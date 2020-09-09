@@ -16,7 +16,7 @@ if __name__ == "__main__":
         return(vol)
 
     '''Problem 3:'''
-    def prnt(a, b, c, d, e):
+    def isolate(a, b, c, d, e):
          """This function seperates the first 3 paramters by 5 spaces and
          the last two by a single space"""
          print(a, b, c, sep = '     ', end = ' ')
