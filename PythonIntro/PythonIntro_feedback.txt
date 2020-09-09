@@ -1,0 +1,30 @@
+09/08/20 19:21
+
+Problem 2 (5 points):
+AttributeError: module 'CaelanOsman.PythonIntro.python_intro' has no attribute 'sphere_volume'
+
+Problem 3 (5 points):
+AttributeError: module 'CaelanOsman.PythonIntro.python_intro' has no attribute 'isolate'
+
+Problem 4 (10 points):
+AttributeError: module 'CaelanOsman.PythonIntro.python_intro' has no attribute 'first_half'
+
+Problem 5 (5 points):
+AttributeError: module 'CaelanOsman.PythonIntro.python_intro' has no attribute 'list_ops'
+
+Problem 6 (5 points):
+AttributeError: module 'CaelanOsman.PythonIntro.python_intro' has no attribute 'pig_latin'
+
+Problem 7 (10 points):
+AttributeError: module 'CaelanOsman.PythonIntro.python_intro' has no attribute 'palindrome'
+
+Problem 8 (5 points):
+AttributeError: module 'CaelanOsman.PythonIntro.python_intro' has no attribute 'alt_harmonic'
+
+Code Quality (5 points):
+NotImplementedError: isolate() not found
+
+Total score: 0/50 = 0.0%
+
+-------------------------------------------------------------------------------
+
