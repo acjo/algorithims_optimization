@@ -1,27 +1,33 @@
 # numpy_intro.py
 """Python Essentials: Intro to NumPy.
-<Name>
-<Class>
-<Date>
+Caelan Osman
+Math 321 Sec 3
+September 10, 2020
 """
 
+import numpy as np
 
 def prob1():
     """Define the matrices A and B as arrays. Return the matrix product AB."""
+    A = np.array([[3,-1, 4], [1, 5, -9]])
+    B = np.array([[2, 6, -5, 3],[5,-8,9,7], [9, -3,-2, -3]])
+    return A @ B
     raise NotImplementedError("Problem 1 Incomplete")
-
 
 def prob2():
     """Define the matrix A as an array. Return the matrix -A^3 + 9A^2 - 15A."""
+    A = np.array([[3, 1, 4], [1, 5, 9], [-5, 3, 1]])
+    return -A@A@A + 9 * A@A-15 * A
     raise NotImplementedError("Problem 2 Incomplete")
-
 
 def prob3():
     """Define the matrices A and B as arrays. Calculate the matrix product ABA,
     change its data type to np.int64, and return it.
     """
+    A = np.triu(np.ones((7,7)))
+    B = np.triu(np.full((7,7), 5)) + np.tril(np.full((7,7), -1)) + -5*np.eye(7)
+    return A@B@A.astype(np.float64)
     raise NotImplementedError("Problem 3 Incomplete")
-
 
 def prob4(A):
     """Make a copy of 'A' and set all negative entries of the copy to 0.
