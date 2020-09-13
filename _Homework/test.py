@@ -1,8 +1,8 @@
 import numpy as np
+import random as rand
 
 
-I = np.identity(3)
-A = I + 3
-print(A)
 
-  
+u = np.random.randint(0, 10, (3, 1))
+v = np.random.randint(0, 10, (3, 1))
+print(v @ u.T)
