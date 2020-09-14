@@ -83,4 +83,3 @@ def prob7():
     max_diagonal_down = np.max(grid[3:,:-3] * grid[2:-1, 1:-2] * grid[1:-2, 2:-1] * grid[:-3, 3:] )
     return np.max([max_row, max_col, max_diagonal_up, max_diagonal_down])
     raise NotImplementedError("Problem 7 Incomplete")
-print(prob7())
