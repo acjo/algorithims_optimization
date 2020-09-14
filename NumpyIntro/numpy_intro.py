@@ -4,7 +4,6 @@ Caelan Osman
 Math 321 Sec 3
 September 10, 2020
 """
-
 import numpy as np
 
 def prob1():
@@ -31,15 +30,12 @@ def prob3():
 
 def prob4(A):
     """Make a copy of 'A' and set all negative entries of the copy to 0.
-    Return the copy.
-
-    Example:
-        >>> A = np.array([-3,-1,3])
-        >>> prob4(A)
-        array([0, 0, 3])
-    """
+    Return the copy."""
+    cpy = A
+    mask = cpy < 0
+    cpy[mask] = 0
+    return cpy
     raise NotImplementedError("Problem 4 Incomplete")
-
 
 def prob5():
     """Define the matrices A, B, and C as arrays. Return the block matrix
@@ -49,8 +45,15 @@ def prob5():
     where I is the 3x3 identity matrix and each 0 is a matrix of all zeros
     of the appropriate size.
     """
+    A = np.arange(6).reshape((3,2)).T
+    B = np.tril(np.full((3,3), 3))
+    C = np.diag([-2, -2, -2])
+    col_1 = np.vstack((np.zeros((3,3)), A, B))
+    col_2 = np.vstack((A.T, np.zeros((2,2)), np.zeros((3,2))))
+    col_3 = np.vstack((np.eye(3), np.zeros((2,3)), C))
+    block = np.hstack((col_1, col_2, col_3))
+    return block
     raise NotImplementedError("Problem 5 Incomplete")
-
 
 def prob6(A):
     """Divide each row of 'A' by the row sum and return the resulting array.
@@ -62,12 +65,22 @@ def prob6(A):
                [ 0.        ,  1.        ,  0.        ],
                [ 0.33333333,  0.33333333,  0.33333333]])
     """
+    sums = A.sum(axis=1)
+    sums = np.vstack(sums)
+    return A / sums
     raise NotImplementedError("Problem 6 Incomplete")
-
 
 def prob7():
     """Given the array stored in grid.npy, return the greatest product of four
     adjacent numbers in the same direction (up, down, left, right, or
     diagonally) in the grid.
     """
+    grid = np.load("grid.npy")
+    new = grid[:,:-3]
+    max_row = np.max(grid[:,:-3] * grid[:,1:-2] * grid[:,2:-1] * grid[:,3:])
+    max_col = np.max(grid[:-3,:] * grid[1:-2,:] * grid[2:-1, :] * grid[3:, :])
+    max_diagonal_up = np.max(grid[:-3,:-3] * grid[1:-2, 1:-2] * grid[2:-1, 2:-1] * grid[3:, 3:] )
+    max_diagonal_down = np.max(grid[3:,:-3] * grid[2:-1, 1:-2] * grid[1:-2, 2:-1] * grid[:-3, 3:] )
+    return np.max([max_row, max_col, max_diagonal_up, max_diagonal_down])
     raise NotImplementedError("Problem 7 Incomplete")
+print(prob7())
