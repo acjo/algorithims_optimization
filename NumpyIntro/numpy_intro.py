@@ -11,13 +11,11 @@ def prob1():
     A = np.array([[3,-1, 4], [1, 5, -9]])
     B = np.array([[2, 6, -5, 3],[5,-8,9,7], [9, -3,-2, -3]])
     return A @ B
-    raise NotImplementedError("Problem 1 Incomplete")
 
 def prob2():
     """Define the matrix A as an array. Return the matrix -A^3 + 9A^2 - 15A."""
     A = np.array([[3, 1, 4], [1, 5, 9], [-5, 3, 1]])
     return -A@A@A + 9 * A@A-15 * A
-    raise NotImplementedError("Problem 2 Incomplete")
 
 def prob3():
     """Define the matrices A and B as arrays. Calculate the matrix product ABA,
@@ -25,17 +23,15 @@ def prob3():
     """
     A = np.triu(np.ones((7,7)))
     B = np.triu(np.full((7,7), 5)) + np.tril(np.full((7,7), -1)) + -5*np.eye(7)
-    return A@B@A.astype(np.float64)
-    raise NotImplementedError("Problem 3 Incomplete")
+    return A@B@A.astype(np.int64)
 
 def prob4(A):
     """Make a copy of 'A' and set all negative entries of the copy to 0.
     Return the copy."""
-    cpy = A
+    cpy = np.copy(A)
     mask = cpy < 0
     cpy[mask] = 0
     return cpy
-    raise NotImplementedError("Problem 4 Incomplete")
 
 def prob5():
     """Define the matrices A, B, and C as arrays. Return the block matrix
@@ -53,7 +49,6 @@ def prob5():
     col_3 = np.vstack((np.eye(3), np.zeros((2,3)), C))
     block = np.hstack((col_1, col_2, col_3))
     return block
-    raise NotImplementedError("Problem 5 Incomplete")
 
 def prob6(A):
     """Divide each row of 'A' by the row sum and return the resulting array.
@@ -68,7 +63,6 @@ def prob6(A):
     sums = A.sum(axis=1)
     sums = np.vstack(sums)
     return A / sums
-    raise NotImplementedError("Problem 6 Incomplete")
 
 def prob7():
     """Given the array stored in grid.npy, return the greatest product of four
@@ -82,4 +76,3 @@ def prob7():
     max_diagonal_up = np.max(grid[:-3,:-3] * grid[1:-2, 1:-2] * grid[2:-1, 2:-1] * grid[3:, 3:] )
     max_diagonal_down = np.max(grid[3:,:-3] * grid[2:-1, 1:-2] * grid[1:-2, 2:-1] * grid[:-3, 3:] )
     return np.max([max_row, max_col, max_diagonal_up, max_diagonal_down])
-    raise NotImplementedError("Problem 7 Incomplete")
