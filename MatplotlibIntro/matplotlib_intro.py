@@ -28,7 +28,7 @@ def var_of_means(n):
 
 def prob1():
     """This function creates an array of the results of var_of_means()
-    with inputs n = 100, 200, ..., 1000. using list comprehension. then plots and shows
+    with inputs n = 100, 200, ..., 1000. using list comprehension. Then plots and shows
     the resulting array
     """
     results = np.array([var_of_means(n) for n in range(100, 1100, 100)])
@@ -38,9 +38,8 @@ def prob1():
 
 # Problem 2
 def prob2():
-    """Plot the functions sin(x), cos(x), and arctan(x) on the domain
-    [-2pi, 2pi]. Make sure the domain is refined enough to produce a figure
-    with good resolution.
+    """Shis function plots sin(x), cos(x), and arctan(x) on the domain
+    [-2pi, 2pi].
     """
     x = np.linspace(-2 * np.pi, 2* np.pi, 100)
     y1 = np.sin(x)
@@ -54,14 +53,17 @@ def prob2():
 
 # Problem 3
 def prob3():
-    """Plot the curve f(x) = 1/(x-1) on the domain [-2,6].
-        1. Split the domain so that the curve looks discontinuous.
-        2. Plot both curves with a thick, dashed magenta line.
-        3. Set the range of the x-axis to [-2,6] and the range of the
-           y-axis to [-6,6].
-    """
-    raise NotImplementedError("Problem 3 Incomplete")
-
+    """This function plots the function 1/x-1 over [-2,6]"""
+    x1 = np.linspace(-2, 0.99, 100)
+    x2 = np.linspace(1.01, 6, 100)
+    y1 = (x1-1)**-1
+    y2 = (x2-1)**-1
+    plt.plot(x1, y1, 'm--', linewidth = 4)
+    plt.plot(x2, y2, 'm--', linewidth = 4)
+    plt.xlim(-2,6)
+    plt.ylim(-6,6)
+    plt.show()
+    return
 
 # Problem 4
 def prob4():
