@@ -23,7 +23,9 @@ def prob3():
     """
     A = np.triu(np.ones((7,7)))
     B = np.triu(np.full((7,7), 5)) + np.tril(np.full((7,7), -1)) + -5*np.eye(7)
-    return A@B@A.astype(np.int64)
+    return np.int64(A@B@A)
+
+print(prob3())
 
 def prob4(A):
     """Make a copy of 'A' and set all negative entries of the copy to 0.

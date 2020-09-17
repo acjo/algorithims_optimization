@@ -37,7 +37,8 @@ def backward(strng):
     return strng[::-1]
 
 '''Problem 5:'''
-def list_ops(name_list):
+def list_ops():
+    name_list = ["bear", "ant", "cat", "dog"]
     """This function accepts a list and then performs the following functions on that list"""
     name_list.append("eagle") #add's eagle to the end of the list
     name_list[2] = "fox" #make element at index 2 "fox" instead of "catfp"
@@ -50,7 +51,6 @@ def list_ops(name_list):
     n = len(name_list) - 1
     name_list[n] = name_list[n] + "hunter"
     return name_list
-my_list = ["bear", "ant", "cat", "dog"]
 
 '''Problem 6:'''
 def pig_latin(word):
