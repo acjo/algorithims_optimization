@@ -1,10 +1,12 @@
 # matplotlib_intro.py
 """Python Essentials: Intro to Matplotlib.
-<Name>
-<Class>
-<Date>
+Caelan Osman
+Math 321 Sec 3
+September 17, 2020
 """
 
+from matplotlib import pyplot as plt
+import numpy as np
 
 # Problem 1
 def var_of_means(n):
@@ -18,14 +20,20 @@ def var_of_means(n):
     Returns:
         (float) The variance of the means of each row.
     """
-    raise NotImplementedError("Problem 1 Incomplete")
+    A = np.random.normal(size=(n,n))
+    B = A.mean(axis=1)
+    variance  = np.var(B)
+    return variance
 
 def prob1():
-    """Create an array of the results of var_of_means() with inputs
-    n = 100, 200, ..., 1000. Plot and show the resulting array.
+    """This function creates an array of the results of var_of_means()
+    with inputs n = 100, 200, ..., 1000. using list comprehension. then plots and shows
+    the resulting array
     """
-    raise NotImplementedError("Problem 1 Incomplete")
-
+    results = np.array([var_of_means(n) for n in range(100, 1100, 100)])
+    plt.plot(results)
+    plt.show()
+    return
 
 # Problem 2
 def prob2():
