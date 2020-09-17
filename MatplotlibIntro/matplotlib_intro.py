@@ -7,6 +7,7 @@ September 17, 2020
 
 from matplotlib import pyplot as plt
 import numpy as np
+import math
 
 # Problem 1
 def var_of_means(n):
@@ -41,8 +42,15 @@ def prob2():
     [-2pi, 2pi]. Make sure the domain is refined enough to produce a figure
     with good resolution.
     """
-    raise NotImplementedError("Problem 2 Incomplete")
-
+    x = np.linspace(-2 * np.pi, 2* np.pi, 100)
+    y1 = np.sin(x)
+    y2 = np.cos(x)
+    y3 = np.arctan(x)
+    plt.plot(x,y1)
+    plt.plot(x,y2)
+    plt.plot(x,y3)
+    plt.show()
+    return
 
 # Problem 3
 def prob3():
