@@ -23,3 +23,4 @@ def extended_euclidean_algorithm(a, b):
 
     return gcd, x, y
 
+print(extended_euclidean_algorithm(35, 72))

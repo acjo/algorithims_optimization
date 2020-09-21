@@ -38,7 +38,7 @@ def prob1():
 
 # Problem 2
 def prob2():
-    """Shis function plots sin(x), cos(x), and arctan(x) on the domain
+    """This function plots sin(x), cos(x), and arctan(x) on the domain
     [-2pi, 2pi].
     """
     x = np.linspace(-2 * np.pi, 2* np.pi, 100)
@@ -67,43 +67,73 @@ def prob3():
 
 # Problem 4
 def prob4():
-    """Plot the functions sin(x), sin(2x), 2sin(x), and 2sin(2x) on the
+    """This function plots the functions sin(x), sin(2x), 2sin(x), and 2sin(2x) on the
     domain [0, 2pi].
-        1. Arrange the plots in a square grid of four subplots.
-        2. Set the limits of each subplot to [0, 2pi]x[-2, 2].
-        3. Give each subplot an appropriate title.
-        4. Give the overall figure a title.
-        5. Use the following line colors and styles.
-              sin(x): green solid line.
-             sin(2x): red dashed line.
-             2sin(x): blue dashed line.
-            2sin(2x): magenta dotted line.
     """
-    raise NotImplementedError("Problem 4 Incomplete")
+    x = np.linspace(0, 2 * np.pi, 100)
+    #plot of sin(x)
+    ax1 = plt.subplot(221)
+    ax1.plot(x, np.sin(x), 'g-')
+    ax1.axis([0, 2*np.pi, -2, 2])
+    plt.title("Sin(x)", fontsize = 10)
+    #plot of sin(2x)
+    ax2 = plt.subplot(222)
+    ax2.plot(x, np.sin(2 * x), 'r--')
+    ax2.axis([0, 2*np.pi, -2, 2])
+    plt.title("Sin(2x)", fontsize = 10)
+    #plot of 2sin(x)
+    ax3 = plt.subplot(223)
+    ax3.plot(x, 2 * np.sin(x), 'b--')
+    ax3.axis([0, 2*np.pi, -2, 2])
+    ax3.set_title("2sin(x)", fontsize = 10)
+    #plot of 2sin(2x)
+    ax4 = plt.subplot(224)
+    ax4.plot(x, 2 * np.sin(2 * x), 'm:')
+    ax4.axis([0, 2*np.pi, -2, 2])
+    ax4.set_title("2sin(2x)", fontsize = 10)
+    plt.suptitle("Sin Function Variations", fontsize = 14)
 
+    plt.show()
+    return
 
 # Problem 5
 def prob5():
-    """Visualize the data in FARS.npy. Use np.load() to load the data, then
-    create a single figure with two subplots:
-        1. A scatter plot of longitudes against latitudes. Because of the
-            large number of data points, use black pixel markers (use "k,"
-            as the third argument to plt.plot()). Label both axes.
-        2. A histogram of the hours of the day, with one bin per hour.
-            Label and set the limits of the x-axis.
+    """Visualize the data in FARS.npy on a scatter plot and a histogram.
     """
-    raise NotImplementedError("Problem 5 Incomplete")
+    fars = np.load("FARS.npy")
+    dot_subplot = plt.subplot(121)
+    plt.plot(fars[:,1], fars[:,2], 'ok', markersize=2)
+    plt.xlabel("Longitudes")
+    plt.ylabel("Latitudes")
+    plt.axis("equal")
 
+    box_subplot = plt.subplot(122)
+    box_subplot.hist(fars[:,0], bins=np.arange(0,23))
+    plt.xlabel("Hours of the Day")
+    plt.show()
+    return
 
 # Problem 6
 def prob6():
-    """Plot the function f(x,y) = sin(x)sin(y)/xy on the domain
-    [-2pi, 2pi]x[-2pi, 2pi].
-        1. Create 2 subplots: one with a heat map of f, and one with a contour
-            map of f. Choose an appropriate number of level curves, or specify
-            the curves yourself.
-        2. Set the limits of each subplot to [-2pi, 2pi]x[-2pi, 2pi].
-        3. Choose a non-default color scheme.
-        4. Add a colorbar to each subplot.
+    """This function plots the function f(x,y) = sin(x)sin(y)/xy on the domain
+    [-2pi, 2pi]x[-2pi, 2pi] using a heat map and a countour map.
     """
-    raise NotImplementedError("Problem 6 Incomplete")
+
+    x = np.linspace(-2 * np.pi, 2 * np.pi, 100)
+    y = x.copy()
+    domainx, domainy = np.meshgrid(x,y)
+    image = (np.sin(domainx) * np.sin(domainy))/ (domainx * domainy)
+
+    #heat map
+    heat = plt.subplot(121)
+    plt.pcolormesh(domainx, domainy, image, cmap='coolwarm')
+    plt.colorbar()
+    heat.axis([-2*np.pi, 2*np.pi, -2*np.pi, 2*np.pi])
+
+    #contour map
+    cont = plt.subplot(122)
+    plt.contour(domainx, domainy, image, 10, cmap='viridis')
+    plt.colorbar()
+    cont.axis([-2*np.pi, 2*np.pi, -2*np.pi, 2*np.pi])
+    plt.show()
+    return
