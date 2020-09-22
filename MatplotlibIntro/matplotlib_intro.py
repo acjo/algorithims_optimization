@@ -102,16 +102,18 @@ def prob5():
     """
     fars = np.load("FARS.npy")
     dot_subplot = plt.subplot(121)
-    plt.plot(fars[:,1], fars[:,2], 'ok', markersize=2)
+    plt.plot(fars[:,1], fars[:,2], 'k,')
     plt.xlabel("Longitudes")
     plt.ylabel("Latitudes")
     plt.axis("equal")
 
     box_subplot = plt.subplot(122)
-    box_subplot.hist(fars[:,0], bins=np.arange(0,23))
+    box_subplot.hist(fars[:,0], bins=np.arange(-0.5,24.5))
     plt.xlabel("Hours of the Day")
     plt.show()
     return
+
+prob5()
 
 # Problem 6
 def prob6():
