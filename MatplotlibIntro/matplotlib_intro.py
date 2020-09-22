@@ -113,8 +113,6 @@ def prob5():
     plt.show()
     return
 
-prob5()
-
 # Problem 6
 def prob6():
     """This function plots the function f(x,y) = sin(x)sin(y)/xy on the domain
