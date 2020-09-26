@@ -3,8 +3,13 @@ import random as rand
 
 
 
-u = np.random.randint(0, 10, (3, 1))
-v = np.random.randint(0, 10, (3, 1))
-A = np.array([[3,2,4], [2,2,3], [6, 7, 5]])
+string = "hello, I would love 30 hotdogs \n and some ketchup"
+splitline = string.strip().split('\n')
+splitline = [line.strip().split(' ') for line in splitline]
+splitline = [line[::-1] for line in splitline]
 
-print([1,1,1]*3)
+splitline = ' '.join('\n'.join(splitline))
+
+
+
+print(splitline)
