@@ -1,8 +1,8 @@
 # test_specs.py
 """Python Essentials: Unit Testing.
-<Name>
-<Class>
-<Date>
+Caelan Osman
+Math 321 sec 3
+September 27, 2020
 """
 
 import specs
@@ -21,9 +21,11 @@ def test_divide():
         specs.divide(4, 0)
     assert excinfo.value.args[0] == "second input cannot be zero"
 
-
 # Problem 1: write a unit test for specs.smallest_factor(), then correct it.
-
+def test_smallest_factor():
+    assert specs.smallest_factor(15) == 3, '3 is the smallest prime factor of 15'
+    assert specs.smallest_factor(1) == 1, '1 is the smallest prime factor of 1'
+    assert specs.smallest_factor(35) == 5, '5 is the smallest prime factor of 35'
 
 # Problem 2: write a unit test for specs.month_length().
 
