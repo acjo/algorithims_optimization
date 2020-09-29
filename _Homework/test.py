@@ -2,12 +2,10 @@ import numpy as np
 import random as rand
 
 
+def func(a,b,c):
+    return a,b,c
 
-string = "hello, I would love 30 hotdogs \nand some ketchup"
-splitline = string.strip().split('\n')
-splitline = [line.strip().split(' ')[::-1] for line in splitline]
-for line in splitline:
-    newstring = ' '.join(line)
-#splitline = [line[::-1] for line in splitline]
 
-print(newstring)
+my_tuple = (1,2,3)
+
+print(func(my_tuple))
