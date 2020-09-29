@@ -23,6 +23,9 @@ def test_divide():
 
 # Problem 1: write a unit test for specs.smallest_factor(), then correct it.
 def test_smallest_factor():
+    '''This function performs a unit test with 100% coverage of the smallest_factor() function in
+       specs.py
+    '''
     assert specs.smallest_factor(15) == 3, '3 is the smallest prime factor of 15'
     assert specs.smallest_factor(1) == 1, '1 is the smallest prime factor of 1'
     assert specs.smallest_factor(35) == 5, '5 is the smallest prime factor of 35'
@@ -30,12 +33,33 @@ def test_smallest_factor():
 
 # Problem 2: write a unit test for specs.month_length().
 def test_month_length():
+    '''This function performs a unit test with 100% coverage of the month_length() function in
+       specs.py
+    '''
     assert specs.month_length("September") == 30, 'There are 30 days in September'
     assert specs.month_length("January") == 31, 'There are 31 days in January'
     assert specs.month_length("February") == 28, 'There are 28 days in a non-leap year February'
     assert specs.month_length("February", True) == 29, 'There are 29 days in a leap year February'
+    assert specs.month_length("hello") == None, 'This is not a month'
 
 # Problem 3: write a unit test for specs.operate().
+def test_operate():
+    '''This function performs a unit test with 100% coverage of the operate() function in
+       specs.py
+    '''
+    assert specs.operate(3,2, '+') == 5, '3+2 is 5 incorrect value returned'
+    assert specs.operate(3,2, '-') == 1, '3-2 is 1 incorrect value returned'
+    assert specs.operate(3,2, '*') == 6, '3*2 is 6 incorrect value returned'
+    assert specs.operate(3,2, '/') == 1.5, '3/2 is 1.5 incorrect value returned'
+    with pytest.raises(TypeError) as excinfo:
+        specs.operate(3,2,3)
+    assert excinfo.value.args[0] == 'oper must be a string'
+    with pytest.raises(ZeroDivisionError) as excinfo:
+        specs.operate(3,0, '/')
+    assert excinfo.value.args[0] == 'division by zero is undefined'
+    with pytest.raises(ValueError) as excinfo:
+        specs.operate(3,4,'[')
+    assert excinfo.value.args[0] == "oper must be one of '+', '/', '-', or '*'"
 
 
 # Problem 4: write unit tests for specs.Fraction, then correct it.
