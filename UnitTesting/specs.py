@@ -93,10 +93,16 @@ class Fraction(object):
             return float(self) == other
 
     def __add__(self, other):
-        return Fraction(self.numer*other.numer + self.denom*other.denom,
-                                                        self.denom*other.denom)
+        if self.denom == other.denom:
+            return Fraction(self.numer + other.numer, self.denom)
+        else:
+            return Fraction(self.numer * other.denom + self.denom * other.numer,
+                                                        self.denom * other.denom)
     def __sub__(self, other):
-        return Fraction(self.numer*other.numer - self.denom*other.denom,
+        if self.denom == other.denom:
+            return Fraction(self.numer - other.numer, self.denom)
+        else:
+            return Fraction(self.numer * other.denom - self.denom * other.numer,
                                                         self.denom*other.denom)
     def __mul__(self, other):
         return Fraction(self.numer*other.numer, self.denom*other.denom)
@@ -106,6 +112,7 @@ class Fraction(object):
             raise ZeroDivisionError("cannot divide by zero")
         return Fraction(self.numer*other.denom, self.denom*other.numer)
 
+print(Fraction(2,3) ==2)
 
 # Problem 6
 def count_sets(cards):
