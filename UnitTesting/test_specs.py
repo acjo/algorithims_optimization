@@ -132,8 +132,8 @@ def test_fraction_truediv(set_up_fractions):
 def set_up_sets():
     card1 = '1022'
     card2 = '1122'
-    card3 = '1222'
     card4 = '1020'
+    card3 = '1222'
     game = ['0110', '0210', '0010', '1222', '1020', '1200', '2000', '2100', '2010', '2111', '2011', '2001']
     falsegame1 = ['1221', '1222']
     falsegame2 = ['1221', '1222', '1202', '0012', '0101', '0202', '0111', '2222', '0000', '1111', '1212', '0202']
@@ -155,7 +155,7 @@ def test_count_sets(set_up_sets):
     with pytest.raises(ValueError) as excinfo:
         specs.count_sets(falsegame4)
     assert excinfo.value.args[0] == 'One or more cards has a character other than 0, 1, or 2'
-    assert specs.count_sets(game) == 1
+    assert specs.count_sets(game) == 4
 
 
 def test_is_set(set_up_sets):

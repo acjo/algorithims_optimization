@@ -5,7 +5,7 @@ Math 321 sec 3
 September 27, 2020
 """
 
-from itertools import combinations as com
+from itertools import combinations
 
 def add(a, b):
     """Add two numbers."""
@@ -116,31 +116,36 @@ class Fraction(object):
 
 # Problem 6
 def count_sets(cards):
-    """Return the number of sets in the provided Set hand.
-
-    Parameters:
-        cards (list(str)) a list of twelve cards as 4-bit integers in
-        base 3 as strings, such as ["1022", "1122", ..., "1020"].
-    Returns:
-        (int) The number of sets in the hand.
-    Raises:
-        ValueError: if the list does not contain a valid Set hand, meaning
-            - there are not exactly 12 cards,
-            - the cards are not all unique,
-            - one or more cards does not have exactly 4 digits, or
-            - one or more cards has a character other than 0, 1, or 2.
+    """Return the number of sets in the provided Set hand. 4 possible errors that can be raised in the case the hand isn't actually a hand
     """
-    raise NotImplementedError("Problem 6 Incomplete")
+    if len(cards) != 12:
+        raise ValueError("There are not exactly 12 cards")
+    for card in cards:
+        if len(card) != 4:
+            raise ValueError("One or more cards does not have exactly 4 digits")
+    for i in range(0, len(cards)):
+        if cards[i] in cards[i+1:len(cards)+1]:
+            raise ValueError("There are not 12 unique cards")
+        for j in range(0, 4):
+            if cards[i][j] not in ['0', '1', '2']:
+                raise ValueError("One or more cards has a character other than 0, 1, or 2")
+    combination = list(combinations(cards,3))
+    num = 0
+    for comb in combination:
+        a = comb[0]
+        b = comb[1]
+        c = comb[2]
+        if is_set(a,b,c):
+            num += 1
+    return num
 
 def is_set(a, b, c):
     """Determine if the cards a, b, and c constitute a set.
-
-    Parameters:
-        a, b, c (str): string representations of 4-bit integers in base 3.
-            For example, "1022", "1122", and "1020" (which is not a set).
-    Returns:
-        True if a, b, and c form a set, meaning the ith digit of a, b,
-            and c are either the same or all different for i=1,2,3,4.
-        False if a, b, and c do not form a set.
     """
-    raise NotImplementedError("Problem 6 Incomplete")
+    isASet = True
+    for i in range(0,4):
+        if int(a[i])+int(b[i])+int(c[i]) not in [0,3,6]:
+            isASet = False
+            break
+
+    return isASet
