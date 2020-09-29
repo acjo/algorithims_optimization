@@ -1,9 +1,11 @@
 # specs.py
 """Python Essentials: Unit Testing.
-<Name>
-<Class>
-<Date>
+Caelan Osman
+Math 321 sec 3
+September 27, 2020
 """
+
+from itertools import combinations as com
 
 def add(a, b):
     """Add two numbers."""
@@ -111,8 +113,6 @@ class Fraction(object):
         if self.denom*other.numer == 0:
             raise ZeroDivisionError("cannot divide by zero")
         return Fraction(self.numer*other.denom, self.denom*other.numer)
-
-print(Fraction(2,3) ==2)
 
 # Problem 6
 def count_sets(cards):
