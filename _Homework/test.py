@@ -3,13 +3,11 @@ import random as rand
 
 
 
-string = "hello, I would love 30 hotdogs \n and some ketchup"
+string = "hello, I would love 30 hotdogs \nand some ketchup"
 splitline = string.strip().split('\n')
-splitline = [line.strip().split(' ') for line in splitline]
-splitline = [line[::-1] for line in splitline]
+splitline = [line.strip().split(' ')[::-1] for line in splitline]
+for line in splitline:
+    newstring = ' '.join(line)
+#splitline = [line[::-1] for line in splitline]
 
-splitline = ' '.join('\n'.join(splitline))
-
-
-
-print(splitline)
+print(newstring)

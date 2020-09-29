@@ -26,9 +26,14 @@ def test_smallest_factor():
     assert specs.smallest_factor(15) == 3, '3 is the smallest prime factor of 15'
     assert specs.smallest_factor(1) == 1, '1 is the smallest prime factor of 1'
     assert specs.smallest_factor(35) == 5, '5 is the smallest prime factor of 35'
+    assert specs.smallest_factor(17) == 17, '17 is the smallest prime factor of 17'
 
 # Problem 2: write a unit test for specs.month_length().
-
+def test_month_length():
+    assert specs.month_length("September") == 30, 'There are 30 days in September'
+    assert specs.month_length("January") == 31, 'There are 31 days in January'
+    assert specs.month_length("February") == 28, 'There are 28 days in a non-leap year February'
+    assert specs.month_length("February", True) == 29, 'There are 29 days in a leap year February'
 
 # Problem 3: write a unit test for specs.operate().
 
