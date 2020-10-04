@@ -1,8 +1,8 @@
 # linked_lists.py
 """Volume 2: Linked Lists.
-<Name>
-<Class>
-<Date>
+Caelan Osman
+Math 345 Sec 3
+October 3rd, 2020
 """
 
 
@@ -11,12 +11,13 @@ class Node:
     """A basic node class for storing data."""
     def __init__(self, data):
         """Store the data in the value attribute.
-                
         Raises:
             TypeError: if data is not of type int, float, or str.
         """
-        self.value = data
-
+        if type(data) != int and type(data) != str and type(data) != float:
+            raise TypeError('data is not of type "str", "int", or "float"')
+        else:
+            self.value = data
 
 class LinkedListNode(Node):
     """A node class for doubly linked lists. Inherits from the Node class.
