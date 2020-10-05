@@ -4,6 +4,30 @@ Caelan Osman
 Math 345 Sec 3
 October 3rd, 2020
 """
+'''
+
+        Examples:
+            >>> l = LinkedList()
+            >>> for x in ['a', 'b', 'c', 'd', 'e']:
+            ...     l.append(x)
+            ...
+            >>> node = l.find('b')
+            >>> node.value
+            'b'
+            >>> l.find('f')
+            ValueError: <message>
+
+        Examples:
+            >>> l = LinkedList()
+            >>> for x in ['a', 'b', 'c', 'd', 'e']:
+            ...     l.append(x)
+            ...
+            >>> node = l.get(3)
+            >>> node.value
+            'd'
+            >>> l.get(5)
+            IndexError: <message>
+'''
 
 
 # Problem 1
@@ -46,11 +70,13 @@ class LinkedList:
         """
         self.head = None
         self.tail = None
+        self.length = 0
 
     def append(self, data):
         """Append a new node containing the data to the end of the list."""
         # Create a new node to store the input data.
         new_node = LinkedListNode(data)
+        self.length += 1
         if self.head is None:
             # If the list is empty, assign the head and tail attributes to
             # new_node, since it becomes the first and last node in the list.
@@ -69,40 +95,46 @@ class LinkedList:
 
         Raises:
             ValueError: if the list does not contain the data.
-
-        Examples:
-            >>> l = LinkedList()
-            >>> for x in ['a', 'b', 'c', 'd', 'e']:
-            ...     l.append(x)
-            ...
-            >>> node = l.find('b')
-            >>> node.value
-            'b'
-            >>> l.find('f')
-            ValueError: <message>
         """
-        raise NotImplementedError("Problem 2 Incomplete")
+        foundnode = None
+        n = self.head
+
+        while(foundNode is None):
+            if data in n:
+                return n
+            elif n == self.head:
+                break
+            else:
+                n = n.next
+        raise ValueError('Data is not contained in linked list')
 
     # Problem 2
     def get(self, i):
+        #if the index is larger than the size of the list through an out of range error
+        if i < 0 or i >= self.length:
+            raise IndexError('Index out of range')
+        #otherwise get the node
+        else:
+            n = self.head
+            for j in range(0, i):
+                if j == i-1:
+                    return n
+
+
+            '''
+
+            if abs(i - self.length) < i:
+                n = self.tail
+                for j in range(0, i):
+
+            else:
+            '''
         """Return the i-th node in the list.
 
         Raises:
             IndexError: if i is negative or greater than or equal to the
                 current number of nodes.
-
-        Examples:
-            >>> l = LinkedList()
-            >>> for x in ['a', 'b', 'c', 'd', 'e']:
-            ...     l.append(x)
-            ...
-            >>> node = l.get(3)
-            >>> node.value
-            'd'
-            >>> l.get(5)
-            IndexError: <message>
         """
-        raise NotImplementedError("Problem 2 Incomplete")
 
     # Problem 3
     def __len__(self):
