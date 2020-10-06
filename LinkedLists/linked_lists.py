@@ -225,15 +225,15 @@ class LinkedList:
         if index < 0 or index > self.length: #throws an out of range error if the index doesn't make sense
             raise IndexError('"i" Out of range')
         elif index == 0: #special case where we are inserting and resetting the head
-            new = LinkedListNode(data)
-            new.next = self.head
-            new.next.prev = new
-            self.head = new
-            self.length += 1
+            new = LinkedListNode(data) #construct new node
+            new.next = self.head #set the pointer to the current head
+            new.next.prev = new  #set the pointer of the next back to the new
+            self.head = new #set the head as the new
+            self.length += 1 #update length
             return
-        elif index == self.length:
+        elif index == self.length: #if the insert is the length of the list just append
             self.append(data)
-        else:
+        else: #do the same as in the first elif statement except at an index that is greater than one
             n = self.head
             for j in range(0,index-1):
                 n = n.next
@@ -244,8 +244,6 @@ class LinkedList:
             new.next.prev = new
             self.length += 1
             return
-
-
 
 # Problem 6: Deque class.
 
