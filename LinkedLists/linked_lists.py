@@ -148,7 +148,15 @@ class LinkedList:
 
         if self.length == 0: #returns an "empty list" if the length is zero
             return string_rep + ']'
+        elif self.length == 1: #handles the case in which the length of the linked list is just one
+            if type(n.value) == str:
+                 string_rep += repr(n.value) + ']'
+                 return string_rep
+            else:
+               string_rep += str(n.value) + ']'
+               return string_rep
 
+        #only executes if the above if-else statement is never entered
         for i in range(0, self.length): #add all nodes to our representation
             if type(n.value) == str: #if the node type is string then we need to represent it as such
                 if i == 0:
@@ -169,21 +177,41 @@ class LinkedList:
 
     # Problem 4
     def remove(self, data):
-        """Remove the first node in the list containing the data.
+        """Removes the first node in the list containing the data.
 
         Raises:
             ValueError: if the list is empty or does not contain the data.
-
-        Examples:
-            >>> print(l1)               |   >>> print(l2)
-            ['a', 'e', 'i', 'o', 'u']   |   [2, 4, 6, 8]
-            >>> l1.remove('i')          |   >>> l2.remove(10)
-            >>> l1.remove('a')          |   ValueError: <message>
-            >>> l1.remove('u')          |   >>> l3 = LinkedList()
-            >>> print(l1)               |   >>> l3.remove(10)
-            ['e', 'o']                  |   ValueError: <message>
         """
-        raise NotImplementedError("Problem 4 Incomplete")
+
+        if self.length == 0: #can't take something out of an empty list
+            raise ValueError('The list is empty')
+
+        n = self.head
+        if self.length == 1 and data == self.head.value: #special case where the list only has one element
+            self.head = None
+            self.tail = None
+            self.length = 0
+            return
+        elif data == n.value: #special case where the len(llist) > 1 and the data is the first node
+            self.head = n.next
+            self.length -= 1
+            return
+        elif data == self.tail.value: #special case where len(llist) > 1 and the data is the final node
+            self.tail = self.tail.prev
+            self.length -= 1
+            return
+        else:#finally we enter this case when none of the above apply
+            n = n.next
+            for i in range(1, self.length-1): #only need to loop from the 2nd to n-1 nodes because of ^^
+                if data == n.value:
+                    n.prev.next = n.next #next of the previous and the previous of the next
+                    n.next.prev = n.prev
+                    self.length -= 1
+                    return
+                else: #otherwise loop onto the next
+                    n = n.next
+
+        raise ValueError('Data not found') #finally if the data is not found
 
     # Problem 5
     def insert(self, index, data):
@@ -223,5 +251,7 @@ def prob7(infile, outfile):
         outfile (str): the file to write to.
     """
     raise NotImplementedError("Problem 7 Incomplete")
+
+
 
 
