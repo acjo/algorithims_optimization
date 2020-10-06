@@ -225,11 +225,11 @@ class LinkedList:
         if index < 0 or index > self.length: #throws an out of range error if the index doesn't make sense
             raise IndexError('"i" Out of range')
         elif index == 0: #special case where we are inserting and resetting the head
+            new = LinkedListNode(data)
+            new.next = self.head
+            new.next.prev = new
+            self.head = new
             self.length += 1
-            h = self.head
-            self.head.value = data
-            self.head.next = h
-            h.prev = self.head
             return
         elif index == self.length:
             self.append(data)
@@ -237,14 +237,12 @@ class LinkedList:
             n = self.head
             for j in range(0,index-1):
                 n = n.next
-            print(n.value)
             new = LinkedListNode(data)
             new.prev = n
             new.next = n.next
+            n.next = new
             new.next.prev = new
-            new.prev.next = new
-
-            print(new.next.value)
+            self.length += 1
             return
 
 
@@ -262,20 +260,3 @@ def prob7(infile, outfile):
         outfile (str): the file to write to.
     """
     raise NotImplementedError("Problem 7 Incomplete")
-
-
-
-
-
-#print([3.2,4.5,6])
-my_llist = LinkedList()
-for n in [1,2,3,5,6]:
-    my_llist.append(n)
-print(my_llist)
-my_llist.insert(3, 4)
-print(my_llist)
-#for node in [3.2, 4.5, 6]:
-#    my_llist.append(node)
-
-
-#print(my_llist)
