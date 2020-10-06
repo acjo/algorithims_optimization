@@ -139,36 +139,32 @@ class LinkedList:
 
     # Problem 3
     def __str__(self):
-        """String representation: the same as a standard Python list.
-
-        Examples:
-            >>> l1 = LinkedList()       |   >>> l2 = LinkedList()
-            >>> for i in [1,3,5]:       |   >>> for i in ['a','b',"c"]:
-            ...     l1.append(i)        |   ...     l2.append(i)
-            ...                         |   ...
-            >>> print(l1)               |   >>> print(l2)
-            [1, 3, 5]                   |   ['a', 'b', 'c']
+        """This function returns a string representation of the liked list
+           which is the same as the standard python list
         """
 
-        is_tail = False
-        n = self.head
-        string_rep = '['
-        for i in range(0, self.length):
-            if type(n.value) == str:
+        n = self.head #starting node
+        string_rep = '[' #initial string representation
+
+        if self.length == 0: #returns an "empty list" if the length is zero
+            return string_rep + ']'
+
+        for i in range(0, self.length): #add all nodes to our representation
+            if type(n.value) == str: #if the node type is string then we need to represent it as such
                 if i == 0:
                     string_rep += repr(n.value)
                 elif i == self.length - 1:
                     string_rep += ', ' + repr(n.value) +']'
                 else:
                     string_rep += ', ' + repr(n.value)
-            else:
+            else:# if the node type is an int or float
                 if i == 0:
                     string_rep += str(n.value)
                 elif i == self.length - 1:
                     string_rep += ', ' + str(n.value) +']'
                 else:
                     string_rep += ', ' + str(n.value)
-            n = n.next
+            n = n.next #set our node to the next node in the linked list
         return string_rep
 
     # Problem 4
@@ -227,7 +223,5 @@ def prob7(infile, outfile):
         outfile (str): the file to write to.
     """
     raise NotImplementedError("Problem 7 Incomplete")
-
-
 
 
