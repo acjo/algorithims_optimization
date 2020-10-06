@@ -96,20 +96,22 @@ class LinkedList:
         Raises:
             ValueError: if the list does not contain the data.
         """
-        foundnode = None
+        #edge case if there are no elements in the liked list then obviously no elements can be found
         if self.length == 0:
             raise ValueError('Data is not contained in Liked List')
 
+        #set intial conditions
+        foundnode = None
         n = self.head
-        while(foundnode is None):
-            if data == n.value:
-                foundnode = True
+        while(foundnode is None): #while our node is not found
+            if data == n.value: #if data is equal to the node value then return that node
                 return n
-            elif n == self.tail:
-                break
+            elif n == self.tail: #if we are at the last node, exit the loop
+                foundnode = False
             else:
-                n = n.next
+                n = n.next #if we aren't at the last, and the data hasn't been found go onto the next node
 
+        #if the node is not found then this error is raised
         raise ValueError('Data is not contained in Linked List')
 
     # Problem 2
@@ -232,12 +234,3 @@ def prob7(infile, outfile):
     raise NotImplementedError("Problem 7 Incomplete")
 
 
-my_llist = LinkedList()
-
-for node in [1,2333,34,5,6]:
-    my_llist.append(node)
-
-node = my_llist.get(4)
-
-print(type(node))
-print(node.value)
