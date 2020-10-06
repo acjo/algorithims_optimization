@@ -130,37 +130,12 @@ class LinkedList:
                     return n
                 else:
                     n = n.next
-            '''
-
-            if abs(i - self.length) < i:
-                n = self.tail
-                for j in range(0, i):
-
-            else:
-            '''
-        """Return the i-th node in the list.
-
-        Raises:
-            IndexError: if i is negative or greater than or equal to the
-                current number of nodes.
-        """
 
     # Problem 3
     def __len__(self):
-        """Return the number of nodes in the list.
-
-        Examples:
-            >>> l = LinkedList()
-            >>> for i in (1, 3, 5):
-            ...     l.append(i)
-            ...
-            >>> len(l)
-            3
-            >>> l.append(7)
-            >>> len(l)
-            4
+        """Returns the number of nodes in the list.
         """
-        raise NotImplementedError("Problem 3 Incomplete")
+        return self.length
 
     # Problem 3
     def __str__(self):
@@ -174,7 +149,27 @@ class LinkedList:
             >>> print(l1)               |   >>> print(l2)
             [1, 3, 5]                   |   ['a', 'b', 'c']
         """
-        raise NotImplementedError("Problem 3 Incomplete")
+
+        is_tail = False
+        n = self.head
+        string_rep = '['
+        for i in range(0, self.length):
+            if type(n.value) == str:
+                if i == 0:
+                    string_rep += repr(n.value)
+                elif i == self.length - 1:
+                    string_rep += ', ' + repr(n.value) +']'
+                else:
+                    string_rep += ', ' + repr(n.value)
+            else:
+                if i == 0:
+                    string_rep += str(n.value)
+                elif i == self.length - 1:
+                    string_rep += ', ' + str(n.value) +']'
+                else:
+                    string_rep += ', ' + str(n.value)
+            n = n.next
+        return string_rep
 
     # Problem 4
     def remove(self, data):
@@ -232,5 +227,7 @@ def prob7(infile, outfile):
         outfile (str): the file to write to.
     """
     raise NotImplementedError("Problem 7 Incomplete")
+
+
 
 
