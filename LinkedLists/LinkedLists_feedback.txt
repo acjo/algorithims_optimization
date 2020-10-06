@@ -1,0 +1,31 @@
+10/05/20 18:54
+
+Problem 1 (5 points):
+Score += 5
+
+Problem 2 (5 points):
+Score += 5
+
+Problem 3 (5 points):
+NotImplementedError: Problem 3 Incomplete
+
+Problem 4 (7 points):
+NotImplementedError: Problem 3 Incomplete
+
+Problem 5 (8 points):
+NotImplementedError: Problem 3 Incomplete
+
+Problem 6 (10 points):
+AttributeError: module 'CaelanOsman.LinkedLists.linked_lists' has no attribute 'Deque'
+
+Problem 7 (5 points):
+NotImplementedError: Problem 7 Incomplete
+
+Code Quality (5 points):
+LinkedList.remove() not implemented
+Score += 0
+
+Total score: 10/50 = 20.0%
+
+-------------------------------------------------------------------------------
+
