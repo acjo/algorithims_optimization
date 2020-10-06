@@ -97,16 +97,20 @@ class LinkedList:
             ValueError: if the list does not contain the data.
         """
         foundnode = None
-        n = self.head
+        if self.length == 0:
+            raise ValueError('Data is not contained in Liked List')
 
-        while(foundNode is None):
-            if data in n:
+        n = self.head
+        while(foundnode is None):
+            if data == n.value:
+                foundnode = True
                 return n
-            elif n == self.head:
+            elif n == self.tail:
                 break
             else:
                 n = n.next
-        raise ValueError('Data is not contained in linked list')
+
+        raise ValueError('Data is not contained in Linked List')
 
     # Problem 2
     def get(self, i):
@@ -116,11 +120,14 @@ class LinkedList:
         #otherwise get the node
         else:
             n = self.head
+            if i == 0:
+                return n
+            n = n.next
             for j in range(0, i):
                 if j == i-1:
                     return n
-
-
+                else:
+                    n = n.next
             '''
 
             if abs(i - self.length) < i:
@@ -223,3 +230,14 @@ def prob7(infile, outfile):
         outfile (str): the file to write to.
     """
     raise NotImplementedError("Problem 7 Incomplete")
+
+
+my_llist = LinkedList()
+
+for node in [1,2333,34,5,6]:
+    my_llist.append(node)
+
+node = my_llist.get(4)
+
+print(type(node))
+print(node.value)
