@@ -118,7 +118,7 @@ class LinkedList:
     def get(self, i):
         #if the index is larger than the size of the list through an out of range error
         if i < 0 or i >= self.length:
-            raise IndexError('Index out of range')
+            raise IndexError('"Index" out of range')
         #otherwise get the node
         else:
             n = self.head
@@ -221,21 +221,32 @@ class LinkedList:
         Raises:
             IndexError: if index is negative or strictly greater than the
                 current number of nodes.
-
-        Examples:
-            >>> print(l1)               |   >>> len(l2)
-            ['b']                       |   5
-            >>> l1.insert(0, 'a')       |   >>> l2.insert(6, 'z')
-            >>> print(l1)               |   IndexError: <message>
-            ['a', 'b']                  |
-            >>> l1.insert(2, 'd')       |   >>> l3 = LinkedList()
-            >>> print(l1)               |   >>> l3.insert(1, 'a')
-            ['a', 'b', 'd']             |   IndexError: <message>
-            >>> l1.insert(2, 'c')       |
-            >>> print(l1)               |
-            ['a', 'b', 'c', 'd']        |
         """
-        raise NotImplementedError("Problem 5 Incomplete")
+        if index < 0 or index > self.length: #throws an out of range error if the index doesn't make sense
+            raise IndexError('"i" Out of range')
+        elif index == 0: #special case where we are inserting and resetting the head
+            self.length += 1
+            h = self.head
+            self.head.value = data
+            self.head.next = h
+            h.prev = self.head
+            return
+        elif index == self.length:
+            self.append(data)
+        else:
+            n = self.head
+            for j in range(0,index-1):
+                n = n.next
+            print(n.value)
+            new = LinkedListNode(data)
+            new.prev = n
+            new.next = n.next
+            new.next.prev = new
+            new.prev.next = new
+
+            print(new.next.value)
+            return
+
 
 
 # Problem 6: Deque class.
@@ -255,3 +266,16 @@ def prob7(infile, outfile):
 
 
 
+
+#print([3.2,4.5,6])
+my_llist = LinkedList()
+for n in [1,2,3,5,6]:
+    my_llist.append(n)
+print(my_llist)
+my_llist.insert(3, 4)
+print(my_llist)
+#for node in [3.2, 4.5, 6]:
+#    my_llist.append(node)
+
+
+#print(my_llist)
