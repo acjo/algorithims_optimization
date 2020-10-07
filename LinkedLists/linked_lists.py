@@ -4,30 +4,6 @@ Caelan Osman
 Math 345 Sec 3
 October 3rd, 2020
 """
-'''
-
-        Examples:
-            >>> l = LinkedList()
-            >>> for x in ['a', 'b', 'c', 'd', 'e']:
-            ...     l.append(x)
-            ...
-            >>> node = l.find('b')
-            >>> node.value
-            'b'
-            >>> l.find('f')
-            ValueError: <message>
-
-        Examples:
-            >>> l = LinkedList()
-            >>> for x in ['a', 'b', 'c', 'd', 'e']:
-            ...     l.append(x)
-            ...
-            >>> node = l.get(3)
-            >>> node.value
-            'd'
-            >>> l.get(5)
-            IndexError: <message>
-'''
 
 
 # Problem 1
@@ -194,10 +170,12 @@ class LinkedList:
             return
         elif data == n.value: #special case where the len(llist) > 1 and the data is the first node
             self.head = n.next
+            self.head.prev = None
             self.length -= 1
             return
         elif data == self.tail.value: #special case where len(llist) > 1 and the data is the final node
             self.tail = self.tail.prev
+            self.tail.next = None
             self.length -= 1
             return
         else:#finally we enter this case when none of the above apply
