@@ -303,7 +303,7 @@ def prob7(infile, outfile):
         for i in range(0, filedeque.length):
             of.write(filedeque.popleft())
 
-
+#prob7('english.txt', 'backwards_english.txt')
 
 
 
