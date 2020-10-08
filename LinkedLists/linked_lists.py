@@ -291,15 +291,15 @@ def prob7(infile, outfile):
         infile (str): the file to read from.
         outfile (str): the file to write to.
     """
-    filedeque = Deque()
-    with open(infile, 'r') as ip:
-        lines = ip.readlines()
-    for i in range(0, len(lines)):
+    filedeque = Deque() #create our deque
+    with open(infile, 'r') as ip: #open our file
+        lines = ip.readlines() #add all lines to a list
+    for i in range(0, len(lines)): #populate our deque
         if i == len(lines) - 1:
-            filedeque.appendleft(lines[i] + '\n')
+            filedeque.appendleft(lines[i] + '\n') #if we are at the last element make sure to add another newline character
         else:
             filedeque.appendleft(lines[i])
-    with open(outfile, 'w') as of:
+    with open(outfile, 'w') as of: #write to our outfile
         for i in range(0, filedeque.length):
             of.write(filedeque.popleft())
 
