@@ -202,13 +202,18 @@ class LinkedList:
         """
         if index < 0 or index > self.length: #throws an out of range error if the index doesn't make sense
             raise IndexError('"Index" Out of range')
-        elif index == 0: #special case where we are inserting and resetting the head
+        elif index == 0 and self.length > 0: #special case where we are inserting and resetting the head and the list is not empty
             new = LinkedListNode(data) #construct new node
             new.next = self.head #set the pointer to the current head
             new.next.prev = new  #set the pointer of the next back to the new
             self.head = new #set the head as the new
             self.length += 1 #update length
             return
+        elif index == 0 and self.length == 0: #Special case where we are inserting and resetting the head and the list is empty
+            new = LinkedListNode(data)
+            self.head = new
+            self.tail = new
+            self.length = 1
         elif index == self.length: #if the insert is the length of the list just append
             self.append(data)
         else: #do the same as in the first elif statement except at an index that is greater than one
@@ -243,6 +248,7 @@ class Deque(LinkedList):
             node_value = self.tail.value
             self.tail = None
             self.head = None
+
             self.length = 0
             return node_value
         else: #otherwise reset tail value
@@ -285,4 +291,39 @@ def prob7(infile, outfile):
         infile (str): the file to read from.
         outfile (str): the file to write to.
     """
-    raise NotImplementedError("Problem 7 Incomplete")
+    filedeque = Deque()
+    with open(infile, 'r') as ip:
+        lines = ip.readlines()
+    for i in range(0, len(lines)):
+        if i == len(lines) - 1:
+            filedeque.appendleft(lines[i] + '\n')
+        else:
+            filedeque.appendleft(lines[i])
+    with open(outfile, 'w') as of:
+        for i in range(0, filedeque.length):
+            of.write(filedeque.popleft())
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
