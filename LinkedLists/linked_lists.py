@@ -249,6 +249,7 @@ class Deque(LinkedList):
             node_value = self.tail.value
             self.tail = self.tail.prev
             self.tail.next = None
+            self.length -= 1
             return node_value
 
     def popleft(self): #function to remove first node
@@ -273,7 +274,7 @@ class Deque(LinkedList):
         raise NotImplementedError('Use pop() or popleft() for removal')
 
     def insert(*args, **kwargs):
-        raise NotImplementedError('')
+        raise NotImplementedError('Use append() or appendleft()')
 
 # Problem 7
 def prob7(infile, outfile):
