@@ -201,7 +201,7 @@ class LinkedList:
                 current number of nodes.
         """
         if index < 0 or index > self.length: #throws an out of range error if the index doesn't make sense
-            raise IndexError('"i" Out of range')
+            raise IndexError('"Index" Out of range')
         elif index == 0: #special case where we are inserting and resetting the head
             new = LinkedListNode(data) #construct new node
             new.next = self.head #set the pointer to the current head
@@ -223,8 +223,57 @@ class LinkedList:
             self.length += 1
             return
 
-# Problem 6: Deque class.
+class Deque(LinkedList):
+    '''Deque data structure class:
 
+       Attributes:
+           Head Node
+           Tail Node
+           length of deque
+    '''
+
+    #use LinkedList class constructor
+    def __init__(self):
+        LinkedList.__init__(self)
+
+    def pop(self): #function to remove last node
+        if self.head == None: #edge case if deque is empty
+            raise ValueError('The deque is empty, cannot pop.')
+        elif self.length == 1: #edge case if deque only has one node
+            node_value = self.tail.value
+            self.tail = None
+            self.head = None
+            self.length = 0
+            return node_value
+        else: #otherwise reset tail value
+            node_value = self.tail.value
+            self.tail = self.tail.prev
+            self.tail.next = None
+            return node_value
+
+    def popleft(self): #function to remove first node
+        if self.head == None: #edge case if our deque is emtpy
+            raise ValueError('The deque is empty, cannot popleft.')
+        elif self.length == 1: #edge case if our deque only has one element
+            node_value = self.head.value
+            self.tail = None
+            self.head = None
+            self.length = 0
+            return node_value
+        else: #otherwise reset the head value uses inheritance and the remove function from the linked list class
+            node_value = self.head.value
+            LinkedList.remove(self, node_value)
+            return node_value
+
+    def appendleft(self, data): #if we want to add nodes to the beginning of our deque we just use inheritence on the insert function with index 0.
+        LinkedList.insert(self, 0, data)
+
+    #these just remove functionality that we don't want to be able to be accessed because deques are restricted access
+    def remove(*args, **kwargs):
+        raise NotImplementedError('Use pop() or popleft() for removal')
+
+    def insert(*args, **kwargs):
+        raise NotImplementedError('')
 
 # Problem 7
 def prob7(infile, outfile):
