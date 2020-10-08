@@ -72,9 +72,9 @@ class LinkedList:
         Raises:
             ValueError: if the list does not contain the data.
         """
-        #edge case if there are no elements in the liked list then obviously no elements can be found
-        if self.length == 0:
-            raise ValueError('Data is not contained in Liked List')
+        #edge case if head is None then the list is empty and the linked list cannot contain the node.
+        if self.head == None:
+            raise ValueError('The node is not contained in the Linked list')
 
         #set intial conditions
         foundnode = None
