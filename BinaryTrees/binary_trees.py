@@ -1,8 +1,8 @@
 # binary_trees.py
 """Volume 2: Binary Trees.
-<Name>
-<Class>
-<Date>
+Caelan Osman
+Math 321 sec 3
+October 8, 2020
 """
 
 # These imports are used in BST.draw().
