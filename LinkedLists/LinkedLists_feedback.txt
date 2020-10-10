@@ -29,3 +29,48 @@ Total score: 10/50 = 20.0%
 
 -------------------------------------------------------------------------------
 
+10/09/20 20:58
+
+Problem 1 (5 points):
+Score += 5
+
+Problem 2 (5 points):
+Score += 5
+
+Problem 3 (5 points):
+Score += 5
+
+Problem 4 (7 points):
+Score += 7
+
+Problem 5 (8 points):
+Score += 8
+
+Problem 6 (10 points):
+Score += 10
+
+Problem 7 (5 points):
+prob7() failed
+	Original file:
+leer
+encyclopaedic
+doubts
+fixations
+sociolinguistics
+glistened
+yours
+outlier
+euthanasia
+outlooks
+	Correct response: '\noutlooks\neuthanasia\noutlier\nyours\nglistened\nsociolinguistics\nfixations\ndoubts\nencyclopaedic\nleer'
+	Student response: '\noutlooks\n\neuthanasia\noutlier\nyours\nglistened\nsociolinguistics\nfixations\ndoubts\nencyclopaedic\nleer'
+Score += 0
+
+Code Quality (5 points):
+You are inconsistent with returns, you can either have one in each of your else statements or in none of them as long as you're consistent. You can also move those long comments onto their own line (right before the else/elif statement it is refering to) and add a blank line before the comment to help seperate sections and make groupings easier to recognize.
+Score += 4
+
+Total score: 44/50 = 88.0%
+
+-------------------------------------------------------------------------------
+
