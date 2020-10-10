@@ -64,6 +64,13 @@ class SinglyLinkedList:
 
         return is_node(self.head)
 
+my_list = SinglyLinkedList()
+print(type(my_list.iterative_find(5)))
+
+for node in [1,2,3,4]:
+    my_list.append(node)
+
+
 class BSTNode:
     """A node class for binary search trees. Contains a value, a
     reference to the parent node, and references to two child nodes.
