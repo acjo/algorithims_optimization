@@ -155,36 +155,64 @@ class BST:
 
     # Problem 3
     def remove(self, data):
-        """Remove the node containing the specified data.
-
+        """This function removes the node containing the specified data.
         Raises:
             ValueError: if there is no node containing the data, including if
                 the tree is empty.
-
-        Examples:
-            >>> print(12)                       | >>> print(t3)
-            [6]                                 | [5]
-            [4, 8]                              | [3, 6]
-            [1, 5, 7, 10]                       | [1, 4, 7]
-            [3, 9]                              | [8]
-            >>> for x in [7, 10, 1, 4, 3]:      | >>> for x in [8, 6, 3, 5]:
-            ...     t1.remove(x)                | ...     t3.remove(x)
-            ...                                 | ...
-            >>> print(t1)                       | >>> print(t3)
-            [6]                                 | [4]
-            [5, 8]                              | [1, 7]
-            [9]                                 |
-                                                | >>> print(t4)
-            >>> print(t2)                       | [5]
-            [2]                                 | >>> t4.remove(1)
-            [1, 3]                              | ValueError: <message>
-            >>> for x in [2, 1, 3]:             | >>> t4.remove(5)
-            ...     t2.remove(x)                | >>> print(t4)
-            ...                                 | []
-            >>> print(t2)                       | >>> t4.remove(5)
-            []                                  | ValueError: <message>
         """
-        raise NotImplementedError("Problem 3 Incomplete")
+        #if the BST is empty raise value error
+        if self.root == None:
+            raise ValueError('The BST is empty.')
+
+        #this is the node to remove; self.find(data) will raise a value error
+        #if there is no node in the BST containing the data
+        node_to_remove = self.find(data)
+
+        if node_to_remove.left == None and node_to_remove.right == None: #if the node to remove is a leaf node
+            if node_to_remove == self.root: #if the leaf node is the root node
+                self.root = None
+            elif node_to_remove.prev.left == node_to_remove: #if it is a left child of the parent node set the left pointer to None
+                node_to_remove.prev.left = None
+            else: #otherwise it is a right child so set the parents right child to none
+                node_to_remove.prev.right = None
+        elif node_to_remove.left != None: #if the node to remove has a left child
+            if self.root == node_to_remove: #if this node happens to be the root
+                self.root = self.root.left
+                self.root.prev = None
+            elif node_to_remove.prev.left == node_to_remove: #if the node to remove is a left child of its parent node
+                prev_node = node_to_remove.prev
+                prev_node.left = node_to_remove.left
+                prev_node.left.prev = prev_node
+            else: #otherwise it is a right child of it's parent node so set the parents right child to none
+                prev_node = node_to_remove.prev
+                prev_node.right = node_to_remove.left
+                prev_node.right.prev = prev_node
+        elif node_to_remove.right != None: #if the node to remove has a right child
+            if self.root == node_to_remove: #if this node happens to be the root
+                self.root = self.root.right
+                self.root.prev = None
+            elif node_to_remove.prev.left == node_to_remove: #if the node to remove is a left child of its paren node
+                prev_node = node_to_remove.prev
+                prev_node.left = node_to_remove.right
+                prev_node.left.prev = prev_node
+            else: #otherwise it is a right child of it's parent node so set the parents right child to none
+                prev_node = node_to_remove.prev
+                prev_node.right = node_to_remove.right
+                prev_node.right.prev = prev_node
+        else: #If the node to remove has two children or is the root node
+            if self.root == node_to_remove: #if the node to remove is the root node (and has two children)
+                leaf = self.root.left
+                while(leaf.right != None): #go to the farthest right leaf node after going one level left
+                    leaf = leaf.right
+                self.root.value = leaf.value #set the roots new value
+                self.remove(leaf) #remove the leaf
+            else: #if the node to remove is not the root, follow the same strategy as above
+                leaf = node_to_remove.left
+                while (leaf.right != None):
+                    leaf = leaf.right
+                node_to_remove.value = leaf.value
+                self.remove(leaf)
+
 
     def __str__(self):
         """String representation: a hierarchical view of the BST.
@@ -230,6 +258,14 @@ class BST:
                 with_labels=True, node_color="C1", font_size=8)
         plt.show()
 
+bst = BST()
+
+for node in [5, 3, 7, 4, 2, 6]:
+    bst.insert(node)
+
+print(bst)
+
+bst.remove(2)
 
 class AVL(BST):
     """Adelson-Velsky Landis binary search tree data structure class.
