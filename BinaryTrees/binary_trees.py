@@ -393,48 +393,53 @@ def prob4():
     avl_find_times = []
 
     for n in num_elements: #computing times
-        random_elements = random.sample(data, n) #1-d array containing n random elements from data
-        subset = random.sample(random_elements, 5) #subset containging 5 random elements from random_elements
+        random_elements = random.sample(data, n) #List containing n random elements from data
+        subset = random.sample(random_elements, 5) #subset containing 5 random elements from random_elements
 
-        #timing sll actions
-        sll = SinglyLinkedList() #intializing empty sll and start times
-        #timing loading
+
+        #timing creation times
+        #sll
+        sll = SinglyLinkedList()
         sll_start = time.time()
-        for element in random_elements: #
+        for element in random_elements:
             sll.append(element)
         sll_end = time.time()
         sll_load_times.append(sll_end - sll_start)
-        #timing finding
+
+        #bst
+        bst = BST()
+        bst_start = time.time()
+        for element in random_elements:
+            bst.insert(element)
+        bst_end = time.time()
+        bst_load_times.append(bst_end - bst_start)
+
+        #avl
+        avl = AVL()
+        avl_start = time.time()
+        for element in random_elements:
+            avl.insert(element)
+        avl_end = time.time()
+        avl_load_times.append(avl_end - avl_start)
+
+
+
+        #timing finding times
+        #sll
         sll_start = time.time()
         for element in subset:
             sll.iterative_find(element)
         sll_end = time.time()
         sll_find_times.append(sll_end - sll_start)
 
-        #timing bst actions
-        bst = BST()
-        #timing loading
-        bst_start = time.time()
-        for element in random_elements:
-            bst.insert(element)
-        bst_end = time.time()
-        bst_load_times.append(bst_end - bst_start)
-        #timing finding
+        #bst
         bst_start = time.time()
         for element in subset:
             bst.find(element)
         bst_end = time.time()
         bst_find_times.append(bst_end - bst_start)
 
-        #timing avl actions
-        avl = AVL()
-        #timing loading
-        avl_start = time.time()
-        for element in random_elements:
-            avl.insert(element)
-        avl_end = time.time()
-        avl_load_times.append(avl_end - avl_start)
-        #timing finding
+        #avl
         avl_start = time.time()
         for element in subset:
             avl.find(element)
@@ -454,15 +459,8 @@ def prob4():
     ax2.plot(num_elements, sll_find_times, label='SLL Find Times')
     ax2.plot(num_elements, bst_find_times, label='BST Find Times')
     ax2.plot(num_elements, avl_find_times, label='AVL Find Times')
-    '''
-    ax2.loglog(num_elements, sll_find_times, basex=2, basey=2, label='SLL Find Times')
-    ax2.loglog(num_elements, bst_find_times, basex=2, basey=2, label='BST Find Times')
-    ax2.loglog(num_elements, avl_find_times, basex=2, basey=2, label='AVL Find Times')
-    '''
     ax2.legend(loc='upper left')
     plt.title('Find Times')
     plt.xlabel('Number of Elements in Structure')
     plt.ylabel('Find Times')
     plt.show()
-
-prob4()
