@@ -52,16 +52,23 @@ class SinglyLinkedList:
         raises:
             (ValueError): If the list is empty or the data is not contained in the list. 
         """
+        #function to revursively find node
         def is_node(node):
+            #if the SLL is empty raise a value error
             if node == None:
                 raise ValueError('The list is empty')
+            #if current node contains the data return that node
             elif node.value == data:
                 return node
+            #if the next node is none then we know we are at the end of our list and no other node
+            #contained the value so we can rais a value error that the data isn't contained in the SLL
             elif node.next == None:
                 raise ValueError('The data is not contained in the list')
+            #recursive call on the next node in the lsit
             else:
                 return is_node(node.next)
 
+        #initial call on the head node in the SLL
         return is_node(self.head)
 
 class BSTNode:
@@ -114,19 +121,37 @@ class BST:
 
         Raises:
             ValueError: if the data is already in the tree.
-
-        Example:
-            >>> tree = BST()                    |
-            >>> for i in [4, 3, 6, 5, 7, 8, 1]: |            (4)
-            ...     tree.insert(i)              |            / \
-            ...                                 |          (3) (6)
-            >>> print(tree)                     |          /   / \
-            [4]                                 |        (1) (5) (7)
-            [3, 6]                              |                  \
-            [1, 5, 7]                           |                  (8)
-            [8]                                 |
         """
-        raise NotImplementedError("Problem 2 Incomplete")
+        #recurssive function to step through BST and insert node where we want it to be
+        def _step(node):
+            if data < node.value: #if the data is less than the node value we insert to the left
+                if node.left == None: #if there is no left node insert the data here
+                    new = BSTNode(data)
+                    node.left = new
+                    new.prev = node
+                else: #otherwise recursive call to _step(node) function
+                    _step(node.left)
+
+            #if the data is grater than the node value do the same thing about except on the right.
+            #notice node.value != data because of the try except block below
+            else:
+                ###Because of the try except block below the data will never be equal to node.value
+                if node.right == None:
+                    new = BSTNode(data)
+                    node.right = new
+                    new.prev = node
+                else:
+                    _step(node.right)
+
+        try: #try to find the data
+            self.find(data)
+        except ValueError: #if the data is not found insert our new node
+            if self.root == None: #if there is no root, the BST is empty, make the new node the root
+                self.root = BSTNode(data)
+            else: #otherwise call the step function
+                _step(self.root)
+        else: #if the data is found raise a value error about duplicates
+            raise ValueError('Data already contained in tree, no duplicates allowed')
 
     # Problem 3
     def remove(self, data):
