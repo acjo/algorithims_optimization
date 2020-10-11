@@ -135,7 +135,6 @@ class BST:
             #if the data is grater than the node value do the same thing about except on the right.
             #notice node.value != data because of the try except block below
             else:
-                ###Because of the try except block below the data will never be equal to node.value
                 if node.right == None:
                     new = BSTNode(data)
                     node.right = new
@@ -183,7 +182,7 @@ class BST:
                 prev_node = node_to_remove.prev
                 prev_node.left = node_to_remove.left
                 prev_node.left.prev = prev_node
-            else: #otherwise it is a right child of it's parent node so set the parents right child to none
+            else: #otherwise it is a right child of the parent node
                 prev_node = node_to_remove.prev
                 prev_node.right = node_to_remove.left
                 prev_node.right.prev = prev_node
@@ -195,7 +194,7 @@ class BST:
                 prev_node = node_to_remove.prev
                 prev_node.left = node_to_remove.right
                 prev_node.left.prev = prev_node
-            else: #otherwise it is a right child of it's parent node so set the parents right child to none
+            else: #otherwise it is a right child of the parent node
                 prev_node = node_to_remove.prev
                 prev_node.right = node_to_remove.right
                 prev_node.right.prev = prev_node
