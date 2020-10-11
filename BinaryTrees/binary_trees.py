@@ -162,20 +162,20 @@ class BST:
         """
         #if the BST is empty raise value error
         if self.root == None:
-            raise ValueError('The BST is empty.')
+           raise ValueError('The BST is empty.')
 
         #this is the node to remove; self.find(data) will raise a value error
         #if there is no node in the BST containing the data
         node_to_remove = self.find(data)
 
         if node_to_remove.left == None and node_to_remove.right == None: #if the node to remove is a leaf node
-            if node_to_remove == self.root: #if the leaf node is the root node
+            if node_to_remove.prev == None: #if it is the root node
                 self.root = None
             elif node_to_remove.prev.left == node_to_remove: #if it is a left child of the parent node set the left pointer to None
                 node_to_remove.prev.left = None
             else: #otherwise it is a right child so set the parents right child to none
                 node_to_remove.prev.right = None
-        elif node_to_remove.left != None: #if the node to remove has a left child
+        elif node_to_remove.right == None: #if the node to remove has a left child
             if self.root == node_to_remove: #if this node happens to be the root
                 self.root = self.root.left
                 self.root.prev = None
@@ -187,11 +187,11 @@ class BST:
                 prev_node = node_to_remove.prev
                 prev_node.right = node_to_remove.left
                 prev_node.right.prev = prev_node
-        elif node_to_remove.right != None: #if the node to remove has a right child
+        elif node_to_remove.left == None: #if the node to remove has a right child
             if self.root == node_to_remove: #if this node happens to be the root
                 self.root = self.root.right
                 self.root.prev = None
-            elif node_to_remove.prev.left == node_to_remove: #if the node to remove is a left child of its paren node
+            elif node_to_remove.prev.left == node_to_remove: #if the node to remove is a left child of its parent node
                 prev_node = node_to_remove.prev
                 prev_node.left = node_to_remove.right
                 prev_node.left.prev = prev_node
@@ -204,14 +204,16 @@ class BST:
                 leaf = self.root.left
                 while(leaf.right != None): #go to the farthest right leaf node after going one level left
                     leaf = leaf.right
-                self.root.value = leaf.value #set the roots new value
-                self.remove(leaf) #remove the leaf
+                new_value = leaf.value
+                self.remove(leaf.value) #remove the leaf
+                self.root.value = new_value #set the roots new value
             else: #if the node to remove is not the root, follow the same strategy as above
                 leaf = node_to_remove.left
                 while (leaf.right != None):
                     leaf = leaf.right
-                node_to_remove.value = leaf.value
-                self.remove(leaf)
+                new_value = leaf.value
+                self.remove(leaf.value)
+                node_to_remove.value = new_value
 
 
     def __str__(self):
@@ -257,15 +259,6 @@ class BST:
         nx.draw(G, pos=graphviz_layout(G, prog="dot"), arrows=True,
                 with_labels=True, node_color="C1", font_size=8)
         plt.show()
-
-bst = BST()
-
-for node in [5, 3, 7, 4, 2, 6]:
-    bst.insert(node)
-
-print(bst)
-
-bst.remove(2)
 
 class AVL(BST):
     """Adelson-Velsky Landis binary search tree data structure class.
