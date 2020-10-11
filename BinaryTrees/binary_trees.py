@@ -175,7 +175,7 @@ class BST:
                 node_to_remove.prev.left = None
             else: #otherwise it is a right child so set the parents right child to none
                 node_to_remove.prev.right = None
-        elif node_to_remove.right == None: #if the node to remove has a left child
+        elif node_to_remove.right == None: #if the node to remove has only a left child
             if self.root == node_to_remove: #if this node happens to be the root
                 self.root = self.root.left
                 self.root.prev = None
@@ -187,7 +187,7 @@ class BST:
                 prev_node = node_to_remove.prev
                 prev_node.right = node_to_remove.left
                 prev_node.right.prev = prev_node
-        elif node_to_remove.left == None: #if the node to remove has a right child
+        elif node_to_remove.left == None: #if the node to remove has only a right child
             if self.root == node_to_remove: #if this node happens to be the root
                 self.root = self.root.right
                 self.root.prev = None
