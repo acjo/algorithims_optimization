@@ -27,6 +27,3 @@ def knapsack(W, items):
         indicies.append(x)
     return max_value, indicies
 
-
-
-print(knapsack(120, [(20, 0.5), (50, 1), (100, 1.2)]))
