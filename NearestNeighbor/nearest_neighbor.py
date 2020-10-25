@@ -1,27 +1,34 @@
 # nearest_neighbor.py
 """Volume 2: Nearest Neighbor Search.
-<Name>
-<Class>
-<Date>
+Caelan Osman
+Math 321 sec 3
+October 25, 2020
 """
 
 import numpy as np
-
+from scipy import linalg as la
 
 # Problem 1
 def exhaustive_search(X, z):
-    """Solve the nearest neighbor search problem with an exhaustive search.
-
+    """This function solves the nearest neighbor search problem with an exhaustive search.
     Parameters:
         X ((m,k) ndarray): a training set of m k-dimensional points.
         z ((k, ) ndarray): a k-dimensional target point.
-
     Returns:
-        ((k,) ndarray) the element (row) of X that is nearest to z.
-        (float) The Euclidean distance from the nearest neighbor to z.
+        min_vec ((k,) ndarray) the element (row) of X that is nearest to z.
+        min_dist (float) The Euclidean distance from the nearest neighbor to z.
     """
-    raise NotImplementedError("Problem 1 Incomplete")
+    diff = X - z #use array broadcasting to find the difference of each row of X and the elements of Z
+    distances = la.norm(diff, axis = 1) #an array containing all norm values of the rows
+    min_dist = min(distances) #sets the minimum distanced
+    find = np.where(distances == min_dist)[0][0] #find the first index where the min distance occurs
+    min_vec = X[find, :] #set the min vec to the the row at find index
 
+    return min_vec, min_dist
+
+A = np.array([[1,2,3],[4,5,6],[7,8,10]])
+z = np.array([8,2,12])
+exhaustive_search(A,z)
 
 # Problem 2: Write a KDTNode class.
 class KDTNode:
@@ -33,6 +40,14 @@ class KDTNode:
         value ((k,) ndarray): a coordinate in k-dimensional space.
         pivot (int): the dimension of the value to make comparisons on.
     """
+    def __init__(self, x):
+        if type(x) != np.ndarray:
+            raise TypeError('Input vector is not of correct type')
+        else: #initializing value and children
+            self.value = x
+            self.left = None
+            self.right = None
+            self.pivot = None
 
 # Problems 3 and 4
 class KDT:
