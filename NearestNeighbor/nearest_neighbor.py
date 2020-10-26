@@ -218,32 +218,25 @@ class KDT:
                     nodes.append(child)
         return "KDT(k={})\n".format(self.k) + "\n".join(strs)
 
-
-'''
-tree = KDT()
-
-to_insert = [np.array([3,1,4]), np.array([1,2, 7]), np.array([4,3,5]), np.array([2, 0, 3]), np.array([2, 4, 5]), np.array([6, 1, 4]), np.array([1, 4, 3]), np.array([0, 5, 7]), np.array([5,2,5])]
-
-for node in to_insert:
-    tree.insert(node)
-
-z = np.array([3,18,9])
-print(tree.query(z))
-
-A = np.array([[3,1,4], [1,2,7], [4,3,5], [2, 0, 3], [2,4,5], [6,1,4], [1,4,3], [0,5,7], [5,2,5]])
-print(exhaustive_search(A, z))
-node = tree.find(np.array([5,2,5]))
-print(node.value)
-print(node.left)
-print(node.right)
-print(node.pivot)
-'''
-
 # Problem 5: Write a KNeighborsClassifier class.
 class KNeighborsClassifier:
     """A k-nearest neighbors classifier that uses SciPy's KDTree to solve
     the nearest neighbor problem efficiently.
     """
+
+    def __init__(self, k):
+        self.k_nearest_neighbors = k
+        self.tree = None
+        self.labels = None
+
+    def fit(self, X, y):
+        self.tree = KDTree(X)
+        self.labels = y
+
+    def predict(self, z):
+        distances, indices = self.tree.query(z, self.k_nearest_neighbors)
+        list_of_labels = [self.labels[index] for index in indices]
+        return mode(list_of_labels)
 
 # Problem 6
 def prob6(n_neighbors, filename="mnist_subset.npz"):
@@ -260,4 +253,3 @@ def prob6(n_neighbors, filename="mnist_subset.npz"):
     Returns:
         (float): the classification accuracy.
     """
-    raise NotImplementedError("Problem 6 Incomplete")
