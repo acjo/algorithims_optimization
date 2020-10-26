@@ -253,3 +253,12 @@ def prob6(n_neighbors, filename="mnist_subset.npz"):
     Returns:
         (float): the classification accuracy.
     """
+    data = np.load(filename)
+    X_train = data["X_train"].astype(np.float)
+    y_train = data["y_train"]
+    X_test = data["X_test"].astype(np.float)
+    y_test = data["y_test"]
+
+    classifier = KNeighborsClassifier(n_neighbors)
+    classifier.fit(X_train, y_train)
+
