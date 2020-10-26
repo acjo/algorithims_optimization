@@ -7,6 +7,7 @@ October 25, 2020
 
 import numpy as np
 from scipy import linalg as la
+from scipy.spatial import KDTree
 
 # Problem 1
 def exhaustive_search(X, z):
@@ -92,13 +93,13 @@ class KDT:
         """
         new = KDTNode(data) #takes care of the type error
 
-        if self.root != None:
+        if self.root is not None:
             if self.k != len(data): #raises value error if new data doesn't have the same dimension
                 raise ValueError('The input data is not of the same dimension as other values in the tree')
 
         def _step(node):
             if data[node.pivot] < node.value[node.pivot]: #need to put it on the left
-                if node.left == None: #if there is no left node insert the data here
+                if node.left is None: #if there is no left node insert the data here
                     #new = KDTNode(data) #create the new node
                     node.left = new #point the parent to it
                     if node.pivot == self.k - 1: #if the parents pivot is k-1 set child's pivot to 0
@@ -109,7 +110,7 @@ class KDT:
                     _step(node.left)
             #if the data at the pivot is greater than or equal to the node value do the same thing
             else:
-                if node.right == None:
+                if node.right is None:
                     #new = KDTNode(data)
                     node.right = new
                     if node.pivot == self.k - 1:
@@ -122,7 +123,7 @@ class KDT:
         try: #try to find the data
             self.find(data)
         except ValueError: #if the data isn't in the tree
-            if self.root == None: #if the tree is empty set the root node, k, and the pivot
+            if self.root is None: #if the tree is empty set the root node, k, and the pivot
                 self.root = new
                 self.root.pivot = 0
                 self.k = len(data)
@@ -157,7 +158,7 @@ class KDT:
 
     # Problem 4
     def query(self, z):
-        """Find the value in the tree that is nearest to z.
+        """This function finds the value in the tree that is nearest to z.
 
         Parameters:
             z ((k,) ndarray): a k-dimensional target point.
@@ -166,7 +167,28 @@ class KDT:
             ((k,) ndarray) the value in the tree that is nearest to z.
             (float) The Euclidean distance from the nearest neighbor to z.
         """
-        raise NotImplementedError("Problem 4 Incomplete")
+        def KDSearch(current, nearest, d): #defines recursive function to infd nearest node
+            if current is None: #base case: dead end
+                return nearest, d
+            x = current.value
+            i = current.pivot
+            if la.norm(x - z) < d: #check if current is closer to z than nearest
+                nearest = current
+                d = la.norm(x - z)
+            if z[i] < x[i]: #search to the left
+                nearest, d = KDSearch(current.left, nearest, d)
+                if z[i] + d >= x[i]: #search to the right if needed
+                    nearest, d = KDSearch(current.right, nearest, d)
+            else: #search to the right
+                nearest, d = KDSearch(current.right, nearest, d)
+                if z[i] - d <= x[i]: #search to the left if needed
+                    nearest, d = KDSearch(current.left, nearest, d)
+
+            return nearest, d
+
+        node, d = KDSearch(self.root, self.root, la.norm(root.value - z))
+        return node.value, d
+
 
     def __str__(self):
         """String representation: a hierarchical list of nodes and their axes.
@@ -189,14 +211,15 @@ class KDT:
                     nodes.append(child)
         return "KDT(k={})\n".format(self.k) + "\n".join(strs)
 
-'''
 tree = KDT()
 
-to_insert = [np.array([3,1,4]), np.array([1,2,7]), np.array([4,3,5]), np.array([2, 0, 3]), np.array([2, 4, 5]), np.array([6, 1, 4]), np.array([1, 4, 3]), np.array([0, 5, 7]), np.array([5,2,5])]
+to_insert = [np.array([3,1,4]), np.array([1,2, 7]), np.array([4,3,5]), np.array([2, 0, 3]), np.array([2, 4, 5]), np.array([6, 1, 4]), np.array([1, 4, 3]), np.array([0, 5, 7]), np.array([5,2,5])]
 
 for node in to_insert:
     tree.insert(node)
 
+print(tree)
+'''
 node = tree.find(np.array([5,2,5]))
 print(node.value)
 print(node.left)
