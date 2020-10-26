@@ -26,10 +26,6 @@ def exhaustive_search(X, z):
 
     return min_vec, min_dist
 
-A = np.array([[1,2,3],[4,5,6],[7,8,10]])
-z = np.array([8,2,12])
-exhaustive_search(A,z)
-
 # Problem 2: Write a KDTNode class.
 class KDTNode:
     """Node class for K-D Trees.
@@ -42,7 +38,7 @@ class KDTNode:
     """
     def __init__(self, x):
         if type(x) != np.ndarray:
-            raise TypeError('Input vector is not of correct type')
+            raise TypeError('Input data is not of correct type')
         else: #initializing value and children
             self.value = x
             self.left = None
@@ -89,13 +85,75 @@ class KDT:
 
         Parameters:
             data ((k,) ndarray): a k-dimensional point to insert into the tree.
-
         Raises:
             ValueError: if data does not have the same dimensions as other
                 values in the tree.
             ValueError: if data is already in the tree
         """
-        raise NotImplementedError("Problem 3 Incomplete")
+        new = KDTNode(data) #takes care of the type error
+
+        if self.root != None:
+            if self.k != len(data): #raises value error if new data doesn't have the same dimension
+                raise ValueError('The input data is not of the same dimension as other values in the tree')
+
+        def _step(node):
+            if data[node.pivot] < node.value[node.pivot]: #need to put it on the left
+                if node.left == None: #if there is no left node insert the data here
+                    #new = KDTNode(data) #create the new node
+                    node.left = new #point the parent to it
+                    if node.pivot == self.k - 1: #if the parents pivot is k-1 set child's pivot to 0
+                        new.pivot = 0
+                    else: #set child's pivot to k+1
+                        new.pivot = node.pivot + 1
+                else:#otherwise recursive call on the left node
+                    _step(node.left)
+            #if the data at the pivot is greater than or equal to the node value do the same thing
+            else:
+                if node.right == None:
+                    #new = KDTNode(data)
+                    node.right = new
+                    if node.pivot == self.k - 1:
+                        new.pivot = 0
+                    else:
+                        new.pivot = node.pivot + 1
+                else:
+                    _step(node.right)
+
+        try: #try to find the data
+            self.find(data)
+        except ValueError: #if the data isn't in the tree
+            if self.root == None: #if the tree is empty set the root node, k, and the pivot
+                self.root = new
+                self.root.pivot = 0
+                self.k = len(data)
+            else:#otherwise recursively step through starting with the root node
+                _step(self.root)
+        else: #if the data is found raise error
+            raise ValueError('Data already contained in tree, no duplicates allowed')
+
+        #pulled from pdf file
+
+        def __str__(self):
+            """String representation: a hierarchical list of nodes and their axes.
+            Example:
+                             'KDT(k=2)
+               [5,5]           [5 5] pivot = 0
+                / \            [3 2] pivot = 1
+            [3,2] [8,4]        [8 4] pivot = 1
+              \      \         [2 6] pivot = 0
+            [2,6] [7,5]        [7 5] pivot = 0'
+            """
+
+            if self.root is None:
+                return "Empty KDT"
+            nodes, strs = [self.root], []
+            while nodes:
+                current = nodes.pop(0)
+                strs.append("{}\tpivot = {}".format(current.value, current.pivot))
+                for child in [current.left, current.right]:
+                    if child:
+                        nodes.append(child)
+            return "KDT(k={})\n".format(self.k) + "\n".join(strs)
 
     # Problem 4
     def query(self, z):
@@ -131,6 +189,20 @@ class KDT:
                     nodes.append(child)
         return "KDT(k={})\n".format(self.k) + "\n".join(strs)
 
+'''
+tree = KDT()
+
+to_insert = [np.array([3,1,4]), np.array([1,2,7]), np.array([4,3,5]), np.array([2, 0, 3]), np.array([2, 4, 5]), np.array([6, 1, 4]), np.array([1, 4, 3]), np.array([0, 5, 7]), np.array([5,2,5])]
+
+for node in to_insert:
+    tree.insert(node)
+
+node = tree.find(np.array([5,2,5]))
+print(node.value)
+print(node.left)
+print(node.right)
+print(node.pivot)
+'''
 
 # Problem 5: Write a KNeighborsClassifier class.
 class KNeighborsClassifier:
