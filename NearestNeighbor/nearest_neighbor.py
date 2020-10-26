@@ -170,23 +170,30 @@ class KDT:
         def KDSearch(current, nearest, d): #defines recursive function to infd nearest node
             if current is None: #base case: dead end
                 return nearest, d
+
             x = current.value
             i = current.pivot
+
             if la.norm(x - z) < d: #check if current is closer to z than nearest
                 nearest = current
                 d = la.norm(x - z)
+
             if z[i] < x[i]: #search to the left
                 nearest, d = KDSearch(current.left, nearest, d)
+
                 if z[i] + d >= x[i]: #search to the right if needed
                     nearest, d = KDSearch(current.right, nearest, d)
+
             else: #search to the right
                 nearest, d = KDSearch(current.right, nearest, d)
+
                 if z[i] - d <= x[i]: #search to the left if needed
                     nearest, d = KDSearch(current.left, nearest, d)
 
             return nearest, d
 
-        node, d = KDSearch(self.root, self.root, la.norm(root.value - z))
+        node, d = KDSearch(self.root, self.root, la.norm(self.root.value - z))
+
         return node.value, d
 
 
@@ -211,6 +218,8 @@ class KDT:
                     nodes.append(child)
         return "KDT(k={})\n".format(self.k) + "\n".join(strs)
 
+
+'''
 tree = KDT()
 
 to_insert = [np.array([3,1,4]), np.array([1,2, 7]), np.array([4,3,5]), np.array([2, 0, 3]), np.array([2, 4, 5]), np.array([6, 1, 4]), np.array([1, 4, 3]), np.array([0, 5, 7]), np.array([5,2,5])]
@@ -218,8 +227,11 @@ to_insert = [np.array([3,1,4]), np.array([1,2, 7]), np.array([4,3,5]), np.array(
 for node in to_insert:
     tree.insert(node)
 
-print(tree)
-'''
+z = np.array([3,18,9])
+print(tree.query(z))
+
+A = np.array([[3,1,4], [1,2,7], [4,3,5], [2, 0, 3], [2,4,5], [6,1,4], [1,4,3], [0,5,7], [5,2,5]])
+print(exhaustive_search(A, z))
 node = tree.find(np.array([5,2,5]))
 print(node.value)
 print(node.left)
