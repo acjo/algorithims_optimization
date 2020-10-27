@@ -9,6 +9,7 @@ import numpy as np
 from scipy import linalg as la
 from scipy.spatial import KDTree
 from matplotlib import pyplot as plt
+from scipy.stats import mode
 
 # Problem 1
 def exhaustive_search(X, z):
@@ -226,18 +227,38 @@ class KNeighborsClassifier:
     """
 
     def __init__(self, k):
+        '''constructs the classifier object
+        '''
         self.k_nearest_neighbors = k
         self.tree = None
         self.labels = None
 
     def fit(self, X, y):
+        '''creates the tree and labels attributes
+        '''
         self.tree = KDTree(X)
         self.labels = y
 
     def predict(self, z):
+        '''returns the most common label
+        '''
         distances, indices = self.tree.query(z, self.k_nearest_neighbors)
         list_of_labels = [self.labels[index] for index in indices]
-        return mode(list_of_labels)
+        return mode(list_of_labels)[0][0]
+
+def prob5():
+    X = np.random.random((100,5))
+    y = np.random.random(100)
+    z = np.random.random(5)
+
+    classifier = KNeighborsClassifier(5)
+    classifier.fit(X, y)
+    m = classifier.predict(z)
+    return m
+
+res = prob5()
+print(res)
+
 
 # Problem 6
 def prob6(n_neighbors, filename="mnist_subset.npz"):
