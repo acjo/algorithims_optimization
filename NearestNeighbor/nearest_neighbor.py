@@ -8,6 +8,7 @@ October 25, 2020
 import numpy as np
 from scipy import linalg as la
 from scipy.spatial import KDTree
+from matplotlib import pyplot as plt
 
 # Problem 1
 def exhaustive_search(X, z):
@@ -258,6 +259,12 @@ def prob6(n_neighbors, filename="mnist_subset.npz"):
     y_train = data["y_train"]
     X_test = data["X_test"].astype(np.float)
     y_test = data["y_test"]
+
+    '''
+    Visualization
+    plt.imshow(X_test[0].reshape((28,28)), cmap="gray")
+    plt.show()
+    '''
 
     classifier = KNeighborsClassifier(n_neighbors)
     classifier.fit(X_train, y_train)
