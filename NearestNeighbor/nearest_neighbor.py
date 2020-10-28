@@ -226,38 +226,33 @@ class KNeighborsClassifier:
     the nearest neighbor problem efficiently.
     """
 
-    def __init__(self, k):
+    def __init__(self, n_neighbors):
         '''constructs the classifier object
+           Paramaters:
+           int (n nearest neighbors)
         '''
-        self.k_nearest_neighbors = k
+        self.n_neighbors = n_neighbors
         self.tree = None
         self.labels = None
 
     def fit(self, X, y):
         '''creates the tree and labels attributes
+           Paramaters:
+           X: ((m,k) ndarray) the training set
+           y:((m,), ndarray) the training entries
         '''
-        self.tree = KDTree(X)
+        self.kdt = KDTree(X)
         self.labels = y
 
     def predict(self, z):
         '''returns the most common label
+           Paramaters:
+           z((k,) ndarray) elements whose label is to be predicted
         '''
-        distances, indices = self.tree.query(z, self.k_nearest_neighbors)
+        _, indices = self.kdt.query(z, self.n_neighbors)
         list_of_labels = [self.labels[index] for index in indices]
         return mode(list_of_labels)[0][0]
 
-def prob5():
-    X = np.random.random((100,5))
-    y = np.random.random(100)
-    z = np.random.random(5)
-
-    classifier = KNeighborsClassifier(5)
-    classifier.fit(X, y)
-    m = classifier.predict(z)
-    return m
-
-res = prob5()
-print(res)
 
 
 # Problem 6
@@ -275,18 +270,28 @@ def prob6(n_neighbors, filename="mnist_subset.npz"):
     Returns:
         (float): the classification accuracy.
     """
+
+    #set up data sets
     data = np.load(filename)
     X_train = data["X_train"].astype(np.float)
     y_train = data["y_train"]
     X_test = data["X_test"].astype(np.float)
     y_test = data["y_test"]
 
-    '''
-    Visualization
-    plt.imshow(X_test[0].reshape((28,28)), cmap="gray")
-    plt.show()
-    '''
-
+    #build our classifier class object
     classifier = KNeighborsClassifier(n_neighbors)
     classifier.fit(X_train, y_train)
 
+
+    #get the classifier for each column of X_test
+    m,_ = X_test.shape
+    classification_match = 0
+    for i in range(0, m):
+        predicted_label = classifier.predict(X_test[i, :])
+        #check if the predicted label matched
+        if predicted_label == y_test[i]:
+            classification_match += 1
+
+    #calculate and return accuracy
+    accuracy = classification_match / m
+    return accuracy
