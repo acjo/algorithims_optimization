@@ -242,7 +242,7 @@ class KNeighborsClassifier:
            y:((m,), ndarray) the training entries
         '''
         self.kdt = KDTree(X)
-        self.labels = y
+        self.labels = np.array(y).astype(np.float64)
 
     def predict(self, z):
         '''returns the most common label
