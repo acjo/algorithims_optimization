@@ -257,6 +257,16 @@ class KNeighborsClassifier:
             list_of_labels = [self.labels[index] for index in indices]
         return mode(list_of_labels)[0][0]
 
+Classifier = KNeighborsClassifier(1)
+
+X = np.array([[1,2,3],[4,5,6],[7,8,10], [22,-3,46]])
+y = np.array([13,-161, 2])
+Classifier.fit(X,y)
+z = np.array([94, 68, 1])
+
+print(Classifier.predict(z))
+
+
 # Problem 6
 def prob6(n_neighbors, filename="mnist_subset.npz"):
     """Extract the data from the given file. Load a KNeighborsClassifier with
