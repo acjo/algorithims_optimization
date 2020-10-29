@@ -251,7 +251,6 @@ class KNeighborsClassifier:
         '''
         _, indices = self.kdt.query(z, self.n_neighbors)
         if type(indices) == np.int64:
-            print(indices)
             list_of_labels = self.labels[indices]
         else:
             list_of_labels = [self.labels[index] for index in indices]
