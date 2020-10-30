@@ -1,8 +1,8 @@
 # breadth_first_search.py
 """Volume 2: Breadth-First Search.
-<Name>
-<Class>
-<Date>
+Caelan Osman
+Math 321, Sec 3
+October 28, 2020
 """
 
 
