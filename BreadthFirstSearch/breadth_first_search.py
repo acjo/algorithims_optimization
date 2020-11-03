@@ -5,6 +5,7 @@ Math 321, Sec 3
 October 28, 2020
 """
 
+from collections import deque
 
 # Problems 1-3
 class Graph:
@@ -31,7 +32,10 @@ class Graph:
         Parameters:
             n: the label for the new node.
         """
-        raise NotImplementedError("Problem 1 Incomplete")
+        #if n is not in the set of keys add our new node
+        if n not in self.d.keys():
+            edges = set()
+            self.d.update({n: edges})
 
     # Problem 1
     def add_edge(self, u, v):
@@ -42,7 +46,19 @@ class Graph:
             u: a node label.
             v: a node label.
         """
-        raise NotImplementedError("Problem 1 Incomplete")
+        #add node
+        self.add_node(u)
+        self.add_node(v)
+
+        #get the nodes adjacent to u and v and add v and u respectively
+        u_edges = self.d.get(u)
+        u_edges.add(v)
+        v_edges = self.d.get(v)
+        v_edges.add(u)
+
+        #update the dictionary
+        self.d.update({u: u_edges})
+        self.d.update({v: v_edges})
 
     # Problem 1
     def remove_node(self, n):
@@ -54,7 +70,12 @@ class Graph:
         Raises:
             KeyError: if n is not in the graph.
         """
-        raise NotImplementedError("Problem 1 Incomplete")
+        #if n is not a key value raise an error
+        if n not in self.d.keys():
+            raise KeyError('The node ' + str(n) + ' is not in the graph')
+        #otherwise pop it from the dictionary
+        else:
+            self.d.pop(n)
 
     # Problem 1
     def remove_edge(self, u, v):
@@ -68,7 +89,17 @@ class Graph:
             KeyError: if u or v are not in the graph, or if there is no
                 edge between u and v.
         """
-        raise NotImplementedError("Problem 1 Incomplete")
+        #if u or v are not key values raise an error
+        if u not in self.d.keys() or v not in self.d.keys():
+            raise KeyError('Either the node ' + str(u) + ' or ' + str(v) + ' is not a keyvalue')
+        #otherwise remove the edge
+        else:
+            u_edges = self.d.get(u)
+            v_edges = self.d.get(v)
+            u_edges.remove(v)
+            v_edges.remove(u)
+            self.d.update({u: u_edges})
+            self.d.update({v: v_edges})
 
     # Problem 2
     def traverse(self, source):
@@ -85,7 +116,40 @@ class Graph:
         Raises:
             KeyError: if the source node is not in the graph.
         """
-        raise NotImplementedError("Problem 2 Incomplete")
+        #checking to see if the source is in the graph
+        if source not in self.d.keys():
+            raise KeyError('The source node ' + str(source) + ' is not in the graph')
+        #otherwise traverse the graph
+        else:
+            #to be visited
+            Q = deque(source)
+            #marked
+            M = set(source)
+            #nodes that have been visited in visitation order
+            V = []
+
+            #while Q is nonempty
+            while Q:
+
+                #pop the node off of the deque
+                current = Q.pop()
+
+                #append it to visited nodes
+                V.append(current)
+
+                #get the neighbors of current
+                neighbors = self.d.get(current)
+
+                #check if the nneighbor nodes are in marked if not, add them to Q and M,
+                #add them to Q the opposite way you remove them
+                for node in neighbors:
+                    if node not in M:
+                        Q.appendleft(node)
+                        M.add(node)
+
+            return V
+
+
 
     # Problem 3
     def shortest_path(self, source, target):
@@ -105,6 +169,12 @@ class Graph:
             KeyError: if the source or target nodes are not in the graph.
         """
         raise NotImplementedError("Problem 3 Incomplete")
+
+data = {'A': {'B', 'D'}, 'B': {'A', 'D'}, 'C': {'D'}, 'D': {'A', 'B', 'C'}}
+graph = Graph(data)
+print(graph.d)
+graph.add_edge('A', 'E')
+print(graph.traverse('B'))
 
 
 # Problems 4-6
