@@ -6,6 +6,7 @@ October 28, 2020
 """
 
 from collections import deque
+import networkx as nx
 
 # Problems 1-3
 class Graph:
@@ -122,7 +123,8 @@ class Graph:
         #otherwise traverse the graph
         else:
             #to be visited
-            Q = deque(source)
+            Q = deque()
+            Q.append(source)
             #marked
             M = set(source)
             #nodes that have been visited in visitation order
@@ -130,16 +132,12 @@ class Graph:
 
             #while Q is nonempty
             while Q:
-
                 #pop the node off of the deque
                 current = Q.pop()
-
                 #append it to visited nodes
                 V.append(current)
-
                 #get the neighbors of current
                 neighbors = self.d.get(current)
-
                 #check if the nneighbor nodes are in marked if not, add them to Q and M,
                 #add them to Q the opposite way you remove them
                 for node in neighbors:
@@ -168,53 +166,29 @@ class Graph:
         if source not in self.d.keys() or target not in self.d.keys():
             return KeyError('Either the source or the target nodes are not in the graph')
         else:
-
-            #to be visited
-            Q = deque(source)
-
-            #marked
+            #got from algorithm 4.2 in the vol2 textbook
+            #first partial path
+            first_path = [source]
+            #deque containing all partial paths
+            P = deque()
+            P.append(first_path)
+            #marked nodes
             M = set(source)
 
-            #dictionary containing mapping
-            mapping = dict()
+            #while P is nonempty
+            while P:
+                #pop the first node off of the list
+                current = P.pop()
+                #add the path's last node to M
+                M.add(current[-1])
 
-            #nodes that have been visited in visitation order
-            p = []
+                #if the path's last node is found
+                if current[-1] == target:
+                    return current
 
-            #while Q is nonempty
-            while Q:
-
-                #pop the node off of the deque
-                current = Q.pop()
-
-                #if the current is the target node
-                if current == target:
-                    for key in mapping:
-
-                    return
-
-                #append it to visited nodes
-                V.append(current)
-
-                #get the neighbors of current
-                neighbors = self.d.get(current)
-
-                #check if the nneighbor nodes are in marked if not, add them to Q and M,
-                #add them to Q the opposite way you remove them; and adding the mappings to mapping
-                for node in neighbors:
-                    if node not in M:
-                        Q.appendleft(node)
-                        M.add(node)
-
-
-
-
-data = {'A': {'B', 'D'}, 'B': {'A', 'D'}, 'C': {'D'}, 'D': {'A', 'B', 'C'}}
-graph = Graph(data)
-print(graph.d)
-graph.add_edge('A', 'E')
-print(graph.shortest_path('B', 'C'))
-
+                #difference of two sets, append the new partial path
+                for node in self.d[current[-1]] - M:
+                    P.appendleft(current + [node])
 
 # Problems 4-6
 class MovieGraph:
@@ -237,7 +211,27 @@ class MovieGraph:
         Any '/' characters in movie titles have been replaced with the
         vertical pipe character | (for example, Frost|Nixon (2008)).
         """
-        raise NotImplementedError("Problem 4 Incomplete")
+
+        #constructing the empty network
+        self.network = nx.Graph()
+        #initialize movie titls and actor names
+        self.movie_titles = set()
+        self.actor_names = set()
+
+        #open the file and read line by line
+        with open(filename, 'r') as infile:
+            lines = infile.read().strip().split('\n')
+        #add the correct content to each set
+        #add the edges between nodes
+        for line in lines:
+            movie_content = line.strip().split('/')
+            current_title = movie_content[0]
+            self.movie_titles.add(current_title)
+            for i in range(1, len(movie_content)):
+                current_actor = movie_content[i]
+                self.actor_names.add(current_actor)
+                self.network.add_edge(current_title, current_actor)
+
 
     # Problem 5
     def path_to_actor(self, source, target):
@@ -248,7 +242,9 @@ class MovieGraph:
             (list): a shortest path from source to target, including endpoints and movies.
             (int): the number of steps from source to target, excluding movies.
         """
-        raise NotImplementedError("Problem 5 Incomplete")
+        path = nx.shortest_path(self.network, source, target)
+        steps = nx.shortest_path_length(self.network, source, target)
+        return path, steps
 
     # Problem 6
     def average_number(self, target):
@@ -259,4 +255,12 @@ class MovieGraph:
         Returns:
             (float): the average path length from actor to target.
         """
-        raise NotImplementedError("Problem 6 Incomplete")
+        all_paths = [len(p) for p in nx.all_shortest_paths(self.network, self.actor_names, target)]
+        print(all_paths)
+
+
+
+
+
+mv = MovieGraph()
+print(mv.average_number('Kevin Bacon'))
