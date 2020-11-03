@@ -255,12 +255,9 @@ class MovieGraph:
         Returns:
             (float): the average path length from actor to target.
         """
-        all_paths = [len(p) for p in nx.all_shortest_paths(self.network, self.actor_names, target)]
-        print(all_paths)
+        distances = nx.shortest_path_length(self. graph, target)
+        distances = [distances[i]//2 for i in distances]
+        plt.hist(distances, bins=[i-0.5 for i in range(8)])
+        plt.show()
 
 
-
-
-
-mv = MovieGraph()
-print(mv.average_number('Kevin Bacon'))
