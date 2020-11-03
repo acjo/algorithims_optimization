@@ -146,10 +146,7 @@ class Graph:
                     if node not in M:
                         Q.appendleft(node)
                         M.add(node)
-
             return V
-
-
 
     # Problem 3
     def shortest_path(self, source, target):
@@ -168,13 +165,55 @@ class Graph:
         Raises:
             KeyError: if the source or target nodes are not in the graph.
         """
-        raise NotImplementedError("Problem 3 Incomplete")
+        if source not in self.d.keys() or target not in self.d.keys():
+            return KeyError('Either the source or the target nodes are not in the graph')
+        else:
+
+            #to be visited
+            Q = deque(source)
+
+            #marked
+            M = set(source)
+
+            #dictionary containing mapping
+            mapping = dict()
+
+            #nodes that have been visited in visitation order
+            p = []
+
+            #while Q is nonempty
+            while Q:
+
+                #pop the node off of the deque
+                current = Q.pop()
+
+                #if the current is the target node
+                if current == target:
+                    for key in mapping:
+
+                    return
+
+                #append it to visited nodes
+                V.append(current)
+
+                #get the neighbors of current
+                neighbors = self.d.get(current)
+
+                #check if the nneighbor nodes are in marked if not, add them to Q and M,
+                #add them to Q the opposite way you remove them; and adding the mappings to mapping
+                for node in neighbors:
+                    if node not in M:
+                        Q.appendleft(node)
+                        M.add(node)
+
+
+
 
 data = {'A': {'B', 'D'}, 'B': {'A', 'D'}, 'C': {'D'}, 'D': {'A', 'B', 'C'}}
 graph = Graph(data)
 print(graph.d)
 graph.add_edge('A', 'E')
-print(graph.traverse('B'))
+print(graph.shortest_path('B', 'C'))
 
 
 # Problems 4-6
