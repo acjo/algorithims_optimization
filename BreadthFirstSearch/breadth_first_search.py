@@ -47,19 +47,13 @@ class Graph:
             u: a node label.
             v: a node label.
         """
-        #add node
+        #add nodes
         self.add_node(u)
         self.add_node(v)
 
-        #get the nodes adjacent to u and v and add v and u respectively
-        u_edges = self.d.get(u)
-        u_edges.add(v)
-        v_edges = self.d.get(v)
-        v_edges.add(u)
-
-        #update the dictionary
-        self.d.update({u: u_edges})
-        self.d.update({v: v_edges})
+        #add v to the nodes adjacent to u and visa vers
+        self.d[u].add(v)
+        self.d[v].add(u)
 
     # Problem 1
     def remove_node(self, n):
@@ -74,8 +68,12 @@ class Graph:
         #if n is not a key value raise an error
         if n not in self.d.keys():
             raise KeyError('The node ' + str(n) + ' is not in the graph')
+
         #otherwise pop it from the dictionary
+        #and remove it from all adjacent nodes
         else:
+            for node in self.d.keys():
+                self.d[node].discard(n)
             self.d.pop(n)
 
     # Problem 1
@@ -93,14 +91,11 @@ class Graph:
         #if u or v are not key values raise an error
         if u not in self.d.keys() or v not in self.d.keys():
             raise KeyError('Either the node ' + str(u) + ' or ' + str(v) + ' is not a keyvalue')
+
         #otherwise remove the edge
         else:
-            u_edges = self.d.get(u)
-            v_edges = self.d.get(v)
-            u_edges.remove(v)
-            v_edges.remove(u)
-            self.d.update({u: u_edges})
-            self.d.update({v: v_edges})
+            self.d[v].discard(u)
+            self.d[u].discard(v)
 
     # Problem 2
     def traverse(self, source):
