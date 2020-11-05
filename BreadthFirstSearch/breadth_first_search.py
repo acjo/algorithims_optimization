@@ -7,6 +7,7 @@ October 28, 2020
 
 from collections import deque
 import networkx as nx
+from matplotlib import pyplot as plt
 
 # Problems 1-3
 class Graph:
@@ -220,13 +221,17 @@ class MovieGraph:
         #add the correct content to each set
         #add the edges between nodes
         for line in lines:
+            #grab content for the movie
             movie_content = line.strip().split('/')
+            #grab the title
             current_title = movie_content[0]
+            #add the movie title to the attribute
             self.movie_titles.add(current_title)
+            #add the actors and edges to the the actor names attribute and the network attribute
             for i in range(1, len(movie_content)):
                 current_actor = movie_content[i]
                 self.actor_names.add(current_actor)
-                self.network.add_edge(current_title, current_actor)
+                self.network.add_edge(current_actor, current_title)
 
 
     # Problem 5
@@ -238,7 +243,9 @@ class MovieGraph:
             (list): a shortest path from source to target, including endpoints and movies.
             (int): the number of steps from source to target, excluding movies.
         """
+        #grabs the path
         path = nx.shortest_path(self.network, source, target)
+        #grabs the number of steps
         steps = nx.shortest_path_length(self.network, source, target)
         return path, steps
 
@@ -251,9 +258,18 @@ class MovieGraph:
         Returns:
             (float): the average path length from actor to target.
         """
-        distances = nx.shortest_path_length(self. graph, target)
-        distances = [distances[i]//2 for i in distances]
-        plt.hist(distances, bins=[i-0.5 for i in range(8)])
+        #get all distances to target
+        shortest_distances = nx.shortest_path_length(self.network, target)
+
+        #get rid of the distances from movies
+        actor_distances = []
+        for source in shortest_distances:
+            if source not in self.actor_names:
+                actor_distances.append(shortest_distances[source] // 2)
+
+        #compute the average
+        avg = sum(actor_distances) / len(actor_distances)
+        #plot the histogram
+        plt.hist(actor_distances, bins=[i-0.5 for i in range(8)])
         plt.show()
-
-
+        return avg
