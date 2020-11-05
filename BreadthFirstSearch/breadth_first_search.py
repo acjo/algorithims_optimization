@@ -173,12 +173,12 @@ class Graph:
 
             #while P is nonempty
             while P:
-                #pop the first node off of the list
+                #pop the first path off of the list
                 current = P.pop()
                 #add the path's last node to M
                 M.add(current[-1])
 
-                #if the path's last node is found
+                #if the path's last node is the target node
                 if current[-1] == target:
                     return current
 
