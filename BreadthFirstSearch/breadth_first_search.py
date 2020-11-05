@@ -264,7 +264,7 @@ class MovieGraph:
         #get rid of the distances from movies
         actor_distances = []
         for source in shortest_distances:
-            if source not in self.actor_names:
+            if source in self.actor_names:
                 actor_distances.append(shortest_distances[source] // 2)
 
         #compute the average
