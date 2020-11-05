@@ -166,9 +166,10 @@ class Graph:
             first_path = [source]
             #deque containing all partial paths
             P = deque()
-            P.append(first_path)
+            P.appendleft(first_path)
             #marked nodes
-            M = set(source)
+            M = set()
+            M.add(source)
 
             #while P is nonempty
             while P:
