@@ -96,7 +96,7 @@ class MarkovChain:
 
         #add the N-1 states
         for i in range(0, N-1):
-            new_state = self.transition(state_labels[i])
+            new_state = self.transition(state_labels[-1])
             state_labels.append(new_state)
 
         return state_labels
@@ -140,7 +140,26 @@ class MarkovChain:
         Raises:
             ValueError: if there is no convergence within maxiter iterations.
         """
-        raise NotImplementedError("Problem 4 Incomplete")
+        #generate random state distribution vector all elements non-negative and sum to zero
+        x_old = np.random.random(self.transition_matrix.shape[0])
+        x_old /= sum(x_old)
+
+        #iterate through and
+        i = 0
+        while i < maxiter:
+            #calculate new state vector
+            x_new = self.transition_matrix @ x_old
+            #calculate the difference using the one norm
+            diff = np.linalg.norm((x_old - x_new), ord=1)
+            #check difference is within tolerance
+            if diff < tol:
+                return x_new
+            #update values
+            x_old = x_new
+            i += 1
+
+        #if the tolerance is never met raise a ValueError
+        raise ValueError('A^k does not converge')
 
 '''
 labels_1 = [ 'hot', 'cold' ]
@@ -148,8 +167,13 @@ B = np.array( [ [ 0.7, 0.6 ],
                 [ 0.3, 0.4 ] ] )
 
 m_chain_1 = MarkovChain(B, labels_1)
-m_chain_1.transition('cold')
+print(m_chain_1.steady_state(1e-15, 15))
+print(type(m_chain_1.steady_state()))
+
 '''
+
+
+
 
 '''
 labels =[ 'hot', 'mild', 'cold', 'freezing' ]
@@ -159,7 +183,7 @@ A = np.array( [ [ 0.5, 0.3, 0.1, 0 ],
                 [ 0, 0.1, 0.2, 0.2 ] ] )
 
 m_chain = MarkovChain(A, labels)
-print(m_chain.path('cold', 'cold'))
+m_chain.steady_state()
 '''
 
 class SentenceGenerator(MarkovChain):
