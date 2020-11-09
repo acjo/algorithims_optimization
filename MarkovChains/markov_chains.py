@@ -1,13 +1,12 @@
 # markov_chains.py
 """Volume 2: Markov Chains.
-<Name>
-<Class>
-<Date>
+Caelan Osman
+Math 321 Sec. 3
+Nov 8, 2020
 """
 
 import numpy as np
 from scipy import linalg as la
-
 
 class MarkovChain:
     """A Markov chain with finitely many states.
@@ -39,7 +38,29 @@ class MarkovChain:
                             to B [   .5      .2   ]
         and the label-to-index dictionary is {"A":0, "B":1}.
         """
-        raise NotImplementedError("Problem 1 Incomplete")
+        #check that A is square
+        if A.shape[0] != A.shape[1]:
+            raise ValueError('A is not a square matrix')
+        #check that A is column stochastic
+        elif not np.allclose(A.sum(axis=0), np.ones(A.shape[0])):
+            raise ValueError('A is not column stochastic')
+        #otherwise construct object
+        else:
+            #set the transition and labels attribute, initialize mapping to an empty dictionary
+            self.transition = np.copy(A)
+            self.labels = states
+            self.mapping = dict()
+
+            #update the mappings based on whether or not there are states
+            if self.labels == None:
+                for i in range(0, self.transition.shape[0]):
+                    self.mapping.update({i:i})
+            else:
+                for i in range(0, self.transition.shape[0]):
+                    self.mapping.update({self.labels[i]:i})
+
+
+
 
     # Problem 2
     def transition(self, state):
@@ -97,6 +118,14 @@ class MarkovChain:
             ValueError: if there is no convergence within maxiter iterations.
         """
         raise NotImplementedError("Problem 4 Incomplete")
+
+labels =['hot', 'cold']
+A = np.array([[0.8, 0.6], [0.3, 0.4]])
+
+chain = MarkovChain(A, labels)
+print(chain.transition)
+print(chain.labels)
+print(chain.mapping)
 
 class SentenceGenerator(MarkovChain):
     """A Markov-based simulator for natural language.
