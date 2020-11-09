@@ -47,20 +47,18 @@ class MarkovChain:
         #otherwise construct object
         else:
             #set the transition and labels attribute, initialize mapping to an empty dictionary
-            self.transition = np.copy(A)
-            self.labels = states
+            self.transition_matrix = np.copy(A)
             self.mapping = dict()
 
             #update the mappings based on whether or not there are states
-            if self.labels == None:
-                for i in range(0, self.transition.shape[0]):
+            if states == None:
+                self.labels = [i for i in range(0, self.transition_matrix.shape[0])]
+                for i in range(0, self.transition_matrix.shape[0]):
                     self.mapping.update({i:i})
             else:
-                for i in range(0, self.transition.shape[0]):
+                self.labels = states
+                for i in range(0, self.transition_matrix.shape[0]):
                     self.mapping.update({self.labels[i]:i})
-
-
-
 
     # Problem 2
     def transition(self, state):
@@ -73,7 +71,12 @@ class MarkovChain:
         Returns:
             (str): the label of the state to transitioned to.
         """
-        raise NotImplementedError("Problem 2 Incomplete")
+        #which state to transition to
+        draw = np.random.multinomial(1, self.transition_matrix[:, self.mapping[state]])
+        #the index of the transition
+        index = np.argmax(draw)
+        #return the label at that index
+        return self.labels[index]
 
     # Problem 3
     def walk(self, start, N):
@@ -87,7 +90,16 @@ class MarkovChain:
         Returns:
             (list(str)): A list of N state labels, including start.
         """
-        raise NotImplementedError("Problem 3 Incomplete")
+        #create the initial state_labels list
+        state_labels = []
+        state_labels.append(start)
+
+        #add the N-1 states
+        for i in range(0, N-1):
+            new_state = self.transition(state_labels[i])
+            state_labels.append(new_state)
+
+        return state_labels
 
     # Problem 3
     def path(self, start, stop):
@@ -101,7 +113,18 @@ class MarkovChain:
         Returns:
             (list(str)): A list of state labels from start to stop.
         """
-        raise NotImplementedError("Problem 3 Incomplete")
+        #initialize state path
+        state_path = []
+        #add the start state to it
+        state_path.append(start)
+        #iterate through the transitions until you reach the stopping point
+        while state_path[-1] != stop:
+            new_state = self.transition(state_path[-1])
+            state_path.append(new_state)
+
+        #return the path
+        return state_path
+
 
     # Problem 4
     def steady_state(self, tol=1e-12, maxiter=40):
@@ -119,13 +142,25 @@ class MarkovChain:
         """
         raise NotImplementedError("Problem 4 Incomplete")
 
-labels =['hot', 'cold']
-A = np.array([[0.8, 0.6], [0.3, 0.4]])
+'''
+labels_1 = [ 'hot', 'cold' ]
+B = np.array( [ [ 0.7, 0.6 ],
+                [ 0.3, 0.4 ] ] )
 
-chain = MarkovChain(A, labels)
-print(chain.transition)
-print(chain.labels)
-print(chain.mapping)
+m_chain_1 = MarkovChain(B, labels_1)
+m_chain_1.transition('cold')
+'''
+
+'''
+labels =[ 'hot', 'mild', 'cold', 'freezing' ]
+A = np.array( [ [ 0.5, 0.3, 0.1, 0 ],
+                [ 0.3, 0.3, 0.3, 0.3 ],
+                [ 0.2, 0.3, 0.4, 0.5 ],
+                [ 0, 0.1, 0.2, 0.2 ] ] )
+
+m_chain = MarkovChain(A, labels)
+print(m_chain.path('cold', 'cold'))
+'''
 
 class SentenceGenerator(MarkovChain):
     """A Markov-based simulator for natural language.
