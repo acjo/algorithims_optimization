@@ -7,6 +7,7 @@ Nov 8, 2020
 
 import numpy as np
 from scipy import linalg as la
+import time
 
 class MarkovChain:
     """A Markov chain with finitely many states.
@@ -47,7 +48,7 @@ class MarkovChain:
         #otherwise construct object
         else:
             #set the transition and labels attribute, initialize mapping to an empty dictionary
-            self.transition_matrix = np.copy(A)
+            self.transition_matrix = A
             self.mapping = dict()
 
             #update the mappings based on whether or not there are states
@@ -161,31 +162,6 @@ class MarkovChain:
         #if the tolerance is never met raise a ValueError
         raise ValueError('A^k does not converge')
 
-'''
-labels_1 = [ 'hot', 'cold' ]
-B = np.array( [ [ 0.7, 0.6 ],
-                [ 0.3, 0.4 ] ] )
-
-m_chain_1 = MarkovChain(B, labels_1)
-print(m_chain_1.steady_state(1e-15, 15))
-print(type(m_chain_1.steady_state()))
-
-'''
-
-
-
-
-'''
-labels =[ 'hot', 'mild', 'cold', 'freezing' ]
-A = np.array( [ [ 0.5, 0.3, 0.1, 0 ],
-                [ 0.3, 0.3, 0.3, 0.3 ],
-                [ 0.2, 0.3, 0.4, 0.5 ],
-                [ 0, 0.1, 0.2, 0.2 ] ] )
-
-m_chain = MarkovChain(A, labels)
-m_chain.steady_state()
-'''
-
 class SentenceGenerator(MarkovChain):
     """A Markov-based simulator for natural language.
 
@@ -198,7 +174,78 @@ class SentenceGenerator(MarkovChain):
         contents. You may assume that the file has one complete sentence
         written on each line.
         """
-        raise NotImplementedError("Problem 5 Incomplete")
+        #read in the input file
+        with open(filename, 'r') as inpt_file:
+            #get each line
+            lines = inpt_file.read().strip().split('\n')
+
+        #create the state labels of unique words
+        state_labels = []
+        #append the start label
+        state_labels.append('$tart')
+        for line in lines:
+            #split the words up in each line
+            line_words = line.split()
+            #add the word to state_labels if it is not there
+            for word in line_words:
+                if word not in state_labels:
+                    state_labels.append(word)
+
+        #append the stop label
+        state_labels.append('$top')
+
+        #initialize transition matrix
+        state_matrix = np.zeros((len(state_labels), len(state_labels)))
+        #set $top -> $top to 1
+        state_matrix[-1, -1] = 1
+
+        #algorithmicaly construct transition matrix
+        #The element trans[i, j] is the probability that word i follows word j
+        for j in range(0, len(state_labels)):
+            for i in range(0, len(state_labels)):
+                #nothing ever follows stop
+                if j == len(state_labels) - 1:
+                    break
+                #nothing is every followed by start
+                elif i == 0:
+                    continue
+                #find out what follows start
+                elif j == 0:
+                    current_phrase = state_labels[i]
+                    #for each line find out which one of them
+                    #has the current phrase as the first word
+                    for line in lines:
+                        if line.split()[0] == current_phrase:
+                            state_matrix[i, j] += 1
+
+                #find out what is followed by stop
+                elif i == len(state_labels) - 1:
+                    current_phrase = state_labels[j]
+                    #for each line find out which one of them
+                    #has the current phrase as the last word
+                    for line in lines:
+                        if line.split()[-1] == current_phrase:
+                            state_matrix[i, j] += 1
+
+                #find out what words are followed by the other words
+                else:
+                    #set current phrase
+                    current_phrase = ' '.join([state_labels[j], state_labels[i]])
+                    #initialize total count of phrase in all lines to zero
+                    total_count = 0
+                    #check that count of the phrase in each line and increment total_count
+                    for line in lines:
+                        total_count += line.count(current_phrase)
+                    #set the element in total_count
+                    if total_count != 0:
+                        state_matrix[i, j] = total_count
+
+            #make the matrix column stochastic
+            state_matrix[:, j] /= sum(state_matrix[:, j])
+
+        #call the constructor from the MarkovChain class because we are inheriting
+        #this automatically sets up all of our attributes and methods
+        MarkovChain.__init__(self, state_matrix, state_labels)
 
     # Problem 6
     def babble(self):
@@ -213,4 +260,11 @@ class SentenceGenerator(MarkovChain):
             >>> print(yoda.babble())
             The dark side of loss is a path as one with you.
         """
-        raise NotImplementedError("Problem 6 Incomplete")
+        #generated random bable
+        rand_babble = self.path('$tart', '$top')
+        #remove start and stop
+        rand_babble.remove('$tart')
+        rand_babble.remove('$top')
+
+        #join the words into a sentence and return it
+        return ' '.join(rand_babble)
