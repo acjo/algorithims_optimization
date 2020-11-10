@@ -7,7 +7,6 @@ Nov 8, 2020
 
 import numpy as np
 from scipy import linalg as la
-import time
 
 class MarkovChain:
     """A Markov chain with finitely many states.
@@ -48,7 +47,7 @@ class MarkovChain:
         #otherwise construct object
         else:
             #set the transition and labels attribute, initialize mapping to an empty dictionary
-            self.transition_matrix = A
+            self.transition_matrix = np.copy(A).astype(np.float64)
             self.mapping = dict()
 
             #update the mappings based on whether or not there are states
