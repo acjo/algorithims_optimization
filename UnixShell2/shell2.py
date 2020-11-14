@@ -1,8 +1,8 @@
 # shell2.py
 """Volume 3: Unix Shell 2.
-<Name>
-<Class>
-<Date>
+Caelan Osman
+Math 321 Sec 3
+Nov. 13, 2020
 """
 
 
