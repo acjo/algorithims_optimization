@@ -1,0 +1,63 @@
+11/16/20 18:14
+
+Problem 1 (5 points):
+Score += 5
+
+Problem 2 (5 points):
+Score += 5
+
+Problem 3 (10 points):Your response:
+TypeError: can only concatenate str (not "tuple") to str
+
+Problem 4 (10 points):Your response:
+TypeError: can only concatenate str (not "list") to str
+
+Problem 5 (5 points):
+File 'Optimal_Reentry_Spacecraft.pdf' not found
+Score += 4
+
+Problem 6 (5 points):
+Score += 5
+
+Problem 7 (5 points):
+File 'date_modified.txt' not found
+Score += 0
+
+Code Quality (5 points):
+Score += 5
+
+Total score: 24/50 = 48.0%
+
+-------------------------------------------------------------------------------
+
+11/16/20 18:31
+
+Problem 1 (5 points):
+Score += 5
+
+Problem 2 (5 points):
+Score += 5
+
+Problem 3 (10 points):Your response:
+TypeError: can only concatenate str (not "tuple") to str
+
+Problem 4 (10 points):Your response:
+TypeError: can only concatenate str (not "list") to str
+
+Problem 5 (5 points):
+Score += 5
+
+Problem 6 (5 points):
+Score += 5
+
+Problem 7 (5 points):
+File 'date_modified.txt' not found
+Score += 0
+
+Code Quality (5 points):
+Score += 5
+
+Total score: 25/50 = 50.0%
+
+-------------------------------------------------------------------------------
+
