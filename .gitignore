@@ -37,6 +37,7 @@ Wavelets\mandrill.png
 Wavelets\woman_darkhair.png
 Wavelets\noisy_darkhair.png
 Wavelets\uncompressed_finger.png
+UnixShell2\Shell2\*
 
 # General Files ---------------------------------------------------------------
 
@@ -74,6 +75,7 @@ __pycache__/
 *.bcf
 *.fls
 *.pdf
+*~undo-tree~
 
 # OS generated files
 .DS_Store
