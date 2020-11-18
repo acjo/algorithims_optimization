@@ -37,7 +37,7 @@ def grep(target_string, file_pattern):
                     target_files.append(filename)
                     break
 
-    return target_files, target_string
+    return target_files
 
 # Problem 4
 def largest_files(n):
@@ -47,21 +47,16 @@ def largest_files(n):
 
     #get all files
     all_files = glob('**', recursive = True)
-    #contains files and sizes
-    files_sizes = list()
 
-    #iterate through all files getting the size
-    for filename in all_files:
-        #check the current file is actually a file
-        if os.path.isfile(filename):
-            #append the size and filename stripping off the appended newline
-            files_sizes.append(subprocess.check_output(['ls', '-s', filename]).decode().strip('\n'))
+    #iterate through all files getting the size and file name assuming the file name is to a file
+    files_sizes = [subprocess.check_output(['ls', '-s', filename]).decode().strip('\n') for filename in all_files if os.path.isfile(filename)]
 
-    #get only the sizes in a list
+    #get only the sizes of the files in a list
     sizes = np.array([int(file_string.split()[0]) for file_string in files_sizes])
 
-    #get only the filenames in a list
-    file_names = [' '.join(file_string.split()[1:]) for file_string in files_sizes]
+    #get only the filenames of the files in a list
+    #file_names = [' '.join(file_string.split()[1:]) for file_string in files_sizes]
+    file_names = [file_string.replace(file_string.split()[0], '').strip() for file_string in files_sizes]
 
     #get the reverse index ranking
     ranking = np.argsort(np.array(sizes))[::-1]
