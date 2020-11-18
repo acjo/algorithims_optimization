@@ -51,6 +51,7 @@ def largest_files(n):
     #iterate through all files getting the size and file name assuming the file name is to a file
     files_sizes = [subprocess.check_output(['ls', '-s', filename]).decode().strip('\n') for filename in all_files if os.path.isfile(filename)]
 
+
     #get only the sizes of the files in a list
     sizes = np.array([int(file_string.split()[0]) for file_string in files_sizes])
 
