@@ -16,7 +16,7 @@ def estimate_pi(n):
     #get the number of interior points also the x
     #will now represent 1 for inside or no for outside
     interior_count = 0
-    for i in range(10**n):
+    for i in range(num):
         if radius[i] <= 1:
             interior_count += 1
             x[i] = 1
