@@ -49,29 +49,22 @@ def largest_files(n):
     all_files = glob('**', recursive = True)
 
     #iterate through all files getting the size and file name assuming the file name is to a file
-    files_sizes = [subprocess.check_output(['ls', '-s', filename]).decode().strip('\n') for filename in all_files if os.path.isfile(filename)]
-
-    #get only the sizes of the files in a list
-    sizes = np.array([int(file_string.split()[0]) for file_string in files_sizes])
-
-    #get only the filenames of the files in a list
-    #file_names = [' '.join(file_string.split()[1:]) for file_string in files_sizes]
-    file_names = [file_string.replace(file_string.split()[0], '').strip() for file_string in files_sizes]
+    paths = [path for path in all_files if os.path.isfile(path)]
+    sizes = np.array([os.path.getsize(path) for path in paths])
 
     #get the reverse index ranking
-    ranking = np.argsort(np.array(sizes))[::-1]
+    ranking = np.argsort(sizes)[::-1]
 
     #list of files from largest to smallest (all)
-    sorted_files = [file_names[index] for index in ranking]
+    sorted_paths = [paths[index] for index in ranking]
 
     #write the line count of the nth smallest file to smallest.txt
-    line_count = subprocess.check_output(['wc', '-l', sorted_files[n-1]]).decode()
+    line_count = subprocess.check_output(['wc', '-l', sorted_paths[n-1]]).decode()
     with open('smallest.txt', 'w') as smallest:
         smallest.write(line_count.split()[0])
 
     #return the n largest files
-    return sorted_files[:n]
-
+    return sorted_paths[:n]
 
 # Problem 6
 def prob6(n = 10):
