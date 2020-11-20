@@ -4,8 +4,9 @@ import numpy as np
 from scipy.stats import norm
 from scipy.stats import beta
 from scipy import linalg as la
-import time
-
+from matplotlib import pyplot as plt
+import scipy as sp
+from scipy.stats import gamma
 
 def exercise7_6(part):
 
@@ -68,3 +69,24 @@ def dDimensionalUnitBall(d):
     num_within = np.count_nonzero(lengths < 1)
 
     return 2**d * (num_within / n)
+
+
+def rej_sampler():
+
+    n = 10**5
+    u = np.random.uniform(0, 1, n)
+    z = -np.log(u)
+    x = np.linspace(0, 20, 500)
+    plt.plot(x, sp.stats.gamma.pdf(x, 1, 1))
+    plt.show()
+    accept = [ z[ i ] for i in range( n ) if u[ i ]<= ( np.exp( -( z [ i ]**2 ) - ( z[ i ]**3 ) ) / ( np.exp(5 / 27 ) * z[ i ] ) ) ]
+
+    Z = .663711
+    x = np.linspace(0, 2, num = 500, endpoint=False)
+    gamma = ((1 / Z) * np.exp(-x**2 - x**3))
+
+    plt.hist(accept, density = True)
+    plt.plot(x, gamma, "-", lw =2)
+    plt.show()
+
+
