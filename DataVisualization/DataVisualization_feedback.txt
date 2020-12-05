@@ -26,3 +26,34 @@ Total score: 28/50 = 56.0%
 
 -------------------------------------------------------------------------------
 
+12/05/20 04:16
+
+Problem 1 (5 points):
+Don't forget to answer the posed questions.
+Score += 4
+
+Problem 2 (5 points):
+Score += 5
+
+Problem 3 (5 points):
+Score += 5
+
+Problem 4 (10 points):
+Score += 10
+
+Problem 5 (10 points):
+It looks like you plotted the minimizer in the wrong spot. (it should be (1,1))
+Score += 9
+
+Problem 6 (10 points):
+Score += 10
+
+Code Quality (5 points):
+Score += 5
+
+Total score: 48/50 = 96.0%
+
+Great job!
+
+-------------------------------------------------------------------------------
+
