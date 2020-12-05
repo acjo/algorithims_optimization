@@ -25,8 +25,6 @@ def prob3():
     B = np.triu(np.full((7,7), 5)) + np.tril(np.full((7,7), -1)) + -5*np.eye(7)
     return np.int64(A@B@A)
 
-print(prob3())
-
 def prob4(A):
     """Make a copy of 'A' and set all negative entries of the copy to 0.
     Return the copy."""
