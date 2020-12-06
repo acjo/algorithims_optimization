@@ -27,9 +27,9 @@ class LinkedListNode(Node):
         """Store the data in the value attribute and initialize
         attributes for the next and previous nodes in the list.
         """
-        Node.__init__(self, data)       # Use inheritance to set self.value.
-        self.next = None                # Reference to the next node.
-        self.prev = None                # Reference to the previous node.
+        Node.__init__(self, data) # Use inheritance to set self.value.
+        self.next = None # Reference to the next node.
+        self.prev = None # Reference to the previous node.
 
 
 # Problems 2-5
@@ -50,20 +50,16 @@ class LinkedList:
 
     def append(self, data):
         """Append a new node containing the data to the end of the list."""
-        # Create a new node to store the input data.
-        new_node = LinkedListNode(data)
+        new_node = LinkedListNode(data) # Create a new node to store the input data.
         self.length += 1
-        if self.head is None:
-            # If the list is empty, assign the head and tail attributes to
-            # new_node, since it becomes the first and last node in the list.
+        if self.head is None: # If the list is empty, assign the head and tail attributes to
             self.head = new_node
             self.tail = new_node
         else:
             # If the list is not empty, place new_node after the tail.
-            self.tail.next = new_node               # tail --> new_node
-            new_node.prev = self.tail               # tail <-- new_node
-            # Now the last node in the list is new_node, so reassign the tail.
-            self.tail = new_node
+            self.tail.next = new_node # tail --> new_node
+            new_node.prev = self.tail # tail <- new_node
+            self.tail = new_node #reassign the tail
 
     # Problem 2
     def find(self, data):
@@ -72,20 +68,20 @@ class LinkedList:
         Raises:
             ValueError: if the list does not contain the data.
         """
-        #edge case if head is None then the list is empty and the linked list cannot contain the node.
+        #edge case if the list is empty head is None then the list is empty and the linked list cannot contain the node.
         if self.head == None:
             raise ValueError('The node is not contained in the Linked list')
 
         #set intial conditions
         foundnode = None
         n = self.head
-        while(foundnode is None): #while our node is not found
+        while(foundnode is None): #repeat until we find node
             if data == n.value: #if data is equal to the node value then return that node
                 return n
             elif n == self.tail: #if we are at the last node, exit the loop
                 foundnode = False
             else:
-                n = n.next #if we aren't at the last, and the data hasn't been found go onto the next node
+                n = n.next #otherwise check next node
 
         #if the node is not found then this error is raised
         raise ValueError('Data is not contained in Linked List')
@@ -95,7 +91,8 @@ class LinkedList:
         #if the index is larger than the size of the list through an out of range error
         if i < 0 or i >= self.length:
             raise IndexError('"Index" out of range')
-        #otherwise get the node
+
+        #otherwise loop through and get the node
         else:
             n = self.head
             if i == 0:
@@ -119,12 +116,13 @@ class LinkedList:
            which is the same as the standard python list
         """
 
-        n = self.head #starting node
-        string_rep = '[' #initial string representation
+        #starting node and initial string representation
+        n = self.head
+        string_rep = '['
 
         if self.length == 0: #returns an "empty list" if the length is zero
             return string_rep + ']'
-        elif self.length == 1: #handles the case in which the length of the linked list is just one
+        elif self.length == 1: #if the lenght of the list is one
             if type(n.value) == str:
                  string_rep += repr(n.value) + ']'
                  return string_rep
@@ -132,16 +130,16 @@ class LinkedList:
                string_rep += str(n.value) + ']'
                return string_rep
 
-        #only executes if the above if-else statement is never entered
-        for i in range(0, self.length): #add all nodes to our representation
-            if type(n.value) == str: #if the node type is string then we need to represent it as such
-                if i == 0:
+        #if the length of the list is greater than one.
+        for i in range(0, self.length): #loop through nodes
+            if type(n.value) == str: #if the node type is string
+                if i == 0: #deals with comma and bracket placement
                     string_rep += repr(n.value)
                 elif i == self.length - 1:
                     string_rep += ', ' + repr(n.value) +']'
                 else:
                     string_rep += ', ' + repr(n.value)
-            else:# if the node type is an int or float
+            else: #same as above but for numbers
                 if i == 0:
                     string_rep += str(n.value)
                 elif i == self.length - 1:
@@ -159,34 +157,41 @@ class LinkedList:
             ValueError: if the list is empty or does not contain the data.
         """
 
-        if self.length == 0: #can't take something out of an empty list
+        #if the list is empty
+        if self.length == 0:
             raise ValueError('The list is empty')
 
+        #special case where the list only has one element
         n = self.head
-        if self.length == 1 and data == self.head.value: #special case where the list only has one element
+        if self.length == 1 and data == self.head.value:
             self.head = None
             self.tail = None
             self.length = 0
             return
-        elif data == n.value: #special case where the len(llist) > 1 and the data is the first node
+        #special case where the len(llist) > 1 and the data is the first node
+        elif data == n.value:
             self.head = n.next
             self.head.prev = None
             self.length -= 1
             return
-        elif data == self.tail.value: #special case where len(llist) > 1 and the data is the final node
+        #special case where len(llist) > 1 and the data is the final node
+        elif data == self.tail.value:
             self.tail = self.tail.prev
             self.tail.next = None
             self.length -= 1
             return
-        else:#finally we enter this case when none of the above apply
+        else:
             n = n.next
-            for i in range(1, self.length-1): #only need to loop from the 2nd to n-1 nodes because of ^^
+            #only need to loop from the 2nd to n-1 nodes because of ^^
+            for i in range(1, self.length-1):
                 if data == n.value:
-                    n.prev.next = n.next #next of the previous and the previous of the next
+                    #next of the previous and the previous of the next
+                    n.prev.next = n.next
                     n.next.prev = n.prev
                     self.length -= 1
                     return
-                else: #otherwise loop onto the next
+                #otherwise loop onto the next
+                else:
                     n = n.next
 
         raise ValueError('Data not found') #finally if the data is not found
@@ -200,23 +205,30 @@ class LinkedList:
             IndexError: if index is negative or strictly greater than the
                 current number of nodes.
         """
-        if index < 0 or index > self.length: #throws an out of range error if the index doesn't make sense
+        #throws an out of range error if the index doesn't make sense
+        if index < 0 or index > self.length:
             raise IndexError('"Index" Out of range')
-        elif index == 0 and self.length > 0: #special case where we are inserting and resetting the head and the list is not empty
+        #special case where we are inserting and resetting the head and the list is not empty
+        if index == 0 and self.length > 0:
             new = LinkedListNode(data) #construct new node
             new.next = self.head #set the pointer to the current head
             new.next.prev = new  #set the pointer of the next back to the new
             self.head = new #set the head as the new
             self.length += 1 #update length
             return
-        elif index == 0 and self.length == 0: #Special case where we are inserting and resetting the head and the list is empty
+        #Special case where we are inserting and resetting the head and the list is empty
+        elif index == 0 and self.length == 0:
             new = LinkedListNode(data)
             self.head = new
             self.tail = new
             self.length = 1
-        elif index == self.length: #if the insert is the length of the list just append
+            return
+        #if the insert is the length of the list just append
+        elif index == self.length:
             self.append(data)
-        else: #do the same as in the first elif statement except at an index that is greater than one
+            return
+        #do the same as in the first elif statement except at an index > 1
+        else:
             n = self.head
             for j in range(0,index-1):
                 n = n.next
@@ -248,7 +260,6 @@ class Deque(LinkedList):
             node_value = self.tail.value
             self.tail = None
             self.head = None
-
             self.length = 0
             return node_value
         else: #otherwise reset tail value
@@ -267,15 +278,18 @@ class Deque(LinkedList):
             self.head = None
             self.length = 0
             return node_value
-        else: #otherwise reset the head value uses inheritance and the remove function from the linked list class
+        #use inhertiance to remove node
+        else:
             node_value = self.head.value
             LinkedList.remove(self, node_value)
             return node_value
-
-    def appendleft(self, data): #if we want to add nodes to the beginning of our deque we just use inheritence on the insert function with index 0.
+    #if we want to add nodes to the beginning of our deque we just use
+    #inheritence on the insert function with index 0.
+    def appendleft(self, data):
         LinkedList.insert(self, 0, data)
 
-    #these just remove functionality that we don't want to be able to be accessed because deques are restricted access
+    #these just remove functionality that we don't want to be able
+    #to be accessed because deques are restricted access
     def remove(*args, **kwargs):
         raise NotImplementedError('Use pop() or popleft() for removal')
 
@@ -291,39 +305,26 @@ def prob7(infile, outfile):
         infile (str): the file to read from.
         outfile (str): the file to write to.
     """
+    final_string = ''
     filedeque = Deque() #create our deque
     with open(infile, 'r') as ip: #open our file
-        lines = ip.readlines() #add all lines to a list
-    for i in range(0, len(lines)): #populate our deque
+        lines = ip.read().strip().split('\n') #add all lines to a list
+    for i, line in enumerate(lines): #populate our deque
+        #if we are at the last element make sure to add another newline character
         if i == len(lines) - 1:
-            filedeque.appendleft(lines[i] + '\n') #if we are at the last element make sure to add another newline character
+            filedeque.appendleft('\n' + line + '\n')
+        #make sure to not add an additional newline
+        elif i == 0:
+            filedeque.appendleft(line)
         else:
-            filedeque.appendleft(lines[i])
-    with open(outfile, 'w') as of: #write to our outfile
-        for i in range(0, filedeque.length):
-            of.write(filedeque.popleft())
+            filedeque.appendleft(line + '\n')
+    #assemble string
+    for _ in range(filedeque.length):
+        final_string += filedeque.popleft()
+    #write to our outfile
+    with open(outfile, 'w') as of:
+        of.write(final_string)
 
-#prob7('english.txt', 'backwards_english.txt')
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+if __name__ == '__main__':
+    prob7('english.txt', 'backwards_english.txt')
 

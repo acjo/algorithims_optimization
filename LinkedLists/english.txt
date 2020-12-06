@@ -78,9 +78,7 @@ abject
 abjectly
 abjure
 abjured
-ablate
-ablates
-ablating
+ablate ablates ablating
 ablation
 ablative
 ablaze
