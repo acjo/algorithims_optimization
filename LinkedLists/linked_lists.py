@@ -305,6 +305,24 @@ def prob7(infile, outfile):
         infile (str): the file to read from.
         outfile (str): the file to write to.
     """
+    filedeque = Deque()
+    with open(infile, 'r') as ip_file:
+        contents = ip_file.read()
+        splitline = contents.strip().split('\n')
+        for i in range(len(splitline)):
+            filedeque.append(str(splitline[i]))
+
+    print(filedeque)
+    final_string = ''
+    with open(outfile, 'w') as op_file:
+        for i in range(filedeque.length):
+            final_string += str(filedeque.pop()) + '\n'
+            #op_file.write(str(filedeque.pop()) + '\n')
+
+    return final_string
+
+
+    '''
     final_string = ''
     filedeque = Deque() #create our deque
     with open(infile, 'r') as ip: #open our file
@@ -325,6 +343,18 @@ def prob7(infile, outfile):
     with open(outfile, 'w') as of:
         of.write(final_string)
 
-if __name__ == '__main__':
-    prob7('english.txt', 'backwards_english.txt')
+    '''
 
+if __name__ == '__main__':
+
+    backwards_file_string = '\noutlooks\neuthanasia\noutlier\nyours\nglistened\nsociolinguistics\nfixations\ndoubts\nencyclopaedic\nleer'
+    deque = Deque()
+    make_lines = backwards_file_string.split('\n')
+    for line in make_lines:
+        deque.append(line)
+    with open('test.txt', 'w') as key:
+        for _ in range(deque.length):
+            key.write(deque.pop() + '\n')
+
+    string = prob7('test.txt', 'test_output.txt')
+    print(repr(string))
