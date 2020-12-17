@@ -188,15 +188,17 @@ def prob8_45(wavelet, j):
     H_n = IWM(wj_basis, j)
     #get coordinate vector
     f_n = H_n @ wavelet
-    b_n = get_b(f_n)
+    b_n = get_b(f_n, j)
     b = []
     #get b coefficients
     for k, mat in enumerate(b_n):
         for row in mat:
             for col in row:
                 b.append(col)
+    '''
     for _ in range(len(f_n) - len(b)):
         b.insert(0, 0)
+    '''
     #get son/father basis
     vj_basis = [v_j_basis(j, k) for k in range(0, 2**j)]
     #get projection of function onto Vj
