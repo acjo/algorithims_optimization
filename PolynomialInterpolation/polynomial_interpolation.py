@@ -143,16 +143,16 @@ def prob7(n):
 
 if __name__ == "__main__":
     #problem 1:
+    '''
     n = 5
-
     runge = lambda x: 1 / ( 1 + 25 * x ** 2)
     x = np.linspace(-1, 1, n)
     y = runge(x)
-
     domain = np.linspace(-1, 1, 100)
     output = lagrange(x, y, domain)
-
     plt.plot(domain, runge(domain), 'c-', label='Original')
     plt.plot(domain, output, 'r-', label='Interpolation')
     plt.legend(loc='best')
     plt.show()
+
+    '''
