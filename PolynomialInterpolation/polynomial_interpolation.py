@@ -8,6 +8,7 @@ Jan 7 2021
 
 import numpy as np
 from matplotlib import pyplot as plt
+import math
 
 
 # Problems 1 and 2
@@ -30,7 +31,8 @@ def lagrange(xint, yint, points):
     #number of evaluation points
     m = points.size
     #denominators
-    denoms = np.array([np.product(np.array([xint[j] - xint[k] for k in range(n) if j != k])) for j in range(n)])
+    denoms = np.array([np.product(np.array([xint[j] - xint[k] for k in range(n) if j != k]))
+                       for j in range(n)])
 
     def Lj(x, d, j, xvals):
         """evaluates the lagrange basis functions at the point x.
@@ -45,15 +47,12 @@ def lagrange(xint, yint, points):
         s = xvals.size
         numer = np.product(np.array([x - xvals[k] for k in range(s) if k != j]))
         evaluation = numer / d
-
         return evaluation
 
     #lagrange matrix
     l_matrix = np.array([[Lj(x, denoms[j], j, xint) for x in points] for j in range(n)])
-
     #polynomial evaluation points
     p = np.array([sum(yint * l_matrix[:, j]) for j in range(m)])
-
     return p
 
 
@@ -77,7 +76,16 @@ class Barycentric:
             xint ((n,) ndarray): x values of interpolating points.
             yint ((n,) ndarray): y values of interpolating points.
         """
-        raise NotImplementedError("Problem 3 Incomplete")
+        self.x = xint
+        self.y = yint
+        self.n = self.x.size
+        self.w = np.ones(self.n)
+        C = (np.max(xint) - np.min(xint)) / 4
+        shuffle = np.random.permutation(self.n - 1)
+        for j in range(self.n):
+            temp = (xint[j] - np.delete(xint, j)) / C
+            temp = temp[shuffle]
+            self.w[j] /= np.product(temp)
 
     def __call__(self, points):
         """Using the calcuated Barycentric weights, evaluate the interpolating polynomial
@@ -89,7 +97,14 @@ class Barycentric:
         Returns:
             ((m,) ndarray): Array of values where the polynomial has been computed.
         """
-        raise NotImplementedError("Problem 3 Incomplete")
+        '''
+        for x in self.x:
+            mask = x == points
+            points = points[~mask]
+        '''
+        p = np.array([sum(self.w * self.y / (x - self.x)) /
+                      sum(self.w / (x - self.x)) for x in points])
+        return p
 
     # Problem 4
     def add_weights(self, xint, yint):
@@ -154,5 +169,22 @@ if __name__ == "__main__":
     plt.plot(domain, output, 'r-', label='Interpolation')
     plt.legend(loc='best')
     plt.show()
-
     '''
+    #problem 3:
+    '''
+    n = 11
+    runge = lambda x: 1 / ( 1 + 25 * x ** 2)
+    x = np.linspace(-1, 1, n)
+    y = runge(x)
+    domain = np.linspace(-1, 1, 1000)
+    domain = np.delete(domain, 0)
+    domain = np.delete(domain, 998)
+    b = Barycentric(x, y)
+    output = b(domain)
+    plt.plot(domain, runge(domain), 'c-', label='Original')
+    plt.plot(domain, output, 'r-', label='Interpolation')
+    plt.legend(loc='best')
+    plt.show()
+    '''
+
+
