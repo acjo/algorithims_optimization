@@ -1,9 +1,13 @@
 # polynomial_interpolation.py
 """Volume 2: Polynomial Interpolation.
-<Name>
-<Class>
-<Date>
+Caelan Osman
+Math 323 Sec 2
+Jan 7 2021
 """
+
+
+import numpy as np
+from matplotlib import pyplot as plt
 
 
 # Problems 1 and 2
@@ -20,7 +24,39 @@ def lagrange(xint, yint, points):
     Returns:
         ((m,) ndarray): The value of the polynomial at the specified points.
     """
-    raise NotImplementedError("Problems 1 and 2 Incomplete")
+
+    #number of interpolation points
+    n = xint.size
+    #number of evaluation points
+    m = points.size
+    #denominators
+    denoms = np.array([np.product(np.array([xint[j] - xint[k] for k in range(n) if j != k])) for j in range(n)])
+
+    def Lj(x, d, j, xvals):
+        """evaluates the lagrange basis functions at the point x.
+           Paramaters:
+               x (float): value to evaluated
+               d (float): denominator value
+               xvals ((n, ) ndarray): x values to be interpolated
+               j (int): the legrange basis function number
+           returns:
+               eval (float): evaluated value
+        """
+        s = xvals.size
+        numer = np.product(np.array([x - xvals[k] for k in range(s) if k != j]))
+        evaluation = numer / d
+
+        return evaluation
+
+    #lagrange matrix
+    l_matrix = np.array([[Lj(x, denoms[j], j, xint) for x in points] for j in range(n)])
+
+    #polynomial evaluation points
+    p = np.array([sum(yint * l_matrix[:, j]) for j in range(m)])
+
+    return p
+
+
 
 
 # Problems 3 and 4
@@ -103,3 +139,20 @@ def prob7(n):
         n (int): Number of interpolating points to use.
     """
     raise NotImplementedError("Problem 7 Incomplete")
+
+
+if __name__ == "__main__":
+    #problem 1:
+    n = 5
+
+    runge = lambda x: 1 / ( 1 + 25 * x ** 2)
+    x = np.linspace(-1, 1, n)
+    y = runge(x)
+
+    domain = np.linspace(-1, 1, 100)
+    output = lagrange(x, y, domain)
+
+    plt.plot(domain, runge(domain), 'c-', label='Original')
+    plt.plot(domain, output, 'r-', label='Interpolation')
+    plt.legend(loc='best')
+    plt.show()
