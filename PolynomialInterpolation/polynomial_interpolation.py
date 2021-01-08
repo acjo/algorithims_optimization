@@ -115,7 +115,14 @@ class Barycentric:
             xint ((m,) ndarray): x values of new interpolating points.
             yint ((m,) ndarray): y values of new interpolating points.
         """
-        raise NotImplementedError("Problem 4 Incomplete")
+        self.x = xint
+        self.y = yint
+        for j in range(self.n):
+            for k in range(self.n, self.x.size):
+                w[j] /= (self.x[j] - self.x[k])
+
+        new = np.ones(self.x.size - self.n)
+
 
 
 # Problem 5
@@ -128,11 +135,6 @@ def prob5():
     """
     raise NotImplementedError("Problem 5 Incomplete")
 
-
-# Problem 6
-def chebyshev_coeffs(f, n):
-    """Obtain the Chebyshev coefficients of a polynomial that interpolates
-    the function f at n points.
 
     Parameters:
         f (function): Function to be interpolated.
