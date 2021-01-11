@@ -5,7 +5,6 @@ from numpy import linalg as la
 
 def FWT(a, j=0):
     '''
-    testing
     Haar FWT of "a" down to level j
     paramaters:
     a (2**k, 1) ndarray
