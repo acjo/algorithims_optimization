@@ -19,9 +19,9 @@ if __name__ == "__main__":
     domain = np.linspace(0, 1, 500)
     rnge1 = func(domain)
 
-    rnge2 = []
-
     ns = [4, 10, 50, 200]
+    rnge2 = np.array([bernstein_transform(n, func, domain) for n in ns])
+
     for n in ns:
         current = np.array([bernstein_transform(n, func, val) for val in domain])
         rnge2.append(current)
