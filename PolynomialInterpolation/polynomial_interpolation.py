@@ -76,6 +76,7 @@ class Barycentric:
             xint ((n,) ndarray): x values of interpolating points.
             yint ((n,) ndarray): y values of interpolating points.
         """
+        self.dictionary = {x: yint[j] for j, x in enumerate(xint)}
         self.x = xint
         self.y = yint
         self.n = self.x.size
@@ -97,14 +98,14 @@ class Barycentric:
         Returns:
             ((m,) ndarray): Array of values where the polynomial has been computed.
         """
-        '''
-        for x in self.x:
-            mask = x == points
-            points = points[~mask]
-        '''
-        p = np.array([sum(self.w * self.y / (x - self.x)) /
-                      sum(self.w / (x - self.x)) for x in points])
-        return p
+        vals = np.zeros(points.size)
+        for i, point in enumerate(points):
+            if point in self.dictionary:
+                vals[i] = self.dictionary[point]
+            else:
+                vals[i] = sum(self.w * self.y / (point - self.x)) / sum(self.w / (point - self.x))
+
+        return vals
 
     # Problem 4
     def add_weights(self, xint, yint):
@@ -136,6 +137,11 @@ def prob5():
     raise NotImplementedError("Problem 5 Incomplete")
 
 
+# Problem 6
+def chebyshev_coeffs(f, n):
+    """Obtain the Chebyshev coefficients of a polynomial that interpolates
+    the function f at n points.
+
     Parameters:
         f (function): Function to be interpolated.
         n (int): Number of points at which to interpolate.
@@ -156,6 +162,26 @@ def prob7(n):
         n (int): Number of interpolating points to use.
     """
     raise NotImplementedError("Problem 7 Incomplete")
+
+
+def clenshaws(a, x):
+    ''' computes Clenshaw's algorithm and evaluates the polynomial at x
+        Parameters:
+            a ((n+1, )ndarray): containing the coefficients for p(x) = sum( a_k T_k(x) for k in range(0, n+1))
+            x (float): the evaluation point
+        Returns:
+            (float): the output at x
+    '''
+    n = a.size
+    u = np.zeros(n + 1)
+    u[-1] = 0
+    u[-2] = a[-1]
+    for k in range(n-1, -1, -1):
+        u[k] = 2 * x * u[k+1] - u[k+2] + a[k]
+
+    return (a[0] + u[0] - u[2]) / 2.
+
+
 
 
 if __name__ == "__main__":
