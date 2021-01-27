@@ -135,15 +135,18 @@ class Barycentric:
                 Paramaters:
                     new_x ((1, )ndarray): new x value to update the weights with
             '''
-            self.w = np.array([w / (np.prod((self.x[i]- new_x) / self.C)) for i, w in enumerate(self.w)])
+            self.w = np.array([w / ((self.x[i]- new_x) / self.C) for i, w in enumerate(self.w)])
 
         def new_weights(new_x):
             '''Calculates the new weight
                Paramaters:
                    new_x (float): the value to calculate the new weight for
             '''
-            update_weights(np.array([new_x]))
+            #update weights
+            update_weights(np.array(new_x))
+            #create new weight
             weight = 1 / np.prod((new_x - self.x) / self.C)
+            #add current xvalue and weight to our xvalues and weights
             self.x = np.concatenate((self.x, [new_x]))
             self.w = np.concatenate((self.w, [weight]))
 
@@ -298,12 +301,6 @@ if __name__ == "__main__": #problem 1:
     plt.plot(domain, runge(domain), label='Original')
     plt.plot(domain, bary(domain), label='Odd Points, n = ' + str(n))
     bary.add_weights(xvals_2, runge(xvals_2))
-    #bary.add_weights(xvals_2[0], runge(xvals_2[0]))
-    bary.add_weights(xvals_2[1], runge(xvals_2[1]))
-    bary.add_weights(xvals_2[2], runge(xvals_2[2]))
-    bary.add_weights(xvals_2[3], runge(xvals_2[3]))
-    bary.add_weights(xvals_2[4], runge(xvals_2[4]))
-    bary.add_weights(xvals_2[5], runge(xvals_2[5]))
     plt.plot(domain, bary(domain),'k', label='All points, n = ' + str(n))
     plt.legend(loc='best')
     plt.show()
