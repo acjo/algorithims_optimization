@@ -1,9 +1,11 @@
 # regular_expressions.py
 """Volume 3: Regular Expressions.
-<Name>
-<Class>
-<Date>
+Caelan osman
+Math 323 Sec. 2
+Feb 3, 2021
 """
+
+import re
 
 # Problem 1
 def prob1():
@@ -13,7 +15,9 @@ def prob1():
     Returns:
         (_sre.SRE_Pattern): a compiled regular expression pattern object.
     """
-    raise NotImplementedError("Problem 1 Incomplete")
+
+    #return compiled expression
+    return re.compile("python")
 
 # Problem 2
 def prob2():
@@ -23,7 +27,9 @@ def prob2():
     Returns:
         (_sre.SRE_Pattern): a compiled regular expression pattern object.
     """
-    raise NotImplementedError("Problem 2 Incomplete")
+
+    #return compiled expression with meta characters
+    return re.compile(r"\^\{@\}\(\?\)\[%\]\{\.\}\(\*\)\[_]\{&\}\$")
 
 # Problem 3
 def prob3():
@@ -36,7 +42,8 @@ def prob3():
     Returns:
         (_sre.SRE_Pattern): a compiled regular expression pattern object.
     """
-    raise NotImplementedError("Problem 3 Incomplete")
+
+    return re.compile(r"^(Book|Mattress|Grocery) (store|supplier)$")
 
 # Problem 4
 def prob4():
@@ -46,7 +53,7 @@ def prob4():
     Returns:
         (_sre.SRE_Pattern): a compiled regular expression pattern object.
     """
-    raise NotImplementedError("Problem 4 Incomplete")
+    return re.compile(r"^(_|[a-z]|[A-Z])[\w_]* *=? *([\d]*|[\'][\w]*[\'])$")
 
 # Problem 5
 def prob5(code):
@@ -60,7 +67,9 @@ def prob5(code):
     Returns:
         (str): code, but with the colons inserted in the right places.
     """
-    raise NotImplementedError("Problem 5 Incomplete")
+    py_code = re.compile(r"^.*(if|elif|else|for|while|try|except|finally|with|def|class)$")
+
+    return py_code.search(code)
 
 # Problem 6
 def prob6(filename="fake_contacts.txt"):
@@ -77,3 +86,49 @@ def prob6(filename="fake_contacts.txt"):
     """
 
     raise NotImplementedError("Problem 6 Incomplete")
+
+
+if __name__ == "__main__":
+
+    #problem 2:
+    '''
+    test_string = "^{@}(?)[%]{.}(*)[_]{&}$"
+    expression = prob2()
+    print(bool(expression.match(test_string)))
+    '''
+
+    #problem 3:
+    '''
+    test_strings = ["Book store", "Mattress store", "Grocery store", "Book supplier",
+                    "Mattress supplier", "Grocery supplier", "Mattress", "supplier store", "M"]
+    expression = prob3()
+    for string in test_strings:
+        print(string + ":", bool(expression.search(string)))
+    '''
+
+    #problem 4:
+    '''
+    pattern = prob4()
+    python_identifiers = ["Mouse", "compile", "_123456789", "__x__", "while", "_c__ _",
+                          "3rats", "err*r", "sq(x)", "sleep()", " x"]
+
+    for ident in python_identifiers:
+        print(ident + ":", bool(pattern.search(ident)))
+    '''
+
+
+    #problem 5:
+
+    py_code = """
+              k, i, p = 999, 1, 0
+              while k > i
+                  i *= 2
+                  p += 1
+                  if k != 999
+                      print("k should not have changed")
+                  else
+                      pass
+             print(p)
+"""
+
+    print(prob5(py_code))
