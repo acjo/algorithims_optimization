@@ -43,6 +43,7 @@ def prob3():
         (_sre.SRE_Pattern): a compiled regular expression pattern object.
     """
 
+    #use groupds to return correct words
     return re.compile(r"^(Book|Mattress|Grocery) (store|supplier)$")
 
 # Problem 4
@@ -53,7 +54,7 @@ def prob4():
     Returns:
         (_sre.SRE_Pattern): a compiled regular expression pattern object.
     """
-    return re.compile(r"^(_|[a-z]|[A-Z])[\w_]* *=? *[([0-9]|\'.*\')|]=? *([\d]*|[\'][\w]*[\']|(_|[a-z]|[A-Z])[\w_]* *)$")
+    return re.compile(r"^(_|[a-zA-Z])[\w_]* *=? *([-]?[\d]*[\.]?[\d]*|[-]?[\d]*[e][-]?[\d]+|['][^']*[']|(_|[a-zA-Z])[\w_]*)$")
 
 # Problem 5
 def prob5(code):
@@ -68,7 +69,7 @@ def prob5(code):
         (str): code, but with the colons inserted in the right places.
     """
     pattern = re.compile(r"(if|elif|else|for|while|try|except|finally|with|def|class).*")
-    replacement = lambda x: x.group(0) + ':' 
+    replacement = lambda x: x.group(0) + ':'
     return pattern.sub(replacement, code)
 
 # Problem 6
@@ -114,10 +115,17 @@ if __name__ == "__main__":
 
     for ident in python_identifiers:
         print(ident + ":", bool(pattern.search(ident)))
+
+    python_paramaters = ["max=-4.", "string= ''", "num_gesses", "300", "is_4=(value==4)", "pattern=r'^one|two fish'", "hello_ = three"]
+
+    print()
+    for param in python_paramaters:
+        print(param + ":", bool(pattern.search(param)))
     '''
 
 
     #problem 5:
+    '''
     def helper():
         with open('test.txt') as infile:
             code = infile.read()
@@ -127,6 +135,7 @@ if __name__ == "__main__":
             outfile.write(output)
 
     helper()
+    '''
 
 
 
