@@ -53,7 +53,7 @@ def prob4():
     Returns:
         (_sre.SRE_Pattern): a compiled regular expression pattern object.
     """
-    return re.compile(r"^(_|[a-z]|[A-Z])[\w_]* *=? *([\d]*|[\'][\w]*[\'])$")
+    return re.compile(r"^(_|[a-z]|[A-Z])[\w_]* *=? *[([0-9]|\'.*\')|]=? *([\d]*|[\'][\w]*[\']|(_|[a-z]|[A-Z])[\w_]* *)$")
 
 # Problem 5
 def prob5(code):
@@ -67,9 +67,9 @@ def prob5(code):
     Returns:
         (str): code, but with the colons inserted in the right places.
     """
-    py_code = re.compile(r"^.*(if|elif|else|for|while|try|except|finally|with|def|class)$")
-
-    return py_code.search(code)
+    pattern = re.compile(r"(if|elif|else|for|while|try|except|finally|with|def|class).*")
+    replacement = lambda x: x.group(0) + ':' 
+    return pattern.sub(replacement, code)
 
 # Problem 6
 def prob6(filename="fake_contacts.txt"):
@@ -118,17 +118,16 @@ if __name__ == "__main__":
 
 
     #problem 5:
+    def helper():
+        with open('test.txt') as infile:
+            code = infile.read()
 
-    py_code = """
-              k, i, p = 999, 1, 0
-              while k > i
-                  i *= 2
-                  p += 1
-                  if k != 999
-                      print("k should not have changed")
-                  else
-                      pass
-             print(p)
-"""
+        output = prob5(code)
+        with open('output.txt', 'w') as outfile:
+            outfile.write(output)
 
-    print(prob5(py_code))
+    helper()
+
+
+
+
