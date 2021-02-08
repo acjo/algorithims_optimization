@@ -35,8 +35,7 @@ def prob2():
 def prob3():
     """Compile and return a regular expression pattern object that matches
     the following strings (and no other strings).
-
-        Book store          Mattress store          Grocery store
+Book store          Mattress store          Grocery store
         Book supplier       Mattress supplier       Grocery supplier
 
     Returns:
@@ -54,6 +53,7 @@ def prob4():
     Returns:
         (_sre.SRE_Pattern): a compiled regular expression pattern object.
     """
+    #set and return regex pattern
     return re.compile(r"^(_|[a-zA-Z])[\w_]* *=? *([-]?[\d]*[\.]?[\d]*|[-]?[\d]*[e][-]?[\d]+|['][^']*[']|(_|[a-zA-Z])[\w_]*)$")
 
 # Problem 5
@@ -68,8 +68,11 @@ def prob5(code):
     Returns:
         (str): code, but with the colons inserted in the right places.
     """
+    #find the key keywords
     pattern = re.compile(r"(if|elif|else|for|while|try|except|finally|with|def|class).*")
+    #use lambda function to add colon
     replacement = lambda x: x.group(0) + ':'
+    #return string
     return pattern.sub(replacement, code)
 
 # Problem 6
@@ -85,34 +88,59 @@ def prob6(filename="fake_contacts.txt"):
     Returns:
         (dict): a dictionary mapping names to a dictionary of personal info.
     """
+    #read infile by line
     with open(filename) as infile:
-        content = infile.readlines()
+        lines = infile.readlines()
 
-    re.compile(r"^(?P<name>\w+)")
-    name = re.compile(r"^(?P<name>(([a-zA-Z]+ [a-zA-Z]+)|([a-zA-Z]+ [a-zA-Z]\. [a-zA-Z]+)) *)(?P<bday>(\d+/\d+/\d+) )?(?P<phone>())?(?P<email>())?") 
-    #(r"[a-zA-Z .]+ ([a-zA-Z]+[.] )?[a-zA-Z]+ ?")
-    #birthday = re.compile()
-    #email = re.compile()
-    #phone = re.compile()
+    #regex object to match names, birthdays, emails, phones
+    get_name = re.compile(r"^[a-zA-Z]*( )([a-zA-Z]\.( ))?[a-zA-Z]*")
+    get_birthday = re.compile(r"[^ ][\d]*\/[\d]*\/[\d]*[^ \n]*")
+    get_email = re.compile(r"[^ ]*\@[^ \n]*")
+    get_number = re.compile(r"(\d{3}-[^ |\n]*|\(\d*\)[^ \n]*)")
 
+    #regex bject to match the wrong birthdays
+    wrong_birthday_1 = re.compile(r"^(\d{1,2}\/)(\d{1,2}\/)(\d{2})$")
+    wrong_birthday_2 = re.compile(r"^(\d\/)(\d{1,2}\/)(\d{4})s")
+    wrong_birthday_3 = re.compile(r"^(\d{2}\/)(\d\/)(\d{4})$")
 
-    '''
-    dictionary = {}
-    for line in content:
-        current_name = name.search(line)
-        current_birthday = birthday.search(line)
-        current_email = email.search(line)
-        current_phone = phone.search(line)
-    '''
-    
+    #regex bject to match the wrong numbers
+    wrong_number_1 = re.compile(r"^(\d{3})-(\d{3})-(\d{4})$")
+    wrong_number_2 = re.compile(r"^(\(\d{3}\))-(\d{3})-(\d{4})$")
 
-    #names = name.findall(content)
+    #initialize contact dictionary
+    contacts = {}
+    for line in lines:
 
-    print(names)
-    print('John Doe' in names)
-    
+        #intialize and set the name, birthday, and email value
+        name = get_name.search(line)
+        birthday = get_birthday.search(line)
+        email = get_email.search(line)
+        number = get_number.search(line)
 
-    
+        #extract string for name birthday and email
+        if name is not None:
+            name = name.group(0)
+
+        if birthday is not None:
+            birthday = birthday.group(0)
+            #substitute correct birthday syntax if needed
+            birthday = wrong_birthday_1.sub(r"\1\g<2>20\3", birthday)
+            birthday = wrong_birthday_2.sub(r"0\g<1>\2\3", birthday)
+            birthday = wrong_birthday_3.sub(r"\g<1>0\g<2>\g<3>", birthday)
+
+        if email is not None:
+            email = email.group(0)
+
+        if number is not None:
+            #substitute correct phone number syntax if needed
+            number = number.group(0)
+            number = wrong_number_1.sub(r"(\1)\2-\3", number)
+            number = wrong_number_2.sub(r"\1\2-\3", number)
+
+        #map the name to the dictionary containing contact info
+        contacts[name] = {"birthday" : birthday, "email" : email, "phone" : number}
+
+    return contacts
 
 
 if __name__ == "__main__":
@@ -163,7 +191,11 @@ if __name__ == "__main__":
     helper()
     '''
     #problem 6:
-    prob6()
+    '''
+    dictionary = prob6()
+    print(dictionary)
+    '''
+
 
 
 
