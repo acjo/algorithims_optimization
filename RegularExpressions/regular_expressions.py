@@ -85,8 +85,34 @@ def prob6(filename="fake_contacts.txt"):
     Returns:
         (dict): a dictionary mapping names to a dictionary of personal info.
     """
+    with open(filename) as infile:
+        content = infile.readlines()
 
-    raise NotImplementedError("Problem 6 Incomplete")
+    re.compile(r"^(?P<name>\w+)")
+    name = re.compile(r"^(?P<name>(([a-zA-Z]+ [a-zA-Z]+)|([a-zA-Z]+ [a-zA-Z]\. [a-zA-Z]+)) *)(?P<bday>(\d+/\d+/\d+) )?(?P<phone>())?(?P<email>())?") 
+    #(r"[a-zA-Z .]+ ([a-zA-Z]+[.] )?[a-zA-Z]+ ?")
+    #birthday = re.compile()
+    #email = re.compile()
+    #phone = re.compile()
+
+
+    '''
+    dictionary = {}
+    for line in content:
+        current_name = name.search(line)
+        current_birthday = birthday.search(line)
+        current_email = email.search(line)
+        current_phone = phone.search(line)
+    '''
+    
+
+    #names = name.findall(content)
+
+    print(names)
+    print('John Doe' in names)
+    
+
+    
 
 
 if __name__ == "__main__":
@@ -136,6 +162,8 @@ if __name__ == "__main__":
 
     helper()
     '''
+    #problem 6:
+    prob6()
 
 
 
