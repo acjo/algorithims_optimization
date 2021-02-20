@@ -1,8 +1,8 @@
 # opengym.py
 """Volume 2: Open Gym
-<Name>
-<Class>
-<Date>
+Caelan Osman
+Math 323 Sec. 2
+Feb 18, 2021
 """
 
 import gym
@@ -82,9 +82,15 @@ def random_blackjack(n):
         percent (float): percentage that the player
                          wins
     """
-    raise NotImplementedError('Problem 1 Incomplete')
+    env = gym.make("Blackjack-v0")
 
-# Problem 2
+    for _ in range(n):
+        env.reset()
+        draw = env.step(env.action_space.sample()
+
+
+
+# problem 2
 def blackjack(n=11):
     """
     Play blackjack with naive algorithm.
