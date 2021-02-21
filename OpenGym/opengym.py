@@ -158,7 +158,7 @@ def cartpole():
     #initialize done to False
     done = False
     #indexing variables
-    cart, pole, right, left, num_steps = 1, 3, 1, 0, 0
+    pole, right, left, num_steps = 3, 1, 0, 0
     #continue until the pole has fallen over
     while not done:
         #if pole velocity is nonpositive
@@ -167,6 +167,7 @@ def cartpole():
         #if pole velocity is positive
         else:
             positions_velocities, reward, done, _ = env.step(right)
+
         num_steps += reward
 
     return num_steps
@@ -211,6 +212,6 @@ if __name__ == "__main__":
 
     #prob 2
     #print(blackjack())
-    #prob 3
 
-    print(cartpole())
+    #prob 3
+    #print(cartpole())
