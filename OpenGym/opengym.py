@@ -184,11 +184,16 @@ def car():
         iterations (integer): number of steps or iterations
                               to solve the environment
     """
-    raise NotImplementedError("Problem 4 Incomplete")
+    env = gym.make('MountainCar-v0')
+    position_velocity = env.reset()
+    done = False
+    cont = 0
+    while not done:
+        count += 1
+        #do stuff
 
 # Problem 5
-def taxi(q_table):
-    """
+def taxi(q_table): """
     Compare naive and q-learning algorithms.
 
     Parameters:
