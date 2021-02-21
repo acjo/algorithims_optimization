@@ -82,12 +82,27 @@ def random_blackjack(n):
         percent (float): percentage that the player
                          wins
     """
+    #create enviroment
     env = gym.make("Blackjack-v0")
-
+    #how many times we ahve won
+    won = 0
+    #play blacjack n times
     for _ in range(n):
+        #reset the enviroment
         env.reset()
-        draw = env.step(env.action_space.sample()
+        done = False
+        #while not done draw card
+        while not done:
+            observation, reward, done, info = env.step(env.action_space.sample())
 
+        #if the reward is 1 that means we won
+        if reward == 1:
+            won += 1
+
+    #close the enviroment
+    env.close()
+    #return percentage of times we've won
+    return won / n
 
 
 # problem 2
@@ -102,7 +117,30 @@ def blackjack(n=11):
         percent (float): percentage of 10000 iterations
                          that the player wins
     """
-    raise NotImplementedError("Problem 2 Incomplete")
+
+    #naive algorithm to play blackjack 10k times
+    def naive(n):
+        env = gym.make('Blackjack-v0')
+        env.reset()
+        hand = 0
+        while hand <= n:
+            observation, reward, done, info = env.step(env.action_space.sample())
+            hand = observation[0]
+        env.close()
+        #return 1 if we won zero if we didn't
+        if reward == 1:
+            return 1
+        else:
+            return 0
+
+    #initialize count of won games
+    won_count = 0
+    #run 10k times
+    for _ in range(10000):
+        won_count += naive(n)
+
+    #return percentage
+    return won_count / 10000
 
 # Problem 3
 def cartpole():
@@ -114,7 +152,26 @@ def cartpole():
         iterations (integer): number of steps or iterations
                               to solve the environment
     """
-    raise NotImplementedError("Problem 3 Incomplete")
+    #make enviremont and get initial state
+    env = gym.make('CartPole-v0')
+    positions_velocities = env.reset()
+    #initialize done to False
+    done = False
+    #indexing variables
+    cart, pole, right, left, num_steps = 1, 3, 1, 0, 0
+    #continue until the pole has fallen over
+    while not done:
+        #if pole velocity is nonpositive
+        if positions_velocities[pole] <= 0:
+            positions_velocities, reward, done, _ = env.step(left)
+        #if pole velocity is positive
+        else:
+            positions_velocities, reward, done, _ = env.step(right)
+        num_steps += reward
+
+    return num_steps
+
+
 
 # Problem 4
 def car():
@@ -143,3 +200,17 @@ def taxi(q_table):
                           of 10000 runs
     """
     raise NotImplementedError("Problem 5 Incomplete")
+
+
+
+if __name__ == "__main__":
+
+
+    #problem 1
+    #print(random_blackjack(20))
+
+    #prob 2
+    #print(blackjack())
+    #prob 3
+
+    print(cartpole())
