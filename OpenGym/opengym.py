@@ -186,13 +186,24 @@ def car():
         iterations (integer): number of steps or iterations
                               to solve the environment
     """
+    #make enviroment
     env = gym.make('MountainCar-v0')
+    #reset and get current position
     position_velocity = env.reset()
-    done = False
-    count = 0
+    #initialize done to False and count to zero
+    done, count = False, 0
     while not done:
+        #always start by stepping to the right and continuing
+        #to do so if velocity is positive
+        if position_velocity[-1] >= 0:
+            position_velocity, reward, done, _ = env.step(2)
+        #step to the left once velocity starts getting negative
+        else:
+            position_velocity, reward, done, _ = env.step(0)
+        #increment count
         count += 1
-        #do stuff
+
+    return count
 
 # Problem 5
 def taxi(q_table): """
@@ -214,7 +225,13 @@ if __name__ == "__main__":
 
 
     #problem 1
-    #print(random_blackjack(20))
+    '''
+    percentage = []
+    for n in range(500, 10500, 500):
+        percentage.append(random_blackjack(n))
+
+    print(percentage)
+    '''
 
     #prob 2
     '''
@@ -227,3 +244,8 @@ if __name__ == "__main__":
 
     #prob 3
     #print(cartpole())
+
+    #prob4
+    #print(car())
+
+
