@@ -119,14 +119,17 @@ def blackjack(n=11):
     """
 
     #naive algorithm to play blackjack 10k times
+    env = gym.make('Blackjack-v0')
     def naive(n):
-        env = gym.make('Blackjack-v0')
-        env.reset()
-        hand = 0
-        while hand <= n:
-            observation, reward, done, info = env.step(env.action_space.sample())
-            hand = observation[0]
-        env.close()
+        observation = env.reset()
+        hand = observation[0]
+        done = False
+        while not done:
+            if hand <= n:
+                observation, reward, done, info = env.step(1)
+                hand = observation[0]
+            else:
+                observation, reward, done, info = env.step(0)
         #return 1 if we won zero if we didn't
         if reward == 1:
             return 1
@@ -138,6 +141,7 @@ def blackjack(n=11):
     #run 10k times
     for _ in range(10000):
         won_count += naive(n)
+    env.close()
 
     #return percentage
     return won_count / 10000
@@ -172,8 +176,6 @@ def cartpole():
 
     return num_steps
 
-
-
 # Problem 4
 def car():
     """
@@ -187,7 +189,7 @@ def car():
     env = gym.make('MountainCar-v0')
     position_velocity = env.reset()
     done = False
-    cont = 0
+    count = 0
     while not done:
         count += 1
         #do stuff
@@ -205,7 +207,6 @@ def taxi(q_table): """
         q_reward (float): mean reward of Q-learning algorithm
                           of 10000 runs
     """
-    raise NotImplementedError("Problem 5 Incomplete")
 
 
 
@@ -216,7 +217,8 @@ if __name__ == "__main__":
     #print(random_blackjack(20))
 
     #prob 2
-    #print(blackjack())
+    for n in range(21):
+        print(blackjack(n))
 
     #prob 3
     #print(cartpole())
