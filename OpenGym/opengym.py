@@ -206,19 +206,67 @@ def car():
     return count
 
 # Problem 5
-def taxi(q_table): """
+def taxi(q_table):
+    """
     Compare naive and q-learning algorithms.
 
     Parameters:
         q_table (ndarray nxm): table of qvalues
 
     Returns:
-        naive (flaot): mean reward of naive algorithm
+        naive (float): mean reward of naive algorithm
                        of 10000 runs
         q_reward (float): mean reward of Q-learning algorithm
                           of 10000 runs
     """
 
+    #initialize enviroment
+    env = gym.make('Taxi-v3')
+    #naive random algorithm
+    def naive_taxi():
+        #reset enviroment
+        env.reset()
+        #intialize done to false and reward to zero
+        reward, done = False, 0
+
+        #take random actions
+        while not done:
+            _, value, done, _ = env.step(env.action_space.sample())
+            reward += value
+
+        #return reward
+        return reward
+
+    #algorithm for using qlearning
+    def qlearn_taxi():
+        #reset envireoment
+        env.reset()
+        #intialize done and the step number
+        reward, done, row = False, 0, 0
+        #continue until the enviroment is finished
+        while not done:
+            #step using optimal index of the current row
+            _, value, done, _ = env.step(np.argmax(q_table[row]))
+            #increment reward
+            reward += value
+            #increment step
+            row += 1
+
+        return reward
+
+
+    #total rewards for naive and qlearning methods
+    naive = 0
+    qlearn = 0
+    #run 10k times
+    for _ in range(10000):
+        naive += naive_taxi()
+        qlearn += qlearn_taxi()
+
+    #close the enviroment
+    env.close()
+    #return averages
+    return naive / 10000, qlearn / 10000
 
 
 if __name__ == "__main__":
@@ -235,17 +283,27 @@ if __name__ == "__main__":
 
     #prob 2
     '''
-    percentage = []
-    for n in range(21):
-        percentage.append(blackjack(n))
-
+    percentage = np.array([blackjack(n) for n in range(21)])
     print(percentage)
+    print(np.mean(percentage))
     '''
 
     #prob 3
-    #print(cartpole())
+    '''
+    percentage = np.array([cartpole() for _ in range(21)])
+    print(percentage)
+    print(np.mean(percentage))
+    '''
 
     #prob4
     #print(car())
+
+    #prob 5
+    '''
+    qtable = find_qvalues('Taxi-v3')
+    values = taxi(qtable)
+    print(values[0])
+    print(values[1])
+    '''
 
 
