@@ -126,10 +126,10 @@ def blackjack(n=11):
         done = False
         while not done:
             if hand <= n:
-                observation, reward, done, info = env.step(1)
+                observation, reward, done, _ = env.step(1)
                 hand = observation[0]
             else:
-                observation, reward, done, info = env.step(0)
+                observation, reward, done, _ = env.step(0)
         #return 1 if we won zero if we didn't
         if reward == 1:
             return 1
@@ -217,8 +217,13 @@ if __name__ == "__main__":
     #print(random_blackjack(20))
 
     #prob 2
+    '''
+    percentage = []
     for n in range(21):
-        print(blackjack(n))
+        percentage.append(blackjack(n))
+
+    print(percentage)
+    '''
 
     #prob 3
     #print(cartpole())
