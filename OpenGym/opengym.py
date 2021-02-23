@@ -219,7 +219,6 @@ def taxi(q_table):
         q_reward (float): mean reward of Q-learning algorithm
                           of 10000 runs
     """
-
     #initialize enviroment
     env = gym.make('Taxi-v3')
     #naive random algorithm
@@ -241,7 +240,7 @@ def taxi(q_table):
     def qlearn_taxi():
         #reset envireoment
         observation = env.reset()
-        #intialize done and the reward 
+        #intialize done and the reward
         reward, done= False, 0
         #continue until the enviroment is finished
         while not done:
