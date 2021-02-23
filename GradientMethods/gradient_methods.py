@@ -99,7 +99,7 @@ def conjugate_gradient(Q, b, x0, tol=1e-4):
 
 
 # Problem 3
-def nonlinear_conjugate_gradient(f, df, x0, tol=1e-5, maxiter=100):
+def nonlinear_conjugate_gradient(f, Df, x0, tol=1e-5, maxiter=100):
     """Compute the minimizer of f using the nonlinear conjugate gradient
     algorithm.
 
@@ -117,7 +117,32 @@ def nonlinear_conjugate_gradient(f, df, x0, tol=1e-5, maxiter=100):
         (bool): Whether or not the algorithm converged.
         (int): The number of iterations computed.
     """
-    raise NotImplementedError("Problem 3 Incomplete")
+    #get r0, d0
+    r0 = -Df(x0).T
+    d0 = np.copy(r0)
+    #set current line search function
+    phi = lambda alpha: f(x0 + alpha*d0)
+    #optimize alpha
+    alpha = ms(phi).x
+    #get next iteration
+    x0 = x0 + alpha*d0
+
+    #intialize loop counter
+    i = 1
+    while la.nrom(r0, ord=2) and i < maxiter:
+        #get next r value
+        r1 = -Df(x0).T
+        #iterate beta
+        beta = np.inner(r1, r1) / np.inner(r0, r0)
+        #iterate conjugate direction
+        d0 = r1 + beta*d0
+        #set current line search function
+        phi = lambda alpha: f(x0 + alpha*d0)
+        #optimize alpha
+        alpha = ms(phi).x
+        x0 = x0 + alpha * d0
+        r0 = r1
+        i += 1
 
 
 # Problem 4
