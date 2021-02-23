@@ -165,6 +165,8 @@ def cartpole():
     pole, right, left, num_steps = 3, 1, 0, 0
     #continue until the pole has fallen over
     while not done:
+        #render enviroment
+        env.render()
         #if pole velocity is nonpositive
         if positions_velocities[pole] <= 0:
             positions_velocities, reward, done, _ = env.step(left)
@@ -173,6 +175,9 @@ def cartpole():
             positions_velocities, reward, done, _ = env.step(right)
 
         num_steps += reward
+
+    #close enviroment
+    env.close()
 
     return num_steps
 
@@ -193,6 +198,8 @@ def car():
     #initialize done to False and count to zero
     done, count = False, 0
     while not done:
+        #render enviroment
+        env.render()
         #always start by stepping to the right and continuing
         #to do so if velocity is positive
         if position_velocity[-1] >= 0:
@@ -202,6 +209,8 @@ def car():
             position_velocity, reward, done, _ = env.step(0)
         #increment count
         count += 1
+
+    env.close()
 
     return count
 
