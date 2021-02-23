@@ -253,7 +253,6 @@ def taxi(q_table):
 
         return reward
 
-
     #total rewards for naive and qlearning methods
     naive = 0
     qlearn = 0
