@@ -240,17 +240,16 @@ def taxi(q_table):
     #algorithm for using qlearning
     def qlearn_taxi():
         #reset envireoment
-        env.reset()
-        #intialize done and the step number
-        reward, done, row = False, 0, 0
+        observation = env.reset()
+        #intialize done and the reward 
+        reward, done= False, 0
         #continue until the enviroment is finished
         while not done:
             #step using optimal index of the current row
-            _, value, done, _ = env.step(np.argmax(q_table[row]))
+            observation, value, done, _ = env.step(np.argmax(q_table[observation]))
             #increment reward
             reward += value
             #increment step
-            row += 1
 
         return reward
 
