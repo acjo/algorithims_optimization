@@ -76,7 +76,7 @@ def conjugate_gradient(Q, b, x0, tol=1e-4):
     i, maxiter = 0, x0.size
     converge = False
 
-    while i < maxiter + 10:
+    while i < maxiter:
         #iterate alpha
         alpha = (r0 @ r0) / (d0 @ Q @ d0)
         #alpha = np.inner(r0, r0) / np.inner(d0, Q @ d0)
@@ -313,8 +313,6 @@ if __name__ == "__main__":
     sol = prob4()
     print(sol)
     '''
-
-
     #testing problem 5 and 6
     #print(prob6())
 
