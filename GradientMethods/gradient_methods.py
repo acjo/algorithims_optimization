@@ -67,31 +67,34 @@ def conjugate_gradient(Q, b, x0, tol=1e-4):
         (int): The number of iterations computed.
     """
     #set intial r values copy because arrays are immutable
-    r0 = Q@x0 - b
+    r0 = (Q @ x0) - b
+
     r1 = np.copy(r0)
     #set intial conjugate gradient direction
-    d0 = -np.copy(r0)
+    d0 = -1 * np.copy(r0)
     #loop counter, mixiter, and convergence bool
     i, maxiter = 0, x0.size
     converge = False
 
-    while i < maxiter:
+    while i < maxiter + 10:
         #iterate alpha
-        alpha = np.inner(r0, r0) / np.inner(d0, Q @ d0)
+        alpha = (r0 @ r0) / (d0 @ Q @ d0)
+        #alpha = np.inner(r0, r0) / np.inner(d0, Q @ d0)
         #iterate x
         x0 = x0 + alpha * d0
         #iterate r
-        r1 = r0 + alpha * Q @ d0
+        r1 = r0 + alpha * (Q @ d0)
         #iterate beta
-        beta = np.inner(r1, r1) / np.inner(r0, r0)
+        #beta = np.inner(r1, r1) / np.inner(r0, r0)
+        beta = (r1 @ r1) / (r0 @ r0)
         #iterate d
-        d0 = - r1 + beta * d0
+        d0 = -r1 + beta * d0
         #reassign r0
         r0 = r1
         #iterate loop counter
         i += 1
         #check convergence
-        if la.norm(r0) < tol:
+        if la.norm(r0, ord=2) < tol:
             converge = True
             break
 
@@ -131,7 +134,7 @@ def nonlinear_conjugate_gradient(f, Df, x0, tol=1e-5, maxiter=100):
     i = 1
     while la.norm(r0, ord=2) >= tol and i < maxiter:
         #get next r value
-        r1 = -Df(x0).T
+        r1 = -Df(x0).T #iterate beta beta = np.inner(r1, r1) / np.inner(r0, r0)
         #iterate beta
         beta = np.inner(r1, r1) / np.inner(r0, r0)
         #iterate conjugate direction
@@ -167,7 +170,8 @@ def prob4(filename="linregression.txt",
     #get b vect
     b = data[:, 0]
     #get A matrix
-    A = data[:, 1:]
+    A = np.ones_like(data)
+    A[:,1:] = data[:, 1:]
     #calculate and return solution
     return conjugate_gradient(A.T @ A, A.T @ b, x0)
 
@@ -272,8 +276,8 @@ if __name__ == "__main__":
     '''
 
     #problem 2
-    '''
     #test 1
+    '''
     Q = np.array([[2, 0], [0, 4]])
     b = np.array([1, 8])
     x0 = np.array([13, -4])
@@ -283,7 +287,6 @@ if __name__ == "__main__":
     Df = lambda x: np.array([2*x[0] - 1, 4*x[1] - 8])
     x0 = np.array([3, 4])
     print(steepest_descent(fx, Df, x0))
-    #test 2
     n=4
     A = np.random.random((n, n))
     Q = A.T @ A
@@ -306,7 +309,6 @@ if __name__ == "__main__":
     '''
 
     #problem 4
-    #FIXME
     '''
     sol = prob4()
     print(sol)
