@@ -78,15 +78,15 @@ def conjugate_gradient(Q, b, x0, tol=1e-4):
 
     while i < maxiter:
         #iterate alpha
-        alpha = (r0 @ r0) / (d0 @ Q @ d0)
-        #alpha = np.inner(r0, r0) / np.inner(d0, Q @ d0)
+        #alpha = (r0 @ r0) / (d0 @ Q @ d0)
+        alpha = np.inner(r0, r0) / np.inner(d0, Q @ d0)
         #iterate x
         x0 = x0 + alpha * d0
         #iterate r
         r1 = r0 + alpha * (Q @ d0)
         #iterate beta
-        #beta = np.inner(r1, r1) / np.inner(r0, r0)
-        beta = (r1 @ r1) / (r0 @ r0)
+        beta = np.inner(r1, r1) / np.inner(r0, r0)
+        #beta = (r1 @ r1) / (r0 @ r0)
         #iterate d
         d0 = -r1 + beta * d0
         #reassign r0
@@ -173,7 +173,7 @@ def prob4(filename="linregression.txt",
     A = np.ones_like(data)
     A[:,1:] = data[:, 1:]
     #calculate and return solution
-    return conjugate_gradient(A.T @ A, A.T @ b, x0)
+    return conjugate_gradient(A.T @ A, A.T @ b, x0)[0]
 
 
 # Problem 5
