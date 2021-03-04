@@ -89,7 +89,6 @@ class SimplexSolver(object):
         ratios = {-self.D[i + 1, 0] / column[i] : i + 1 for i in range(mask.size-1, -1, -1) if mask[i]}
         #get minimum row index
         row_index = ratios[min(ratios)]
-
         return row_index
 
     # Problem 4
@@ -123,29 +122,38 @@ class SimplexSolver(object):
             (dict): The nonbasic variables and their values.
         """
 
+        #run pivoting until a value error occurs
         try :
             while True:
                 self.pivot()
         except ValueError:
+            #find optimal value
             optimal = self.D[0, 0]
+            #set up empty dictionaries
             basic = {}
             non_basic = {}
-            mask = abs(self.D[0, :]) < 1e-9
+            #create new mask to identify independent and dependent variables
+            mask = abs(self.D[0, :]) < 1e-10
 
+            #run through all columns and mask values
             for col, truth in enumerate(mask):
+                #skip the first column
                 if col == 0:
                     continue
+                #if a 1st row column element is zero
                 elif truth:
+                    #get nonzero values
                     nonzero = self.D[1:, col] != 0
+                    #get row index (plus one for ignoring first row)
                     row_index = np.argmax(nonzero) + 1
+                    #dependent variable values.
                     basic[col - 1] = self.D[row_index, 0]
 
+                #set independent variable values to 0.
                 else:
                     non_basic[col-1] = 0
 
             return optimal, basic, non_basic
-
-
 
 # Problem 6
 def prob6(filename='productMix.npz'):
@@ -165,34 +173,29 @@ def prob6(filename='productMix.npz'):
     m = data['m']
     d = data['d']
 
-    n = d.size
-    I = np.eye(n)
+    b = np.concatenate((m, d))
+    m = p.size
+
+    I = np.eye(d.size)
     #create new A matrix encapsulating all constraint values
     A = np.vstack((A, I))
     #create new boundrie array
-    b = np.concatenate((m, d))
 
     #solve simplex method (negating p) to turn into a min problem
     simplex = SimplexSolver(-p, A, b)
     solution = simplex.solve()
 
+    #alternate way to define
+    #units_1 = np.array([solution[1][i] if i in solution[1] else 0 for i in range(m)])
+
     #combine solution dictionaries
     x = {**solution[1], **solution[2]}
-
-    #return the units for each variable (there are only n original variables)
-    units = np.array([x[i] for i in range(n)])
+    #return the values of the m original variables
+    units = np.array([x[i] for i in range(m)])
     return units
 
 
 if __name__ == "__main__":
-
-    #FIXME
-    #TODO: Ask about error in .pdf (4 & 5 (indexing))
-    #ask about returns and attirbutes (pivot row)
-    #store D as an attribute? -> better ways to construct D
-    #doesn't the simplex method find the a decrease in value?
-    #Do we always ignore the first column in the D matrix
-    #go over problem 6
 
     #problem 1
     '''
