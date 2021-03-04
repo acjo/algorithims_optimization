@@ -130,6 +130,18 @@ class SimplexSolver(object):
             optimal = self.D[0, 0]
             basic = {}
             non_basic = {}
+            mask = abs(self.D[0, :]) < 1e-9
+
+            for col, truth in enumerate(mask):
+                if col == 0:
+                    continue
+                elif truth:
+                    nonzero = self.D[1:, col] != 0
+                    row_index = np.argmax(nonzero) + 1
+                    basic[col - 1] = self.D[row_index, 0]
+
+                else:
+                    non_basic[col-1] = 0
 
             return optimal, basic, non_basic
 
@@ -147,21 +159,29 @@ def prob6(filename='productMix.npz'):
     """
     data = np.load(filename)
 
+    #extract data
     A = data['A']
     p = data['p']
     m = data['m']
     d = data['d']
 
-    I = np.eye(d.size)
+    n = d.size
+    I = np.eye(n)
+    #create new A matrix encapsulating all constraint values
     A = np.vstack((A, I))
-    b = np.concatenate((m , d))
+    #create new boundrie array
+    b = np.concatenate((m, d))
 
+    #solve simplex method (negating p) to turn into a min problem
     simplex = SimplexSolver(-p, A, b)
-    solution = simplex.solve()[1]
+    solution = simplex.solve()
 
-    return solution
+    #combine solution dictionaries
+    x = {**solution[1], **solution[2]}
 
-
+    #return the units for each variable (there are only n original variables)
+    units = np.array([x[i] for i in range(n)])
+    return units
 
 
 if __name__ == "__main__":
@@ -214,12 +234,13 @@ if __name__ == "__main__":
     b = np.array([2, 5, 7])
     A = np.array([[1, -1], [3, 1], [4, 3]])
     simplex = SimplexSolver(c, A, b)
-    simplex.solve()
+    sol = simplex.solve()
 
     D_actual = np.array([[-5.2, 0, 0, 0, 0.2, 0.6], [0.6, 0, 0, -1, 1.4, -0.8],
                          [1.6, -1, 0, 0, -0.6, 0.2], [0.2, 0, -1, 0, 0.8, -0.6]])
 
     print(np.allclose(simplex.D, D_actual))
+    print(sol)
     '''
 
     #problem 6
