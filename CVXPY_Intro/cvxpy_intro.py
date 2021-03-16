@@ -144,9 +144,12 @@ def prob5(A, b):
         The optimal value (float)
     """
 
+    #create variable
     x = cp.Variable(A.shape[1], nonneg=True)
+    #create the objective and constraints
     objective = cp.Minimize(cp.norm(A @ x - b, 2))
     constraints = [sum(x) == 1]
+    #solve and return solution
     prob = cp.Problem(objective, constraints)
     solution = prob.solve()
 
