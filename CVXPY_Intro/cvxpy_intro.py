@@ -61,7 +61,7 @@ def l1Min(A, b):
         The optimal value (float)
     """
     #create variable
-    x = cp.Variable(A.shape[1], nonneg=True)
+    x = cp.Variable(A.shape[1])
 
     #create objective and constraints
     objective = cp.Minimize(cp.norm(x, 1))

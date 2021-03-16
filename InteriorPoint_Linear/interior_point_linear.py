@@ -1,8 +1,8 @@
 # interior_point_linear.py
 """Volume 2: Interior Point for Linear Programs.
-<Name>
-<Class>
-<Date>
+Caelan Osman
+Math 323 Sec. 2
+March 16, 2021
 """
 
 import numpy as np
@@ -37,7 +37,6 @@ def starting_point(A, b, c):
     mu += dmu*np.ones_like(mu)
 
     return x, lam, mu
-
 # Use this linear program generator to test your interior point method.
 def randomLP(j,k):
     """Generate a linear program min c^T x s.t. Ax = b, x>=0.
@@ -80,7 +79,25 @@ def interiorPoint(A, b, c, niter=20, tol=1e-16, verbose=False):
         x ((n, ) ndarray): The optimal point.
         val (float): The minimum value of the objective function.
     """
-    raise NotImplementedError("Problems 1-4 Incomplete")
+    #vector valued function for lagrangian
+    def F(x, lamb, mu):
+        "designs the vector vaued function used the interiro point problem"
+        "Paramaters:
+             x ((n,) ndarray): variable in objective function
+             lambda ((m, ) ndarray): KKT condition lagrange multiplier
+             mu ((n, ) ndarray): KKT condition lagrange multiplier
+        Returns:
+             output ((2n +m, ) ndaraay) output of function
+        "
+        return np.array([A.T @ lamb + mu - c, A @ x - b, np.diag(mu) @ x])
+
+    #vector valued function for derivative of lagrangian
+    def DF(x, lamb, mu):
+
+    #search direction subtroutine
+    def direction(sigma=0.1):
+
+
 
 
 def leastAbsoluteDeviations(filename='simdata.txt'):
