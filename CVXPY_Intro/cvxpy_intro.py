@@ -40,8 +40,8 @@ def prob1():
     constraints = [A @ x <=3, B @ x <=1, C @ x >= 12]
 
     #create, solve, and return solution
-    problem = cp.Problem(objective, constraints)
-    solution = problem.solve()
+    prob = cp.Problem(objective, constraints)
+    solution = prob.solve()
     return x.value, solution
 
 
@@ -68,8 +68,8 @@ def l1Min(A, b):
     constraints = [A @ x == b]
 
     #solve and return solution and optimizer
-    problem = cp.Problem(objective, constraints)
-    solution = problem.solve()
+    prob = cp.Problem(objective, constraints)
+    solution = prob.solve()
 
     return x.value, solution
 
@@ -89,12 +89,15 @@ def prob3():
     c = np.array([4, 7, 6, 8, 8, 9])
 
     objective = cp.Minimize(c.T @ p)
-
-    ones = np.ones(6)
-
-    constraints = [ones @ p == 7, ones @ p == 2, ones @ p ==4, ones @ p <= 5, ones @ p <= 8]
-    problem = cp.Problem(objective, constraints)
-    solution = problem.solve()
+    A = np.array([[1, 1, 0, 0, 0, 0],
+                  [0, 0, 1, 1, 0, 0],
+                  [0, 0, 0, 0, 1, 1],
+                  [1, 0, 1, 0, 1, 0],
+                  [0, 1, 0, 1, 0, 1]])
+    b = np.array([7, 2, 4, 5, 8])
+    constraints = [A @ p == b]
+    prob = cp.Problem(objective, constraints)
+    solution = prob.solve()
 
     return p.value, solution
 
@@ -109,7 +112,21 @@ def prob4():
         The optimizer x (ndarray)
         The optimal value (float)
     """
-    raise NotImplementedError("Problem 4 Incomplete")
+
+    #create q
+    Q = np.array([[3, 2, 1],
+                  [2, 4, 2],
+                  [1, 2, 3]])
+
+    #create r
+    r = np.array([3, 0, 1])
+    #variable
+    x = cp.Variable(3)
+    #solve problem and return solution and optimizer
+    prob = cp.Problem(cp.Minimize(1/2. * cp.quad_form(x, Q) + r.T @ x))
+    solution = prob.solve()
+
+    return x.value, solution
 
 
 # Problem 5
@@ -126,7 +143,14 @@ def prob5(A, b):
         The optimizer x (ndarray)
         The optimal value (float)
     """
-    raise NotImplementedError("Problem 5 Incomplete")
+
+    x = cp.Variable(A.shape[1], nonneg=True)
+    objective = cp.Minimize(cp.norm(A @ x - b, 2))
+    constraints = [sum(x) == 1]
+    prob = cp.Problem(objective, constraints)
+    solution = prob.solve()
+
+    return x.value, solution
 
 
 # Problem 6
@@ -141,7 +165,35 @@ def prob6():
         The optimizer x (ndarray)
         The optimal value (float)
     """
-    raise NotImplementedError("Problem 6 Incomplete")
+    data = np.load("food.npy", allow_pickle=True)
+    #get price and serving columns
+    p = data[:, 0]
+    s = data[:, 1]
+
+    #go through and multiply each nutritional value by the servings
+    m, n = data.shape
+    for i in range(m):
+        data[i, 2:] *= s[i]
+
+    #get nutritional value columns
+    c = data[:, 2]
+    f = data[:, 3]
+    sug = data[:, 4]
+    calc = data[:, 5]
+    fib = data[:, 6]
+    pro = data[:, 7]
+    #set up variable and objective function
+    x = cp.Variable(m, nonneg=True)
+    objective = cp.Minimize(p.T @ x)
+    #set up constraints
+    constraints = [ c.T @ x <=2000, f.T @ x <=65, sug.T @ x <= 50,
+                    calc.T @x >= 1000, fib.T @ x >= 25, pro.T @ x >= 46]
+
+    #set up and solve problem
+    prob = cp.Problem(objective, constraints)
+    solution = prob.solve()
+
+    return x.value, solution
 
 if __name__ == "__main__":
 
@@ -157,3 +209,16 @@ if __name__ == "__main__":
 
     #problem 3
     #print(prob3())
+
+    #problem 4
+    #print(prob4())
+
+    #problem 5
+    '''
+    A = np.array([[1, 2, 1, 1],
+                  [0, 3, -2, -1]])
+    b = np.array([7, 4])
+    print(prob5(A, b))
+    '''
+    #problem 6
+    #print(prob6())
