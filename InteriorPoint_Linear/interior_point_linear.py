@@ -89,10 +89,14 @@ def interiorPoint(A, b, c, niter=20, tol=1e-16, verbose=False):
     zero_mm = np.zeros((m, m))
     #n x n identity amtrix
     I_nn = np.eye(n)
+    #define first two block matrices of DF
     block_1 = np.column_stack((zero_nn, A.T, I_nn))
     block_2 = np.column_stack((A, zero_mm, zero_mn))
-
+    #stack together
     block_1_2 = np.vstack((block_1, block_2))
+
+    #used for third block matrix
+    zero_nm = np.zeros((n, m))
 
     def F(x, lamb, mu):
         ''' defines the vector vaued function used the interior point problem
@@ -103,7 +107,10 @@ def interiorPoint(A, b, c, niter=20, tol=1e-16, verbose=False):
             Returns:
                 ((2n +m, ) ndaraay) output of function
         '''
-        return np.array([A.T @ lamb + mu - c, A @ x - b, np.diag(mu) @ x])
+        first = A.T @ lamb + mu - c
+        second = A @ x - b
+        third  = np.diag(mu) @ x
+        return np.concatenate((first, second, third))
 
     def block3(x, mu):
         '''Returns the last block row in the block matrix defining the
@@ -117,9 +124,6 @@ def interiorPoint(A, b, c, niter=20, tol=1e-16, verbose=False):
         '''
         M = np.diag(mu)
         X = np.diag(x)
-        m, n = A.shape
-        #n x m zero matrix
-        zero_nm = np.zeros((n, m))
         #return bottom block
         return np.column_stack((M, zero_nm, X))
 
@@ -133,60 +137,66 @@ def interiorPoint(A, b, c, niter=20, tol=1e-16, verbose=False):
                 delta_lambda ((m, ) ndarray) delta lambda
                 delta_mu ((n, ) ndarray) delta mu
         '''
-        block_3 = block3(x, mu)
-        DF = np.vstack((block_1_2, block_3))
-
+        #get DF matrix
+        DF = np.vstack((block_1_2, block3(x, mu)))
+        #get centering vector
         center = np.concatenate((np.zeros(n), np.zeros(m), sigma*nu*np.ones(n)))
-        print(F(x, lamb, mu).size)
+
+        #solve the system and return delta_x, delta_lambda, delta_mu as the directions
         solution = la.lu_solve(la.lu_factor(DF), -F(x, lamb, mu) + center)
+        return solution[:n], solution[n : n+m], solution[n+m:]
 
-        delta_x, delta_lamb, delta_mu = solution[:n], solution[n:n+m], solution[n+m:]
-
-        return delta_x, delta_lamb, delta_mu
 
     def step_size(x, delta_x, mu, delta_mu):
         ''' Computes the step length for each iteration:
             Paramaters:
                 x ((n, ) ndarray) current x
-                d_x ((n, ) ndarray) change in current x
+                delta_x ((n, ) ndarray) change in current x
                 mu ((n, ) ndarray) current lagrange mulgiplier
-                d_mu ((n, ) ndarray) change incurrent lagrange mulgiplier
+                delta_mu ((n, ) ndarray) change incurrent lagrange mulgiplier
             Returns:
                 alpha (float) step length for x
                 delta (float) step length for mu
         '''
+        #get mask on delta_x and delta_mu
         mask_1 = delta_x < 0
         mask_2 = delta_mu < 0
 
-        possible_deltas = -1/x[mask_1] * delta_x[mask_1]
-        possible_alphas = -1/mu[mask_2] * delta_mu[mask_2]
+        #get arrays of possible alphas and deltas
+        possible_alphas = -mu[mask_2] / delta_mu[mask_2]
+        possible_deltas = -x[mask_1] / delta_x[mask_1]
 
-        if possible_deltas.size == 0:
-            delta = 1
-        else:
-            delta = np.min(possible_deltas)
+        #find alpha
         if possible_alphas.size == 0:
             alpha = 1
         else:
             alpha = np.min(possible_alphas)
+        #find delta
+        if possible_deltas.size == 0:
+            delta = 1
+        else:
+            delta = np.min(possible_deltas)
 
-        return delta, alpha
+
+        return alpha, delta
 
     #get intial point
-    x, lam, mu = starting_point(A, b, c)
+    x, lamb, mu = starting_point(A, b, c)
     i = 0
     nu = np.inner(x, mu) / n
     if abs(nu) < tol:
         return x, np.inner(c, x)
+
+    #iterate through
     while i < niter:
         #get directions
-        direct_x, direct_lam, direct_mu = direction(x, lam, mu, nu, sigma=0.1)
+        direction_x, direction_lamb, direction_mu = direction(x, lamb, mu, nu, sigma=0.1)
         #get step sizes
-        alph, delt = step_size(x, direct_x, mu, direct_mu)
+        alpha, delta = step_size(x, direction_x, mu, direction_mu)
         #get new x, lambda, and mu values
-        x += delt * direct_x
-        lam += alph * direct_lam
-        mu += alph * direct_mu
+        x += delta * direction_x
+        lamb += alpha * direction_lamb
+        mu += alpha * direction_mu
         #update iteration count
         i += 1
         #get new duality measure
@@ -195,15 +205,69 @@ def interiorPoint(A, b, c, niter=20, tol=1e-16, verbose=False):
         if abs(nu) < tol:
             return x, np.inner(c, x)
 
+    return x, np.inner(c, x)
+
 
 def leastAbsoluteDeviations(filename='simdata.txt'):
     """Generate and show the plot requested in the lab."""
-    raise NotImplementedError("Problem 5 Incomplete")
+    #convert text file to numpy array of ys and xs
+    with open(filename) as infile:
+        data = infile.readlines()
+    data = [line.strip().split(' ') for line in data]
+    data = np.array(data).astype(np.float64)
+
+    #initialize c and y vector
+    m = data.shape[0]
+    n = data.shape[1] - 1
+    c = np.zeros(3*m + 2*(n + 1))
+    c[:m] = 1
+    y = np.empty(2*m)
+    y[::2] = -data[:, 0]
+    y[1::2] = data[:, 0]
+    x = data[:, 1:]
+
+    #set up A matrix
+    A = np.ones((2*m, 3*m + 2*(n + 1)))
+    A[::2, :m] = np.eye(m)
+    A[1::2, :m] = np.eye(m)
+    A[::2, m:m+n] = -x
+    A[1::2, m:m+n] = x
+    A[::2, m+n:m+2*n] = x
+    A[1::2, m+n:m+2*n] = -x
+    A[::2, m+2*n] = -1
+    A[1::2, m+2*n+1] = -1
+    A[:, m+2*n+2:] = -np.eye(2*m, 2*m)
+
+    #get interior point solution
+    sol = interiorPoint(A, y, c, niter=15)[0]
+    beta = sol[m:m+n] - sol[m+n:m+2*n]
+    b = sol[m+2*n] - sol[m+2*n+1]
+
+    #use linear regression
+    slope, intercept = linregress(data[:,1], data[:,0])[:2]
+    domain = np.linspace(0, 10, 10)
+    plt.plot(domain, domain*slope + intercept, 'm--', label='Linear Regression')
+    plt.plot(data[:, 1], data[:, 0], 'bx', label='Data')
+    plt.plot(data[:, 1], data[:, 1] * beta + b, 'c-.', label='Least Absolute Deviation')
+    plt.legend(loc='best')
+    plt.show()
 
 
 if __name__ == "__main__":
 
+    #test for problem 1 through 4
+    '''
     j, k = 7, 5
-    A, b, c, x = randomLP(j, k)
-    point, value = interiorPoint(A, b, c)
-    print(np.allclose(x, point[:k]))
+    A1, b1, c1, x1 = randomLP(j, k)
+    point, value = interiorPoint(A1, b1, c1)
+    print(np.allclose(x1, point[:k]))
+    '''
+    '''
+    j, k = 36, 24
+    A1, b1, c1, x1 = randomLP(j, k)
+    point, value = interiorPoint(A1, b1, c1)
+    print(np.allclose(x1, point[:k]))
+    '''
+
+    #test for problem 5
+    #leastAbsoluteDeviations()
