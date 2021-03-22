@@ -82,7 +82,8 @@ def interiorPoint(A, b, c, niter=20, tol=1e-16, verbose=False):
     """
     m, n = A.shape
     #n x n zero matrix
-    zero_nn = np.zeros((n, n))
+    zero_nn = np.zeros((n, n)
+    )
     #m x n zero matrix
     zero_mn = np.zeros((m, n))
     #m x m zero matrix
@@ -144,7 +145,7 @@ def interiorPoint(A, b, c, niter=20, tol=1e-16, verbose=False):
 
         #solve the system and return delta_x, delta_lambda, delta_mu as the directions
         solution = la.lu_solve(la.lu_factor(DF), -F(x, lamb, mu) + center)
-        return solution[:n], solution[n : n+m], solution[n+m:]
+        return solution[:n], solution[n:n+m], solution[n+m:]
 
 
     def step_size(x, delta_x, mu, delta_mu):
@@ -170,25 +171,21 @@ def interiorPoint(A, b, c, niter=20, tol=1e-16, verbose=False):
         if possible_alphas.size == 0:
             alpha = 1
         else:
-            alpha = np.min(possible_alphas)
+            alpha = 0.95 * np.min(possible_alphas)
         #find delta
         if possible_deltas.size == 0:
             delta = 1
         else:
-            delta = np.min(possible_deltas)
+            delta = 0.95 * np.min(possible_deltas)
 
 
         return alpha, delta
 
     #get intial point
     x, lamb, mu = starting_point(A, b, c)
-    i = 0
     nu = np.inner(x, mu) / n
-    if abs(nu) < tol:
-        return x, np.inner(c, x)
-
-    #iterate through
-    while i < niter:
+    #iterate at most niter times
+    for _ in range(niter):
         #get directions
         direction_x, direction_lamb, direction_mu = direction(x, lamb, mu, nu, sigma=0.1)
         #get step sizes
@@ -197,13 +194,11 @@ def interiorPoint(A, b, c, niter=20, tol=1e-16, verbose=False):
         x += delta * direction_x
         lamb += alpha * direction_lamb
         mu += alpha * direction_mu
-        #update iteration count
-        i += 1
         #get new duality measure
         nu = np.inner(x, mu) / n
         #check convergence
         if abs(nu) < tol:
-            return x, np.inner(c, x)
+            break
 
     return x, np.inner(c, x)
 
@@ -261,8 +256,7 @@ if __name__ == "__main__":
     A1, b1, c1, x1 = randomLP(j, k)
     point, value = interiorPoint(A1, b1, c1)
     print(np.allclose(x1, point[:k]))
-    '''
-    '''
+
     j, k = 36, 24
     A1, b1, c1, x1 = randomLP(j, k)
     point, value = interiorPoint(A1, b1, c1)
