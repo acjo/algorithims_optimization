@@ -5,11 +5,12 @@ Math 323 Sec. 2
 March 23, 2021
 """
 
-import cvxpy as cp
+#import cvxpy as cp
 import numpy as np
 from scipy import linalg as la
 from scipy.sparse import spdiags
 from matplotlib import pyplot as plt
+from cvxopt import matrix, solvers
 from mpl_toolkits.mplot3d import axes3d
 
 def startingPoint(G, c, A, b, guess):
@@ -251,16 +252,33 @@ def portfolio(filename="portfolio.txt"):
         content = infile.readlines()
 
     #year and stock vectors
-    years = np.array([line.strip().split(' ')[0] for line in content]).astype(np.float64)
     stock = np.array([line.strip().split(' ')[1:] for line in content]).astype(np.float64)
 
     #get return rates mu_i
-    rates = np.array([np.mean(row) for row in stock])
+    rates = np.mean(stock, axis=0)
+    #rates = np.array([np.mean(row) for row in stock])
 
     #get the covariance matrix
-    Q = np.cov(stock)
+    Q = np.cov(stock.T)
 
     #calculate the optimal portfolio with short selling
+    p = np.zeros(Q.shape[0])
+    G = matrix(np.zeros((p.size, p.size)))
+    h = matrix(np.zeros_like(p))
+    #used for without shortselling
+    G1 = matrix(-np.eye(p.size))
+
+    A = matrix(np.ones_like(p), (1, p.size))
+    b = matrix(1.0)
+    Q = 2*matrix(Q)
+    p = matrix(p)
+
+    with_ss = solvers.qp(Q, p, G, h, A, b)
+    #without short selling
+    #have to use new G matrix
+    witho_ss = solvers.qp(Q, p, G1, h, A, b)
+
+    '''
     x = cp.Variable(Q.shape[1])
     objective = cp.Minimize(0.5 * cp.quad_form(x, Q))
     constraints = [sum(x) == 1, x @ rates == R]
@@ -275,8 +293,17 @@ def portfolio(filename="portfolio.txt"):
     prob = cp.Problem(objective, constraints)
     solution = prob.solve()
     with_oss = x.value
+    '''
 
-    return with_ss, with_oss
+    #return with_ss, with_oss
+    return np.array(with_ss['x']), np.array(witho_ss['x']) 
+
+
+
+
+
+
+
 
 
 
@@ -311,7 +338,7 @@ if __name__ == "__main__":
     #problm 3
     circus(n=15)
 
-    print(portfolio()[0])
-    print()
-    print(portfolio()[1])
     '''
+    #print(portfolio()[0])
+    #print()
+    #print(portfolio()[1])
