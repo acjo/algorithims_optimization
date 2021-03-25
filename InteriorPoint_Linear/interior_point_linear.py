@@ -106,7 +106,7 @@ def interiorPoint(A, b, c, niter=20, tol=1e-16, verbose=False):
                 lambda ((m, ) ndarray): KKT condition lagrange multiplier
                 mu ((n, ) ndarray): KKT condition lagrange multiplier
             Returns:
-                ((2n +m, ) ndaraay) output of function
+                ((2n +m, ) ndaraay): output of function
         '''
         first = A.T @ lamb + mu - c
         second = A @ x - b
@@ -120,7 +120,7 @@ def interiorPoint(A, b, c, niter=20, tol=1e-16, verbose=False):
                 x ((n,) ndarray): variable in objective function
                 mu ((n, ) ndarray): KKT condition lagrange multiplier
             Returns:
-                ((n,n2n+m) ndaraay) output of function
+                ((n,n2n+m) ndaraay): output of function
 
         '''
         M = np.diag(mu)
@@ -128,15 +128,18 @@ def interiorPoint(A, b, c, niter=20, tol=1e-16, verbose=False):
         #return bottom block
         return np.column_stack((M, zero_nm, X))
 
-    #search direction subtroutine
     def direction(x, lamb, mu, nu, sigma=0.1):
         '''searching direction subroutine
            Paramaters:
-               sigma (float) defailting to 0.1 used for scaling
+               x ((n, ) ndarray): variable in objective function
+               lamb ((m, ) ndarray): slack variable in KKT
+               mu ((n, ) ndarray): lagrange multipliers
+               nu (float): duality measure
+               sigma (float): defailting to 0.1 used for scaling
             Returns:
-                delta_x ((n, ) ndarray) delta x
-                delta_lambda ((m, ) ndarray) delta lambda
-                delta_mu ((n, ) ndarray) delta mu
+                delta_x ((n, ) ndarray): delta x
+                delta_lambda ((m, ) ndarray): delta lambda
+                delta_mu ((n, ) ndarray): delta mu
         '''
         #get DF matrix
         DF = np.vstack((block_1_2, block3(x, mu)))
@@ -151,13 +154,13 @@ def interiorPoint(A, b, c, niter=20, tol=1e-16, verbose=False):
     def step_size(x, delta_x, mu, delta_mu):
         ''' Computes the step length for each iteration:
             Paramaters:
-                x ((n, ) ndarray) current x
-                delta_x ((n, ) ndarray) change in current x
-                mu ((n, ) ndarray) current lagrange mulgiplier
-                delta_mu ((n, ) ndarray) change incurrent lagrange mulgiplier
+                x ((n, ) ndarray): current x
+                delta_x ((n, ) ndarray): change in current x
+                mu ((n, ) ndarray): current lagrange mulgiplier
+                delta_mu ((n, ) ndarray): change incurrent lagrange mulgiplier
             Returns:
-                alpha (float) step length for x
-                delta (float) step length for mu
+                alpha (float): step length for x
+                delta (float): step length for mu
         '''
         #get mask on delta_x and delta_mu
         mask_1 = delta_x < 0
