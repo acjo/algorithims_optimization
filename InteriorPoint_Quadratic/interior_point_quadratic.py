@@ -261,22 +261,26 @@ def portfolio(filename="portfolio.txt"):
     #get the covariance matrix
     Q = np.cov(stock.T)
 
+    n = Q.shape[0]
     #calculate the optimal portfolio with short selling
-    p = np.zeros(Q.shape[0])
-    G = matrix(np.zeros((p.size, p.size)))
+    p = np.zeros(n)
+
+    A = np.ones((2, n))
+    A[1:, :] = rates
+    A = matrix(A)
+    b = matrix([1, R])
+
     h = matrix(np.zeros_like(p))
     #used for without shortselling
-    G1 = matrix(-np.eye(p.size))
-
-    A = matrix(np.ones_like(p), (1, p.size))
-    b = matrix(1.0)
-    Q = 2*matrix(Q)
+    G = matrix(-np.eye(n))
+    Q = matrix(Q)
     p = matrix(p)
 
-    with_ss = solvers.qp(Q, p, G, h, A, b)
+    solvers.options['show_progress'] = False
+    with_ss = solvers.qp(Q, p, None, None, A, b)
     #without short selling
     #have to use new G matrix
-    witho_ss = solvers.qp(Q, p, G1, h, A, b)
+    witho_ss = solvers.qp(Q, p, G, h, A, b)
 
     '''
     x = cp.Variable(Q.shape[1])
@@ -296,15 +300,7 @@ def portfolio(filename="portfolio.txt"):
     '''
 
     #return with_ss, with_oss
-    return np.array(with_ss['x']), np.array(witho_ss['x']) 
-
-
-
-
-
-
-
-
+    return np.array(with_ss['x']).flatten(), np.array(witho_ss['x']).flatten()
 
 
 if __name__ == "__main__":
@@ -338,7 +334,8 @@ if __name__ == "__main__":
     #problm 3
     circus(n=15)
 
+    #problem 4
+    print(portfolio()[0])
+    print()
+    print(portfolio()[1])
     '''
-    #print(portfolio()[0])
-    #print()
-    #print(portfolio()[1])
