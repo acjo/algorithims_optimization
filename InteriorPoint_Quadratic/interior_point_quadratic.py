@@ -307,11 +307,10 @@ if __name__ == "__main__":
 
     print(np.allclose(solution[0], actual))
     print(np.allclose(solution[1], value))
-    '''
 
     #problm 3
-    #circus(n=15)
-    '''
+    circus(n=15)
+
     print(portfolio()[0])
     print()
     print(portfolio()[1])
