@@ -20,27 +20,26 @@ def calc_stopping(N):
         (int): The index of the maximum expected value.
     """
 
-    #initalize empty list and append 0 to it
-    expected_vals = []
-    expected_vals.append(0)
     #iterate top down
+    #initalize max_val to 0 and index to N
+    max_val = 0
+    index = N
     for num in range(N, 0, -1):
         if num == N:
             V_prev = 0
         else:
-            #find max value and append it to expected values
+            #find current val
             V_cur = max(V_prev *  num/ (num + 1) + (1 / N), V_prev)
-            expected_vals.append(V_cur)
+            #update max_val if needed
+            if V_cur > max_val:
+                max_val = V_cur
+                index = num
+
             #set previous to current
             V_prev = V_cur
 
-    #reverse order
-    expected_vals = expected_vals[::-1]
-    #get the max index
-    index = np.argmax(expected_vals)
-
-    #return expected val index and the index (+1)
-    return expected_vals[index], index+1
+    #return expected val index and the index
+    return max_val, index
 
 # Problem 2
 def graph_stopping_times(M):
@@ -59,7 +58,6 @@ def graph_stopping_times(M):
     stopping_percentages = []
     probabilities = []
     #initialize optimal value
-    optimal = 0
     for N in domain:
         #calculate stopping point
         val, t = calc_stopping(N)
@@ -68,7 +66,6 @@ def graph_stopping_times(M):
         #append probabilities
         probabilities.append(val)
         #increment optimal value
-        optimal += val
 
     #plot
     plt.plot(domain, stopping_percentages, 'b--', label='Stopping Percentage')
@@ -77,7 +74,7 @@ def graph_stopping_times(M):
     plt.show()
 
     #return optimal stopping percentage
-    return optimal / M
+    return t / M
 
 # Problem 3
 def get_consumption(N, u=lambda x: np.sqrt(x)):
@@ -128,9 +125,11 @@ def eat_cake(T, N, B, u=lambda x: np.sqrt(x)):
     P = np.zeros_like(A)
     #populate value function  matrix
     for row in range(N+1):
-        possible_values = [w[row] - w[j] for j in range(N+1)]
+        possible_values = [u(w[row]-w[j]) for j in range(N+1) if j <=row]
+        #possible_values = [w[row] - w[j] for j in range(N+1)]
         index = np.argmax(possible_values)
-        A[row, T] = u(possible_values[index])
+        #A[row, T] = u(possible_values[index])
+        A[row, T] = possible_values[index]
         P[row, T] = possible_values[index]
 
     #we now finish populating the value function and policy matrices
@@ -171,26 +170,26 @@ def find_policy(T, N, B, u=np.sqrt):
     #opupulate policy vector
     optimal[0] = P[N, 0]
     #get intial slices to subtract
-    subtract = int(slice_size / P[N, 0])
+    subtract = int(round(slice_size / optimal[0]))
     for i in range(1, T+1):
         #get new optimal
         optimal[i] = P[N-subtract, i]
         #update subtraction constan
-        subtract += int(slice_size / optimal[i])
+        subtract += int(round(slice_size / optimal[i]))
 
     return optimal
 
 if __name__ == "__main__":
 
-    #TODO: Ask about returning index
-    #TODO: Ask about stopping percentage (optimal values don't match in prob2)
-    #TODO: Ask about 18.4 (isn't u always increasing?)
-    #TODO: Ask about rounding and policy
-    #TODO: Ask about consumption matrix
 
     #prob1
-    #print(np.allclose(calc_stopping(4)[0], 0.4583))
-    #print(calc_stopping(4) == 1)
+    '''
+    stopping = calc_stopping(4)
+    print('expected:', stopping[0])
+    print('probability', stopping[1])
+    print(np.allclose(stopping[0], 0.4583333))
+    print(stopping[1] == 1)
+    '''
 
     #prob 2
     '''
