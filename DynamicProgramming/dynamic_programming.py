@@ -42,7 +42,6 @@ def calc_stopping(N):
     #return expected val index and the index (+1)
     return expected_vals[index], index+1
 
-
 # Problem 2
 def graph_stopping_times(M):
     """Graph the optimal stopping percentage of candidates to interview and
@@ -103,7 +102,6 @@ def get_consumption(N, u=lambda x: np.sqrt(x)):
             C[row, col] = u(w[row] - w[col])
 
     return C
-
 
 # Problems 4-6
 def eat_cake(T, N, B, u=lambda x: np.sqrt(x)):
@@ -185,11 +183,11 @@ def find_policy(T, N, B, u=np.sqrt):
 if __name__ == "__main__":
 
     #TODO: Ask about returning index
-    #TODO: Ask about stopping percentage
-    #TODO: Ask about 18.4 (isn't u always increasing)
-    #TODO: Ask about np.sqrt in prob7
+    #TODO: Ask about stopping percentage (optimal values don't match in prob2)
+    #TODO: Ask about 18.4 (isn't u always increasing?)
     #TODO: Ask about rounding and policy
     #TODO: Ask about consumption matrix
+
     #prob1
     #print(np.allclose(calc_stopping(4)[0], 0.4583))
     #print(calc_stopping(4) == 1)
@@ -202,7 +200,6 @@ if __name__ == "__main__":
     '''
 
     #prob3
-
     '''
     consume = get_consumption(4, u=lambda x: x)
     print(consume)
@@ -224,4 +221,5 @@ if __name__ == "__main__":
     print(p)
     '''
 
+    #prob7
     #print(find_policy(3, 4, 0.9, u=np.sqrt))
