@@ -1,8 +1,8 @@
 # policy_iteration.py
 """Volume 2: Policy Function Iteration.
-<Name>
-<Class>
-<Date>
+Caelan Osman
+Math 323 Sec. 2
+April 3, 2021
 """
 
 # Intialize P for test example

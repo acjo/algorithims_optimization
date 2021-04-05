@@ -56,7 +56,7 @@ def haar_coefficients( a, x ):
     return evals
 
 
-def w_j_basis(j, k, father=False):
+def w_j_basis(j, k, f=False):
     ''' Computes the father/mother/daughter basis of W_j
         Paramaters:
         j: int
@@ -65,7 +65,7 @@ def w_j_basis(j, k, father=False):
         returns:
         function object (father/mother daughter)
     '''
-    if father:
+    if f:
         def father(x):
             ''' The father function
             '''
