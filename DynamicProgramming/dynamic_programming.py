@@ -123,15 +123,9 @@ def eat_cake(T, N, B, u=lambda x: np.sqrt(x)):
     #initialize value function matrix and Policy matrix
     A = np.zeros((N+1, T+1))
     P = np.zeros_like(A)
-    #populate value function  matrix
-    for row in range(N+1):
-        possible_values = [u(w[row]-w[j]) for j in range(N+1) if j <=row]
-        #possible_values = [w[row] - w[j] for j in range(N+1)]
-        index = np.argmax(possible_values)
-        #A[row, T] = u(possible_values[index])
-        A[row, T] = possible_values[index]
-        P[row, T] = possible_values[index]
-
+    #set last column of A and P matrix
+    A[:, T] = u(w)
+    P[:, T] = w
     #we now finish populating the value function and policy matrices
     for t in range(T-1, -1, -1):
         #creat current value matrix
@@ -164,18 +158,18 @@ def find_policy(T, N, B, u=np.sqrt):
     #compute slice size
     slice_size = 1/N
     #compute value and policy matrices
-    A, P = eat_cake(T, N, B, u)
+    A, P = eat_cake(T, N, B, u=u)
     #initialize optimal policy vector
     optimal = np.zeros(T+1)
-    #opupulate policy vector
+    #populate policy vector
     optimal[0] = P[N, 0]
     #get intial slices to subtract
-    subtract = int(round(slice_size / optimal[0]))
+    subtract = int(round(optimal[0] / slice_size))
     for i in range(1, T+1):
         #get new optimal
         optimal[i] = P[N-subtract, i]
         #update subtraction constan
-        subtract += int(round(slice_size / optimal[i]))
+        subtract += int(round(optimal[i] / slice_size))
 
     return optimal
 
@@ -214,11 +208,14 @@ if __name__ == "__main__":
 
     #prob4, 5, 6
     '''
-    a, p = eat_cake(3, 4, 0.9, u=lambda x: np.sqrt(x))
+    a, p = eat_cake(4, 5, 0.9, u= lambda x: 3 - 3/(1+x))
     print(a)
     print()
     print(p)
     '''
 
     #prob7
-    #print(find_policy(3, 4, 0.9, u=np.sqrt))
+    '''
+    print()
+    print(find_policy(4, 5, 0.9, u=lambda x: 3 - 3/(1+x)))
+    '''
