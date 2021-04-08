@@ -11,6 +11,12 @@ April 3, 2021
 #Right = 2
 #Up= 3
 
+import numpy as np
+import gym
+from gym import wrappers
+from scipy import linalg as la
+
+
 P = {s : {a: [] for a in range(4)} for s in range(4)}
 P[0][0] = [(0, 0, 0, False)]
 P[0][1] = [(1, 2, -1, False)]
@@ -32,7 +38,7 @@ P[3][3] = [(0, 0, 0, True)]
 
 
 # Problem 1
-def value_iteration(P, nS ,nA, beta = 1, tol=1e-8, maxiter=3000):
+def value_iteration(P, nS, nA, beta = 1, tol=1e-8, maxiter=3000):
     """Perform Value Iteration according to the Bellman optimality principle.
 
     Parameters:
@@ -48,7 +54,24 @@ def value_iteration(P, nS ,nA, beta = 1, tol=1e-8, maxiter=3000):
        v (ndarray): The discrete values for the true value function.
        n (int): number of iterations
     """
-    raise NotImplementedError("Problem 1 Incomplete")
+    #initialize v0
+    v0 = np.zeros(nA)
+    #iterate through max iterations
+    for i in range(maxiter):
+        #copy v1
+        v1 = v0.copy()
+        #iterate through all states
+        for s in range(nS):
+            #get next iteration
+            v1[s] = np.max(np.sum([[p * (u + beta * v0[s_]) for p, s_, u, _ in P[s][a]]
+                                   for a in range(nA)], axis=1))
+        #check convergence
+        if la.norm(v0 - v1, ord=2) < tol:
+            break
+        #reassign v1 to be v0
+        v0 = v1
+
+    return v1, i + 1
 
 # Problem 2
 def extract_policy(P, nS, nA, v, beta = 1.0):
@@ -65,7 +88,17 @@ def extract_policy(P, nS, nA, v, beta = 1.0):
     Returns:
         policy (ndarray): which direction to move in from each square.
     """
-    raise NotImplementedError("Problem 2 Incomplete")
+
+    pi = np.zeros(nS)
+    #we now extract the policy
+    for s in range(nS):
+        #create temp vector
+        temp = np.sum([[p * (u + beta * v[s_]) for p, s_, u, _ in P[s][a]]
+                                   for a in range(nA)], axis=1)
+        #set index corresponding to max value as pi
+        pi[s] = np.argmax(temp)
+
+    return pi
 
 # Problem 3
 def compute_policy_v(P, nS, nA, policy, beta=1.0, tol=1e-8):
@@ -83,7 +116,21 @@ def compute_policy_v(P, nS, nA, policy, beta=1.0, tol=1e-8):
     Returns:
         v (ndarray): The discrete values for the true value function.
     """
-    raise NotImplementedError("Problem 3 Incomplete")
+    #initiilzise vectors
+    v0 = np.zeros(nA)
+    v1 = np.ones(nA)
+
+    while la.norm(v0-v1, ord=2) >= tol:
+        #copy iteration
+        v1 = v0.copy()
+        #create next iteration
+        for s in range(nS):
+           v1 = np.sum([[p * (u + beta * v0[s_]) for p, s_, u, _ in P[s][pol]]
+                         for pol in policy], axis=1)
+        #reassign
+        v0 = v1
+
+    return v
 
 # Problem 4
 def policy_iteration(P, nS, nA, beta=1, tol=1e-8, maxiter=200):
@@ -103,7 +150,28 @@ def policy_iteration(P, nS, nA, beta=1, tol=1e-8, maxiter=200):
         policy (ndarray): which direction to move in each square.
         n (int): number of iterations
     """
-    raise NotImplementedError("Problem 4 Incomplete")
+
+    #intialize pi
+    #FIXME: what is the starting point?
+    pi0 = np.zeros(nS)
+
+    #iterate until maxiter
+    for k in range(maxiter):
+        #compute new value vector
+        v1 = compute_policy_v(P, nS, nA, pi0, beta=beta, tol=tol)
+        #extract policy
+        pi1 = extract_policy(P, nS, nA, v1, beta=beta)
+
+        #check convergence
+        if la.norm(pi0 - pi1, ord=2) < tol:
+            break
+
+        pi0 = pi1.copy()
+
+    return v1, pi1, k+1
+
+
+
 
 # Problem 5 and 6
 def frozen_lake(basic_case=True, M=1000, render=False):
@@ -137,3 +205,56 @@ def run_simulation(env, policy, render=True, beta = 1.0):
     total reward (float): Value of the total reward received under policy.
     """
     raise NotImplementedError("Problem 6 Incomplete")
+
+
+
+if __name__ == "__main__":
+
+    #question 1
+    '''
+            #set temporary vector
+            temp = np.zeros(nA)
+            #iterate through all actions for a given state
+            for a in range(nA):
+                #grab the state info corresponding to action and state
+                #TODO: find out if this inner for-loop is necessary
+                for tuple_info in P[s][a]:
+                    p, s_, u, _ = tuple_info
+                    #update the temp vec
+                    temp[a] += (p * (u + beta * v0[s_]))
+            #set corresponding element to be the max
+            v1[s] = np.max(temp)
+    solution = np.array([1, 1, 1, 0])
+    num_iters = 3
+    v, i = value_iteration(P, 4 ,4, beta = 1, tol=1e-8, maxiter=3000)
+    print(np.allclose(v, solution ))
+    print(i == num_iters)
+    '''
+
+
+    #question 2
+    '''
+        temp = np.zeros(nA)
+        for a in range(nA):
+            for tuple_info in P[s][a]:
+                p, s_, u, t = tuple_info
+                #update the temp vec
+                temp[a] += (p * (u + beta * v[s_]))
+
+        pi[s] = np.argmax(temp)
+    policy = np.array([2, 1, 2, 0])
+    c = extract_policy(P, 4, 4, v, beta = 1.0)
+    print(np.allclose(policy, c))
+    '''
+
+    #question 3
+    '''
+            for pol in policy:
+                for p, s_, u, _ in P[s][pol]:
+                    v1[s] += (p * (u + beta * v0[s_]))
+    print(np.allclose(compute_policy_v(P, 4, 4, policy, beta=1.0, tol=1e-8), solution))
+    '''
+
+
+    #question 4
+    #print(policy_iteration(P, 4, 4, beta=1, tol=1e-8, maxiter=200))
