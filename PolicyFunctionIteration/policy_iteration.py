@@ -55,7 +55,7 @@ def value_iteration(P, nS, nA, beta = 1, tol=1e-8, maxiter=3000):
        n (int): number of iterations
     """
     #initialize v0
-    v0 = np.zeros(nA)
+    v0 = np.zeros(nS)
     #iterate through max iterations
     for i in range(maxiter):
         #copy v1
@@ -117,20 +117,23 @@ def compute_policy_v(P, nS, nA, policy, beta=1.0, tol=1e-8):
         v (ndarray): The discrete values for the true value function.
     """
     #initiilzise vectors
-    v0 = np.zeros(nA)
-    v1 = np.ones(nA)
+    v0 = np.ones(nS)
+    v1 = np.zeros(nS)
 
-    while la.norm(v0-v1, ord=2) >= tol:
+    iterate = True
+    while iterate:
         #copy iteration
-        v1 = v0.copy()
         #create next iteration
         for s in range(nS):
            v1 = np.sum([[p * (u + beta * v0[s_]) for p, s_, u, _ in P[s][pol]]
                          for pol in policy], axis=1)
-        #reassign
-        v0 = v1
 
-    return v
+        if la.norm(v0-v1, ord=2) < tol:
+            break
+
+        v0 = v1.copy()
+
+    return v1
 
 # Problem 4
 def policy_iteration(P, nS, nA, beta=1, tol=1e-8, maxiter=200):
@@ -224,13 +227,13 @@ if __name__ == "__main__":
                     temp[a] += (p * (u + beta * v0[s_]))
             #set corresponding element to be the max
             v1[s] = np.max(temp)
+    '''
+
     solution = np.array([1, 1, 1, 0])
     num_iters = 3
     v, i = value_iteration(P, 4 ,4, beta = 1, tol=1e-8, maxiter=3000)
     print(np.allclose(v, solution ))
     print(i == num_iters)
-    '''
-
 
     #question 2
     '''
@@ -242,18 +245,20 @@ if __name__ == "__main__":
                 temp[a] += (p * (u + beta * v[s_]))
 
         pi[s] = np.argmax(temp)
+    '''
     policy = np.array([2, 1, 2, 0])
     c = extract_policy(P, 4, 4, v, beta = 1.0)
     print(np.allclose(policy, c))
-    '''
 
     #question 3
     '''
             for pol in policy:
                 for p, s_, u, _ in P[s][pol]:
                     v1[s] += (p * (u + beta * v0[s_]))
-    print(np.allclose(compute_policy_v(P, 4, 4, policy, beta=1.0, tol=1e-8), solution))
     '''
+    my_policy = compute_policy_v(P, 4, 4, policy, beta=1.0, tol=1e-8)
+    print(my_policy)
+    #print(np.allclose(compute_policy_v(P, 4, 4, policy, beta=1.0, tol=1e-8), solution))
 
 
     #question 4
