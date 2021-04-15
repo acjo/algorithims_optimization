@@ -36,7 +36,6 @@ P[3][2] = [(0, 0, 0, True)]
 P[3][3] = [(0, 0, 0, True)]
 
 
-
 # Problem 1
 def value_iteration(P, nS, nA, beta = 1, tol=1e-8, maxiter=3000):
     """Perform Value Iteration according to the Bellman optimality principle.
@@ -56,22 +55,32 @@ def value_iteration(P, nS, nA, beta = 1, tol=1e-8, maxiter=3000):
     """
     #initialize v0
     v0 = np.zeros(nS)
+    v1 = np.zeros(nS)
     #iterate through max iterations
     for i in range(maxiter):
-        #copy v1
-        v1 = v0.copy()
-        #iterate through all states
+        #iterate through states
         for s in range(nS):
-            #get next iteration
-            v1[s] = np.max(np.sum([[p * (u + beta * v0[s_]) for p, s_, u, _ in P[s][a]]
-                                   for a in range(nA)], axis=1))
+            #set temporary vector
+            sa_vector = np.zeros(nA)
+            #iterate through actions
+            for a in range(nA):
+                for tuple_info in P[s][a]:
+                    p, s_, u, _ = tuple_info
+                    #compute porbablity
+                    sa_vector[a] += (p * (u + beta * v0[s_]))
+
+            #get max value
+            v1[s] = np.max(sa_vector)
+
         #check convergence
         if la.norm(v0 - v1, ord=2) < tol:
             break
-        #reassign v1 to be v0
-        v0 = v1
+
+        #update
+        v0 = v1.copy()
 
     return v1, i + 1
+
 
 # Problem 2
 def extract_policy(P, nS, nA, v, beta = 1.0):
@@ -122,15 +131,26 @@ def compute_policy_v(P, nS, nA, policy, beta=1.0, tol=1e-8):
 
     iterate = True
     while iterate:
-        #copy iteration
-        #create next iteration
+        #iterate through states
         for s in range(nS):
-           v1 = np.sum([[p * (u + beta * v0[s_]) for p, s_, u, _ in P[s][pol]]
-                         for pol in policy], axis=1)
+            #set temporary vector
+            temp = np.zeros(nA)
+            #iterate through policy
+            for i, pol in enumerate(policy):
+                #iterate through the markov relationships
+                for tuple_info in P[s][pol]:
+                    p, s_, u, _ = tuple_info
+                    #compute probability
+                    temp[i] += (p * (u + beta * v0[s_]))
 
+            #set element
+            v1[s] = np.max(temp)
+
+        #check convergence
         if la.norm(v0-v1, ord=2) < tol:
             break
 
+        #update
         v0 = v1.copy()
 
     return v1
@@ -155,7 +175,6 @@ def policy_iteration(P, nS, nA, beta=1, tol=1e-8, maxiter=200):
     """
 
     #intialize pi
-    #FIXME: what is the starting point?
     pi0 = np.zeros(nS)
 
     #iterate until maxiter
@@ -213,52 +232,65 @@ def run_simulation(env, policy, render=True, beta = 1.0):
 
 if __name__ == "__main__":
 
-    #question 1
     '''
-            #set temporary vector
-            temp = np.zeros(nA)
-            #iterate through all actions for a given state
-            for a in range(nA):
-                #grab the state info corresponding to action and state
-                #TODO: find out if this inner for-loop is necessary
-                for tuple_info in P[s][a]:
-                    p, s_, u, _ = tuple_info
-                    #update the temp vec
-                    temp[a] += (p * (u + beta * v0[s_]))
-            #set corresponding element to be the max
-            v1[s] = np.max(temp)
+def value_iteration_old(P, nS, nA, beta = 1, tol=1e-8, maxiter=3000):
+    """Perform Value Iteration according to the Bellman optimality principle.
+
+    Parameters:
+        P (dict): The Markov relationship
+                (P[state][action] = [(prob, nextstate, reward, is_terminal)...]).
+        nS (int): The number of states.
+        nA (int): The number of actions.
+        beta (float): The discount rate (between 0 and 1).
+        tol (float): The stopping criteria for the value iteration.
+        maxiter (int): The maximum number of iterations.
+
+    Returns:
+       v (ndarray): The discrete values for the true value function.
+       n (int): number of iterations
+    """
+    #initialize v0
+    v0 = np.zeros(nS)
+    #iterate through max iterations
+    for i in range(maxiter):
+        #copy v1
+        v1 = v0.copy()
+        #iterate through all states
+        for s in range(nS):
+            #get next iteration
+            v1[s] = np.max(np.sum([[p * (u + beta * v0[s_]) for p, s_, u, _ in P[s][a]]
+                                   for a in range(nA)], axis=1))
+        #check convergence
+        if la.norm(v0 - v1, ord=2) < tol:
+            break
+        #reassign v1 to be v0
+        v0 = v1
+
+    return v1, i + 1
     '''
 
+    #question 1
+    '''
     solution = np.array([1, 1, 1, 0])
     num_iters = 3
     v, i = value_iteration(P, 4 ,4, beta = 1, tol=1e-8, maxiter=3000)
     print(np.allclose(v, solution ))
     print(i == num_iters)
+    '''
 
     #question 2
-    '''
-        temp = np.zeros(nA)
-        for a in range(nA):
-            for tuple_info in P[s][a]:
-                p, s_, u, t = tuple_info
-                #update the temp vec
-                temp[a] += (p * (u + beta * v[s_]))
-
-        pi[s] = np.argmax(temp)
     '''
     policy = np.array([2, 1, 2, 0])
     c = extract_policy(P, 4, 4, v, beta = 1.0)
     print(np.allclose(policy, c))
+    '''
 
     #question 3
     '''
-            for pol in policy:
-                for p, s_, u, _ in P[s][pol]:
-                    v1[s] += (p * (u + beta * v0[s_]))
-    '''
     my_policy = compute_policy_v(P, 4, 4, policy, beta=1.0, tol=1e-8)
     print(my_policy)
-    #print(np.allclose(compute_policy_v(P, 4, 4, policy, beta=1.0, tol=1e-8), solution))
+    print(np.allclose(compute_policy_v(P, 4, 4, policy, beta=1.0, tol=1e-8), solution))
+    '''
 
 
     #question 4
