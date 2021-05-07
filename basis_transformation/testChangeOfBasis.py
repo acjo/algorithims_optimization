@@ -3,8 +3,8 @@
 import pytest
 import numpy as np
 from matplotlib import pyplot as plt
-import bernstein_functions as bf
-import change_of_basis as cob
+import basisFunctions as bf
+import changeOfBasis as cob
 
 def test_fft():
     x_4 = np.zeros(5)
@@ -31,7 +31,6 @@ def test_transition():
     assert np.allclose(cM3, cob.transitionMatrixBTC( 3 ))
 
 
-print(cob.transitionMatrixBTC( 1 ))
 
 x4 = np.zeros(5)
 x4[-1] = 1
@@ -54,12 +53,12 @@ ax.set_facecolor('gray')
 
 
 domain1 = np.linspace(-1, 1, 100)
-domain2 = np.linspace(0, 1, 100)
+domain2 = np.linspace(-1, 1, 100)
 
 outputFFT = np.array([x4FFT(x) for x in domain1])
 outputMatrix = np.array([x4Matrix(x) for x in domain2])
 plt.plot(domain1, original(domain1), 'w', linewidth=7, label='original')
-plt.plot(domain1, outputFFT, 'b', linewidth=4, label='COB using FFT')
+plt.plot(domain1, outputFFT, 'b', linewidth=3, label='COB using FFT')
 plt.plot(domain2, outputMatrix, 'r', linewidth=1, label='COB using Matrix')
 plt.legend(loc='best')
 plt.title(r'$x^4$ in different polynomial bases')
