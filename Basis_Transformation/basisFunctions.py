@@ -25,7 +25,7 @@ def bernsteinFunc( n, k, domain=[0, 1] ):
         raise ValueError( "Domain is infeasible." )
 
     #bernstein function B_k^n(x)
-    return lambda x: binom( n, k ) * (( x - a ) / ( b-a ))**k*(( x - b ) / ( b - a )) ** ( n - k )
+    return lambda x: binom( n, k ) * ((( b - x ) / ( b - a ))**( n-k )) * ((( x - a ) / ( b- a ))**k)
 
 def chebyshevFunc( n, domain=[-1, 1] ):
     '''Returns the chebyshev function of degree n
