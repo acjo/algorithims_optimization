@@ -15,9 +15,14 @@ def bernsteinFunc( n, k, domain=[0, 1] ):
             ValueError: if k < 0 or k > n
     '''
     if k < 0 or k > n:
-        raise ValueError('k is not in range for the bernstein polynomials')
-    a = domain[0]
-    b = domain[1]
+        raise ValueError( "k is not in range for the bernstein polynomials." )
+    if type( domain ) is not list or len( domain ) != 2:
+        raise TypeError( "Domain is not a list or domain is the wrong size." )
+
+    a, b = domain[ 0 ], domain[ -1 ]
+
+    if b <= a:
+        raise ValueError( "Domain is infeasible." )
 
     #bernstein function B_k^n(x)
     return lambda x: binom( n, k ) * (( x - a ) / ( b-a ))**k*(( x - b ) / ( b - a )) ** ( n - k )
@@ -30,8 +35,15 @@ def chebyshevFunc( n, domain=[-1, 1] ):
        returns:
             T_n(x) (function): degree n chebyshev polynomial
     '''
+    if type( domain ) is not list or len( domain ) != 2:
+        raise TypeError( "Domain is not a list or domain is the wrong size." )
+
     a, b = domain[0], domain[-1]
 
+    if b <= a:
+        raise ValueError( "Domain is infeasible." )
+    if n < 0:
+        raise ValueError( "Invalid Chebyshev polynomial degree." )
 
     if n == 0:
         return lambda x : 1

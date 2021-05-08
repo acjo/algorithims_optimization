@@ -3,7 +3,6 @@
 import numpy as np
 from numpy.fft import fft
 from scipy.special import binom
-from matplotlib import pyplot as plt
 import basisFunctions as bf
 
 
@@ -19,6 +18,9 @@ def transitionMatrixBTC( n ):
     """Creates the transition matrix from Bernstein to Chebyshev polynomials
        n is the polynomial degree, the matrix will be ((n+1), (n+1))
     """
+    if type( n ) is not int:
+        raise TypeError( "n needs to be an integer." )
+
     C = np.zeros(( n+1, n+1 ))
     for j in range( n+1 ):
         for k in range( n+1 ):
@@ -30,6 +32,9 @@ def transitionMatrixCTB( n ):
     """Creates the transition matrix from Chebyshev to Bernstein polynomials
        n is the polynomial degree, the matrix will be ((n+1), (n+1))
     """
+    if type( n ) is not int:
+        raise TypeError( "n needs to be an integer." )
+
     C = np.zeros(( n+1, n+1 ))
     for j in range( n+1 ):
         for k in range( n+1 ):
@@ -48,8 +53,24 @@ def bernsteinToChebyshev( b, domain = [0, 1], matrix=False ):
        Returns:
            coeffs ((n+1, ) ndarray): coordinates in the degree-n Chebyshev basis
     """
+
+    if type( b ) is not np.ndarray:
+        raise TypeError( "Bernsetin coefficeints is not an array." )
+    if type( domain ) is not list or len( domain ) != 2:
+        raise TypeError( "Domain is not a list or domain is the wrong size." )
+    if domain[ -1 ] <= domain[ 0 ]:
+        raise ValueError( "Domain is infeasible." )
+    if type( matrix ) is not bool:
+        raise TypeError( "'Matrix' needs to be a boolean value." )
+
+
     n = b.size - 1
-    if not matrix:
+
+    if matrix:
+        C = transitionMatrixBTC( n )
+        return C @ b
+
+    else:
 
         bBasis = [ bf.bernsteinFunc( n, i, domain=domain ) for i in range( 0, n+1 ) ]
 
@@ -58,32 +79,14 @@ def bernsteinToChebyshev( b, domain = [0, 1], matrix=False ):
         extremizers = np.cos( ( np.pi * np.arange( 2*n ) ) / n )
         samples = np.array([ polyB( extreme ) for extreme in extremizers ])
 
-        coeffs = np.real(fft(samples))[:n+1] / n
-        coeffs[0] /= 2
-        coeffs[-1] /= 2
+        coeffs = np.real( fft( samples ) )[ :n+1 ] / n
+        coeffs[ 0 ] /= 2
+        coeffs[ -1 ] /= 2
 
         return coeffs
 
-    else:
-        #define conjugate Kronecker delta function
-        def cKronecker( delta ):
-            if delta == 0:
-                return 0
-            else:
-                return 1
-        C = transitionMatrixBTC( n )
-
-        return C @ b
 
 if __name__ == "__main__":
 
-    print(transitionMatrixBTC(1))
-    print()
-    print(transitionMatrixCTB( 1 ))
-
-
-
-
-
-
+    pass
 
