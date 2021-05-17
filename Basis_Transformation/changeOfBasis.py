@@ -2,6 +2,7 @@
 
 import numpy as np
 from numpy.fft import fft
+from numpy.fft import ifft
 from scipy.special import binom
 import basisFunctions as bf
 
@@ -67,8 +68,8 @@ def bernsteinToChebyshev( b, domain = [0, 1], matrix=False ):
     n = b.size - 1
 
     if matrix:
-        C = transitionMatrixBTC( n )
-        return C @ b
+        T = transitionMatrixBTC( n )
+        return T @ b
 
     else:
 
@@ -84,6 +85,37 @@ def bernsteinToChebyshev( b, domain = [0, 1], matrix=False ):
         coeffs[ -1 ] /= 2
 
         return coeffs
+
+def chebyshevToBernstein( c, domain=[0, 1], matrix=True ):
+
+    if type( c ) i snot np.ndarray:
+        raise TypeError( "Chebysehv coffeicients is not an array." )
+    if type( domain ) is not list or len( domain ) != 2:
+        raise TypeError( "Domain is not a list or domain is the wrong size." )
+    if domain[ -1 ] <= domain[ 0 ]:
+        raise ValueError( "Domain is infeasible." )
+    if type( matrix ) is not bool:
+        raise TypeError( "'Matrix' needs to be a boolean value." )
+
+
+    n = c.size - 1
+
+    if matrix:
+        T = transitionMatrixCTB( n )
+        return T @ c
+
+    else:
+        c[ 0 ] *= 2
+        c[ -1 ] *= 2
+        c *= n
+        d = np.copy( c[ :n ] )
+
+        coeffs = np.concatenate( c, d )
+
+        samples = np.real( ifft( coeffs ) )
+
+        return None
+
 
 
 if __name__ == "__main__":
