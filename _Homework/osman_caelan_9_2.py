@@ -1,6 +1,7 @@
 #osman_caelan_9_2.py
 import numpy as np
 from matplotlib import pyplot as plt
+import math
 
 def barycentric_weights( x ):
     ''' Computes the barycentric weights for an interpolating polynomial
@@ -18,9 +19,7 @@ def barycentric_weights( x ):
 
 def evaluate_interpolated_function( x, y, x0 ):
     ''' creates an interpolating function from the points in (x, y) and evaluates the function at x0
-        Paramaters:
-            x ( ( n+1, ) ndarray ): the x coordinates of the interpolation points
-            y ( ( n+1, ) ndarray ): the y coordinates of the interpolation points
+        Paramaters: x ( ( n+1, ) ndarray ): the x coordinates of the interpolation points y ( ( n+1, ) ndarray ): the y coordinates of the interpolation points
             x0 ( float ): the point to evaluate the function at
        Returns:
            y0 ( float ): the evaluation point
@@ -83,13 +82,15 @@ if __name__ == "__main__":
         rnge_W[ i ] = W( x )
         rnge_q[ i ] = q( x )
 
+    difference = np.abs( rnge_W - rnge_q )
+    sup = np.max( difference )
     sup_W = np.max( rnge_W )
     sup_q = np.max( rnge_q )
 
     plt.plot( domain, rnge_W, label='Wilkinson' )
     plt.plot( domain, rnge_q, label='q' )
-    plt.suptitle( 'Max W: ' + str( sup_W ) + '\nMax q: ' + str( sup_q ) )
-    plt.title( 'Difference: ' + str( abs( sup_W - sup_q ) ) )
+    #plt.suptitle( 'Max W: ' + str( sup_W ) + '\nMax q: ' + str( sup_q ) )
+    plt.title( r'$||f(x) - p(x)||_{L_{\infty}}$ Difference: ' + str( math.trunc( sup ) ) )
     plt.legend( loc='best' )
     plt.ylim( -5e13, 5e13 )
     plt.xlim( 1, 20 )
