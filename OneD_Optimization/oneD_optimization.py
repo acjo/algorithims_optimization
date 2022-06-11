@@ -1,8 +1,7 @@
 # oneD_optimization.py
 """Volume 2: One-Dimensional Optimization.
-<Name>
-<Class>
-<Date>
+Caelan Osman
+June 11, 2022
 """
 
 

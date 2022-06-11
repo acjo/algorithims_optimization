@@ -11,9 +11,9 @@ April 3, 2021
 #Right = 2
 #Up= 3
 
+import sys
 import numpy as np
 import gym
-from gym import wrappers
 from scipy import linalg as la
 
 
@@ -66,7 +66,7 @@ def value_iteration(P, nS, nA, beta = 1, tol=1e-8, maxiter=3000):
             for a in range(nA):
                 for tuple_info in P[s][a]:
                     p, s_, u, _ = tuple_info
-                    #compute porbablity
+                    #compute probablity
                     sa_vector[a] += (p * (u + beta * v0[s_]))
 
             #get max value
@@ -98,14 +98,19 @@ def extract_policy(P, nS, nA, v, beta = 1.0):
         policy (ndarray): which direction to move in from each square.
     """
 
-    pi = np.zeros(nS)
+    pi = np.zeros(nS, dtype=int)
     #we now extract the policy
     for s in range(nS):
         #create temp vector
-        temp = np.sum([[p * (u + beta * v[s_]) for p, s_, u, _ in P[s][a]]
-                                   for a in range(nA)], axis=1)
+        sa_vector = np.zeros(nA)
+        #populate the temporary vector
+        for a in range(nA):
+            for next_sr in P[s][a]:
+                p, s_, u, _ = next_sr
+                sa_vector[a] += (p * (u + beta * v[s_]))
+
         #set index corresponding to max value as pi
-        pi[s] = np.argmax(temp)
+        pi[s] = np.argmax(sa_vector)
 
     return pi
 
@@ -126,34 +131,21 @@ def compute_policy_v(P, nS, nA, policy, beta=1.0, tol=1e-8):
         v (ndarray): The discrete values for the true value function.
     """
     #initiilzise vectors
-    v0 = np.ones(nS)
-    v1 = np.zeros(nS)
+    v0 = np.zeros(nS)
 
-    iterate = True
-    while iterate:
+    while True:
         #iterate through states
+        v1 = v0.copy()
         for s in range(nS):
+            policy_a = policy[s]
             #set temporary vector
-            temp = np.zeros(nA)
-            #iterate through policy
-            for i, pol in enumerate(policy):
-                #iterate through the markov relationships
-                for tuple_info in P[s][pol]:
-                    p, s_, u, _ = tuple_info
-                    #compute probability
-                    temp[i] += (p * (u + beta * v0[s_]))
-
-            #set element
-            v1[s] = np.max(temp)
+            v0[s] = sum([p * (u + beta * v1[s_]) for p, s_, u, _ in P[s][policy_a]])
 
         #check convergence
-        if la.norm(v0-v1, ord=2) < tol:
+        if (np.sum((np.fabs(v0 - v1))) <= tol):
             break
 
-        #update
-        v0 = v1.copy()
-
-    return v1
+    return v0
 
 # Problem 4
 def policy_iteration(P, nS, nA, beta=1, tol=1e-8, maxiter=200):
@@ -175,22 +167,22 @@ def policy_iteration(P, nS, nA, beta=1, tol=1e-8, maxiter=200):
     """
 
     #intialize pi
-    pi0 = np.zeros(nS)
+    policy = np.random.choice(nA, size=nS)
 
     #iterate until maxiter
     for k in range(maxiter):
-        #compute new value vector
-        v1 = compute_policy_v(P, nS, nA, pi0, beta=beta, tol=tol)
-        #extract policy
-        pi1 = extract_policy(P, nS, nA, v1, beta=beta)
+        # compute old value function
+        old_policy_v = compute_policy_v(P, nS, nA, policy, beta=beta)
+        # extract polciy from value function
+        new_policy = extract_policy(P, nS, nA, old_policy_v, beta=beta)
 
         #check convergence
-        if la.norm(pi0 - pi1, ord=2) < tol:
+        if np.all(policy == new_policy):
             break
 
-        pi0 = pi1.copy()
+        policy = new_policy.copy()
 
-    return v1, pi1, k+1
+    return old_policy_v, policy, k + 1
 
 
 
@@ -210,8 +202,25 @@ def frozen_lake(basic_case=True, M=1000, render=False):
     pi_value_func (ndarray): The maximum value function for the optimal policy from policy iteration.
     pi_policy (ndarray): The optimal policy for policy iteration.
     pi_total_rewards (float): The mean expected value for following the policy iteration optimal policy.
-    """
-    raise NotImplementedError("Problem 5 Incomplete")
+    """    
+    if basic_case:
+        env_name  = 'FrozenLake-v1'
+    else:
+        env_name  = 'FrozenLake8x8-v1'
+
+    env = gym.make(env_name).env
+
+    nS = env.observation_space.n
+    nA = env.action_space.n
+    vi_value_func, vi_iterations = value_iteration(env.P, nS, nA)
+    vi_policy = extract_policy(env.P, nS, nA, vi_value_func,)
+    pi_value_func, pi_policy, pi_iterations = policy_iteration(env.P, nS, nA)
+
+    # Problem 6
+    vi_total_rewards = np.mean([run_simulation(env, vi_policy, render) for _ in range(M)])
+    pi_total_rewards = np.mean([run_simulation(env, pi_policy, render) for _ in range(M)])
+
+    return vi_policy, vi_total_rewards, pi_value_func, pi_policy, pi_total_rewards
 
 # Problem 6
 def run_simulation(env, policy, render=True, beta = 1.0):
@@ -226,72 +235,65 @@ def run_simulation(env, policy, render=True, beta = 1.0):
     Returns:
     total reward (float): Value of the total reward received under policy.
     """
-    raise NotImplementedError("Problem 6 Incomplete")
+    obs = env.reset()
+    total_reward = 0
+    step_index = 0
+    while True:
+        if render == True:
+            env.render(mode='human')
+        obs, reward, done , _ = env.step(int(policy[obs]))
+        total_reward += (beta ** step_index * reward)
+        step_index += 1
+        if done:
+            break
+    return total_reward
 
 
+def main(key):
+
+    if key == "1":
+        solution = np.array([1, 1, 1, 0])
+        num_iters = 3
+        v, i = value_iteration(P, 4 ,4, beta = 1, tol=1e-8, maxiter=3000)
+        assert np.allclose(v, solution)
+        assert i == num_iters
+
+    elif key == "2":
+        policy = np.array([2, 1, 2, 0])
+        c = extract_policy(P, 4, 4, v, beta = 1.0)
+        print(np.allclose(policy, c))
+    elif key == "3":
+        my_policy = compute_policy_v(P, 4, 4, policy, beta=1.0, tol=1e-8)
+        print(my_policy)
+        print(np.allclose(compute_policy_v(P, 4, 4, policy, beta=1.0, tol=1e-8), solution))
+    elif key == "4":
+        print(policy_iteration(P, 4, 4, beta=1, tol=1e-8, maxiter=200))
+    # elif key == "5":
+    # elif key == "6":
+    elif key == "all":
+        main("1")
+        main("2")
+        main("3")
+        main("4")
+        main("5")
+        main("6")
+
+    else:
+        raise ValueError ("{} is an incorrect problem specification.".format(key))
+
+
+    return
 
 if __name__ == "__main__":
 
-    '''
-def value_iteration_old(P, nS, nA, beta = 1, tol=1e-8, maxiter=3000):
-    """Perform Value Iteration according to the Bellman optimality principle.
+    if len(sys.argv) == 2:
+        main(sys.argv[1])
 
-    Parameters:
-        P (dict): The Markov relationship
-                (P[state][action] = [(prob, nextstate, reward, is_terminal)...]).
-        nS (int): The number of states.
-        nA (int): The number of actions.
-        beta (float): The discount rate (between 0 and 1).
-        tol (float): The stopping criteria for the value iteration.
-        maxiter (int): The maximum number of iterations.
 
-    Returns:
-       v (ndarray): The discrete values for the true value function.
-       n (int): number of iterations
-    """
-    #initialize v0
-    v0 = np.zeros(nS)
-    #iterate through max iterations
-    for i in range(maxiter):
-        #copy v1
-        v1 = v0.copy()
-        #iterate through all states
-        for s in range(nS):
-            #get next iteration
-            v1[s] = np.max(np.sum([[p * (u + beta * v0[s_]) for p, s_, u, _ in P[s][a]]
-                                   for a in range(nA)], axis=1))
-        #check convergence
-        if la.norm(v0 - v1, ord=2) < tol:
-            break
-        #reassign v1 to be v0
-        v0 = v1
-
-    return v1, i + 1
-    '''
-
-    #question 1
-    '''
-    solution = np.array([1, 1, 1, 0])
-    num_iters = 3
-    v, i = value_iteration(P, 4 ,4, beta = 1, tol=1e-8, maxiter=3000)
-    print(np.allclose(v, solution ))
-    print(i == num_iters)
-    '''
-
-    #question 2
-    '''
-    policy = np.array([2, 1, 2, 0])
-    c = extract_policy(P, 4, 4, v, beta = 1.0)
-    print(np.allclose(policy, c))
-    '''
 
     #question 3
     '''
-    my_policy = compute_policy_v(P, 4, 4, policy, beta=1.0, tol=1e-8)
-    print(my_policy)
-    print(np.allclose(compute_policy_v(P, 4, 4, policy, beta=1.0, tol=1e-8), solution))
     '''
 
 
     #question 4
-    #print(policy_iteration(P, 4, 4, beta=1, tol=1e-8, maxiter=200))

@@ -37,8 +37,7 @@ def backward(strng):
     return strng[::-1]
 
 '''Problem 5:'''
-def list_ops():
-    name_list = ["bear", "ant", "cat", "dog"]
+def list_ops(name_list=["bear", "ant", "cat", "dog"]):
     """This function accepts a list and then performs the following functions on that list"""
     name_list.append("eagle") #add's eagle to the end of the list
     name_list[2] = "fox" #make element at index 2 "fox" instead of "catfp"
