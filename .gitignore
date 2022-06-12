@@ -73,8 +73,11 @@ __pycache__/
 *.bcf
 *.fls
 *.pdf
-*~undo-tree~
+
+# editor files
+*.~undo-tree~
 *.swp
+*.idea/
 
 # OS generated files
 .DS_Store
@@ -117,3 +120,5 @@ build/
 faces94/
 nyc_*.json
 *.mod
+
+
