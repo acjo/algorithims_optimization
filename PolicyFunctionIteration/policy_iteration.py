@@ -171,7 +171,7 @@ def policy_iteration(P, nS, nA, beta=1, tol=1e-8, maxiter=200):
 
     #iterate until maxiter
     for k in range(maxiter):
-        # compute old value function
+        # compute value function
         old_policy_v = compute_policy_v(P, nS, nA, policy, beta=beta)
         # extract polciy from value function
         new_policy = extract_policy(P, nS, nA, old_policy_v, beta=beta)
@@ -183,9 +183,6 @@ def policy_iteration(P, nS, nA, beta=1, tol=1e-8, maxiter=200):
         policy = new_policy.copy()
 
     return old_policy_v, policy, k + 1
-
-
-
 
 # Problem 5 and 6
 def frozen_lake(basic_case=True, M=1000, render=False):
@@ -259,28 +256,39 @@ def main(key):
         assert i == num_iters
 
     elif key == "2":
+        v, i = value_iteration(P, 4 ,4, beta = 1, tol=1e-8, maxiter=3000)
         policy = np.array([2, 1, 2, 0])
         c = extract_policy(P, 4, 4, v, beta = 1.0)
-        print(np.allclose(policy, c))
+        assert np.allclose(policy, c)
+
     elif key == "3":
-        my_policy = compute_policy_v(P, 4, 4, policy, beta=1.0, tol=1e-8)
-        print(my_policy)
-        print(np.allclose(compute_policy_v(P, 4, 4, policy, beta=1.0, tol=1e-8), solution))
+        value_function_iter, _ = value_iteration(P, 4 ,4, beta = 1, tol=1e-8, maxiter=3000)
+        policy = np.array([2, 1, 2, 0])
+        value_function_poicy = compute_policy_v(P, 4, 4, policy, beta=1.0, tol=1e-8)
+        assert np.allclose(value_function_iter, value_function_poicy)
+
     elif key == "4":
-        print(policy_iteration(P, 4, 4, beta=1, tol=1e-8, maxiter=200))
-    # elif key == "5":
-    # elif key == "6":
+        value_func, policy, _ = policy_iteration(P, 4, 4, beta=1, tol=1e-8, maxiter=200)
+        assert np.allclose(policy, np.array([2, 1, 2, 0]))
+        assert np.allclose(value_func, np.array([1, 1, 1, 0]))
+
+    elif key == "5":
+        vi_policy, vi_total_rewards, pi_value_func, pi_policy, pi_total_rewards = frozen_lake(basic_case=True, M=1000, render=False)
+        value_func = np.array([0.82352937, 0.82352936, 0.82352935, 0.82352934, 0.82352937, 
+        0., 0.52941174, 0., 0.82352938, 0.82352939, 0.76470586, 0., 0., 0.88235292, 0.94117646, 0.])
+        assert np.allclose(vi_policy, pi_policy)
+        assert np.abs(vi_total_rewards - pi_total_rewards) < 0.03
+        assert np.allclose(pi_value_func, value_func)
+
     elif key == "all":
         main("1")
         main("2")
         main("3")
         main("4")
         main("5")
-        main("6")
 
     else:
         raise ValueError ("{} is an incorrect problem specification.".format(key))
-
 
     return
 
@@ -288,12 +296,3 @@ if __name__ == "__main__":
 
     if len(sys.argv) == 2:
         main(sys.argv[1])
-
-
-
-    #question 3
-    '''
-    '''
-
-
-    #question 4
