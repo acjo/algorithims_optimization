@@ -54,7 +54,7 @@ def prob4():
         (_sre.SRE_Pattern): a compiled regular expression pattern object.
     """
     #set and return regex pattern
-    return re.compile(r"^(_|[a-zA-Z])[\w_]* *=? *([-]?[\d]*[\.]?[\d]*|[-]?[\d]*[e][-]?[\d]+|['][^']*[']|(_|[a-zA-Z])[\w_]*)$")
+    return re.compile(r"^([_a-zA-Z])\w*\s*((=\s*)([_a-zA-Z]*)\w*|(=\s*)([1-9\.]*)|(=\s*)('[_a-zA-Z]*')\w*)?\s*$")
 
 # Problem 5
 def prob5(code):
@@ -88,59 +88,52 @@ def prob6(filename="fake_contacts.txt"):
     Returns:
         (dict): a dictionary mapping names to a dictionary of personal info.
     """
-    #read infile by line
-    with open(filename) as infile:
-        lines = infile.readlines()
+    with open(filename, 'r') as infile:
+        rawdata = infile.readlines()
 
-    #regex object to match names, birthdays, emails, phones
-    get_name = re.compile(r"^[a-zA-Z]*( )([a-zA-Z]\.( ))?[a-zA-Z]*")
-    get_birthday = re.compile(r"[^ ][\d]*\/[\d]*\/[\d]*[^ \n]*")
-    get_email = re.compile(r"[^ ]*\@[^ \n]*")
-    get_number = re.compile(r"(\d{3}-[^ |\n]*|\(\d*\)[^ \n]*)")
+    name_exp = re.compile(r"^[a-zA-Z]+(?: [A-Z]\.)? [a-zA-Z]+")
+    phone_exp = re.compile(r"(?:1-)?\(?([0-9]{3})\)?-?([0-9]{3})-?([0-9]{4})")
+    email_exp = re.compile(r"[\w\.]+@[\w\.]+?\.(?:edu|com|net|org)")
+    bday_exp = re.compile(
+                    r"(1[0-2]|0?[1-9])/([1-3]\d|0?[1-9])/((?:2[01])?\d{2})")
 
-    #regex bject to match the wrong birthdays
-    wrong_birthday_1 = re.compile(r"^(\d{1,2}\/)(\d{1,2}\/)(\d{2})$")
-    wrong_birthday_2 = re.compile(r"^(\d\/)(\d{1,2}\/)(\d{4})s")
-    wrong_birthday_3 = re.compile(r"^(\d{2}\/)(\d\/)(\d{4})$")
+    def extract(pattern, target):
+        results = pattern.findall(target)
+        assert len(results) <= 1
+        if results:
+            return results[0]
+        else:
+            return None
 
-    #regex bject to match the wrong numbers
-    wrong_number_1 = re.compile(r"^(\d{3})-(\d{3})-(\d{4})$")
-    wrong_number_2 = re.compile(r"^(\(\d{3}\))-(\d{3})-(\d{4})$")
+    data = {}
+    for line in rawdata:
 
-    #initialize contact dictionary
-    contacts = {}
-    for line in lines:
+        # Check that there is exactly one answer from each expression.
+        name = extract(name_exp, line)
+        phone = extract(phone_exp, line)
+        email = extract(email_exp, line)
+        bday = extract(bday_exp, line)
 
-        #intialize and set the name, birthday, and email value
-        name = get_name.search(line)
-        birthday = get_birthday.search(line)
-        email = get_email.search(line)
-        number = get_number.search(line)
-
-        #extract string for name birthday and email
-        if name is not None:
-            name = name.group(0)
-
-        if birthday is not None:
-            birthday = birthday.group(0)
-            #substitute correct birthday syntax if needed
-            birthday = wrong_birthday_1.sub(r"\1\g<2>20\3", birthday)
-            birthday = wrong_birthday_2.sub(r"0\g<1>\2\3", birthday)
-            birthday = wrong_birthday_3.sub(r"\g<1>0\g<2>\g<3>", birthday)
-
-        if email is not None:
-            email = email.group(0)
-
-        if number is not None:
-            #substitute correct phone number syntax if needed
-            number = number.group(0)
-            number = wrong_number_1.sub(r"(\1)\2-\3", number)
-            number = wrong_number_2.sub(r"\1\2-\3", number)
-
-        #map the name to the dictionary containing contact info
-        contacts[name] = {"birthday" : birthday, "email" : email, "phone" : number}
-
-    return contacts
+        # Format and structure the data.
+        data[name] = {}
+        data[name]["email"] = email
+        if phone:
+            data[name]["phone"] = "({}){}-{}".format(*phone)
+        else:
+            data[name]["phone"] = None
+        if bday:
+            month, day, year = bday
+            if len(year) == 2:
+                year = "20" + year
+            if len(month) == 1:
+                month = "0" + month
+            if len(day) == 1:
+                day = "0" + day
+            data[name]["birthday"] = "{}/{}/{}".format(month, day, year)
+        else:
+            data[name]["birthday"] = None
+        
+    return data
 
 
 if __name__ == "__main__":
