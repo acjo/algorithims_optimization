@@ -237,7 +237,7 @@ def run_simulation(env, policy, render=True, beta = 1.0):
     step_index = 0
     while True:
         if render == True:
-            env.render(mode='human')
+            env.render(mode="human")
         obs, reward, done , _ = env.step(int(policy[obs]))
         total_reward += (beta ** step_index * reward)
         step_index += 1
