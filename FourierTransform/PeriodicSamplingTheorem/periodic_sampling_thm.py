@@ -101,7 +101,7 @@ def antialiasing():
     return
 
 
-def main(key):
+def main(key:str):
 
     if key == "1":
         y = lambda x: np.sin(4*x)
@@ -156,6 +156,8 @@ def main(key):
 
     else:
         raise ValueError ("{} is an incorrect problem specification.".format(key))
+
+    return
 
 if __name__ == "__main__":
     if len(sys.argv) == 2:
