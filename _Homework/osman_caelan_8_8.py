@@ -3,19 +3,19 @@
 import numpy as np
 from matplotlib import pyplot as plt
 
-def sampling( f, n ):
+def sampling(f, n):
 
-    points = np.array( [ k / ( 2**n ) for k in range( 2**n ) ] )
+    points = np.array([k/(2**n) for k in range(2**n)])
 
-    return f( points )
+    return f(points)
 
 
-def haar_wavelets( a, x ):
+def haar_wavelets(a, x):
 
     #compute n, n will be an integer
-    n = int( np.log2( len( a ) ) )
-    #compute the valuation points
-    evals = np.array( [ coef for k, coef in enumerate( a ) if k / (2 ** n ) <= x and x < ( k + 1 ) / (2 ** n ) ] )
+    n = int(np.log2(len(a)))
+    #compute the evaluation points
+    evals = np.array([coef for k, coef in enumerate(a) if k / (2 ** n ) <= x and x < ( k + 1 ) / (2 ** n ) ] )
     #sum and return
     return sum(evals)
 
@@ -42,4 +42,21 @@ def exercise8_42( ):
             ax.legend(loc='best')
             i += 1
 
+    plt.show()
+
+
+if __name__ == "__main__":
+
+    def Haar_Father(t):
+
+        return np.where((0 <= t) & ( t < 1), 1, 0)
+
+    domain = np.linspace(-2, 2, 200) 
+
+    print(Haar_Father(1))
+
+    fig = plt.figure()
+    fig.set_dpi(150)
+    ax = fig.add_subplot(111)
+    ax.plot(domain, Haar_Father(domain))
     plt.show()

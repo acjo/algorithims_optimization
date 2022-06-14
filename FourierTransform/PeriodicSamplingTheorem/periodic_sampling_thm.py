@@ -8,7 +8,7 @@ from scipy.fft import fft
 
 
 #helper function, adds two lambda functions
-def f_add(f1:Callable[[], Any], f2:Callable[[], Any]):
+def function_add(f1:Callable[[], Any], f2:Callable[[], Any]):
     """Adds two lambda functions together.
     Paramaters:
         f1 (callable) first function
@@ -96,6 +96,9 @@ def periodic_sampling_theorem(f:Union[Callable[[], Any], np.ndarray, list], T:fl
     #otherwise return the coefficients
     return coeff
 
+def antialiasing():
+
+    return
 
 
 def main(key):
@@ -147,6 +150,9 @@ def main(key):
 
         plt.suptitle(r"$f(x) = 1-3\sin(12\pi x + 7) + 5\sin(2\pi x-1) + 5\sin(4\pi x -3 )$")
         plt.show()
+
+    elif key=="2":
+        pass
 
     else:
         raise ValueError ("{} is an incorrect problem specification.".format(key))
