@@ -4,7 +4,7 @@ from matplotlib import pyplot as plt
 from numpy import linalg as la
 
 def FWT(a, j=0):
-    '''
+    """
     Haar FWT of "a" down to level j
     paramaters:
     a (2**k, 1) ndarray
@@ -12,7 +12,7 @@ def FWT(a, j=0):
     returns:
     the wavelet transform
     a(updated), L[::-1]
-    '''
+    """
     #assume len(a) is an integer power of 2
     m = int(np.log2(len(a)))
     #list of partial transforms
@@ -20,34 +20,34 @@ def FWT(a, j=0):
 
     while m > j:
         b_m_1 = 0.5 * (a[::2] -a[1::2])
-        L.append(0.5 * (a[::2] - a[1::2]))
+        L.append(b_m_1)
         a = 0.5 * (a[::2] + a[1::2])
         m -= 1
 
     return a, L[::-1]
 
 def sampling( f, n ):
-    ''' takes a function and samples f on those points
+    """ takes a function and samples f on those points
         Paramaters:
         f: lambda function
         n: integer
         returns:
         ((2**n)) ndarray of the points
         ((2**n,)) ndarray of the function evaluation points
-    '''
+    """
     points = np.array( [ k / ( 2**n ) for k in range( 2**n ) ] )
     return points, f( points )
 
 
 def haar_coefficients( a, x ):
-    '''
+    """
     paramaters:
     a: ((2**n,)) ndarray containing evaluation points of a function
     x: a point in the domain of the function determing the coeffcient
        of the given father/son function
     returns:
     ((2**n,)) ndarray containing coefficients
-    '''
+    """
     #compute n, n will be an integer
     n = int( np.log2( len( a ) ) )
     #compute the valuation points
@@ -57,18 +57,18 @@ def haar_coefficients( a, x ):
 
 
 def w_j_basis(j, k, f=False):
-    ''' Computes the father/mother/daughter basis of W_j
+    """ Computes the father/mother/daughter basis of W_j
         Paramaters:
         j: int
         k: int
         father: boolean (optional)
         returns:
         function object (father/mother daughter)
-    '''
+    """
     if f:
         def father(x):
-            ''' The father function
-            '''
+            """ The father function
+            """
             if 0 <= x and x < 1:
                 return 1
             else:
@@ -77,8 +77,8 @@ def w_j_basis(j, k, f=False):
 
     else:
         def daughter(x):
-            ''' The mother/daughter function
-            '''
+            """ The mother/daughter function
+            """
             if k/2**j <=x and x < (2*k+1)/(2**(j+1)):
                 return 1
             elif (2*k+1)/(2**(j+1)) <=x and x < (k+1)/(2**j):
@@ -89,17 +89,17 @@ def w_j_basis(j, k, f=False):
 
 
 def v_j_basis(j, k):
-    ''' Computes the father/son basis of V_j
+    """ Computes the father/son basis of V_j
         Paramaters:
         j: int
         k: int
         returns:
         function object (father/song)
-    '''
+    """
 
     def son(x):
-        '''The father/son function
-        '''
+        """The father/son function
+        """
         if k / 2**j <= x and x < (k+1) / 2**j:
             return 1
         else:
@@ -107,11 +107,11 @@ def v_j_basis(j, k):
     return son
 
 def IWM(basis, j):
-    ''' algorthimically assembles the inverse wavelet transform matrix
+    """ algorthimically assembles the inverse wavelet transform matrix
         Paramaters:
         basis: ((2**j,)) ndarray containing basis function objects
         int: j the dimension of the R^(2**j)
-    '''
+    """
     dim = 2**j
     sampling = np.linspace(0, 1, dim, endpoint=False)
     evals = []
@@ -128,19 +128,19 @@ def IWM(basis, j):
     return H
 
 def approximate(f, basis):
-    ''' approximates a function in a given basis
-    '''
+    """ approximates a function in a given basis
+    """
     def func(x):
         return sum([f[k] * basis[k](x) for k in range(len(f))])
     return func
 
 def create_wj_basis(j):
-    ''' creates an array containing the wj_basis
+    """ creates an array containing the wj_basis
         paramaters:
         j: int
         returns:
         ((2**j)) ndarray of basis function objects
-    '''
+    """
     basis = []
     #append father
     basis.append(w_j_basis(0, 0, True))
@@ -154,8 +154,8 @@ def create_wj_basis(j):
     return basis
 
 def get_b(a, j=0):
-    ''' gets the coefficients for the detail function
-    '''
+    """ gets the coefficients for the detail function
+    """
 
     m = int(np.log2(len(a)))
     L = []
@@ -168,7 +168,7 @@ def get_b(a, j=0):
 
 def prob8_45(wavelet, j):
 
-    ''' takes a wavelet and an integer j computes the inverse wavelet
+    """ takes a wavelet and an integer j computes the inverse wavelet
         transform and returns a function in V_j that approximates f and a function
         g in V_j perp  that describes the detail
         paramaters:
@@ -177,7 +177,7 @@ def prob8_45(wavelet, j):
         returns:
         f lambda (approximation)
         g lambda (detail)
-    '''
+    """
 
     #dimension of R^n (number of basis elements)
     dim = 2 ** j
@@ -195,10 +195,10 @@ def prob8_45(wavelet, j):
         for row in mat:
             for col in row:
                 b.append(col)
-    '''
+    """""""""
     for _ in range(len(f_n) - len(b)):
         b.insert(0, 0)
-    '''
+    """
     #get son/father basis
     vj_basis = [v_j_basis(j, k) for k in range(0, 2**j)]
     #get projection of function onto Vj
@@ -227,13 +227,13 @@ def prob_8_45_3():
         #get the projection
         projection, gj = prob8_45(wavelet, j)
         #plot function and projection on domain
-        ax.plot(domain, function(domain), 'k', label='Original')
+        ax.plot(domain, function(domain), "k", label="Original")
         evaluation = np.array([projection(x) for x in domain])
         #evaluation_c = np.array([projection(x) + gj(x) for x in domain])
-        ax.plot(domain, evaluation, 'r', label='Approximation')
-        #ax.plot(domain, evaluation_c, 'c', label='combined')
-        ax.set_title('j = '+ str(j))
-        ax.legend(loc='best')
+        ax.plot(domain, evaluation, "r", label="Approximation")
+        #ax.plot(domain, evaluation_c, "c", label="combined")
+        ax.set_title("j = "+ str(j))
+        ax.legend(loc="best")
 
     plt.show()
 
