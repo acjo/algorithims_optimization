@@ -68,8 +68,6 @@ function append!(LL<:CustomDataStructure, data)
     return
 end
 
-
-
 function find(LL<:CustomDataStructure, data::Union{Nothing, Int64, Float64, String, Vector{Any}})
 
     # check to see if the LL is empty
@@ -297,5 +295,3 @@ function appendleft!(D::Deque, data)
     insert!(D,0,data)
     return
 end
-
-
