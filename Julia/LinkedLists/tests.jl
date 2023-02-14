@@ -7,57 +7,123 @@ using .LinkedLists
 
 function testLL()
 
+    LLN1 = LinkedListNode("A",nothing,nothing)
+    testLL = LinkedList(LLN1,LLN1,"A")
+
+
+
+    # test constructor & append function
     testLL1 = LinkedList(nothing,nothing,0)
-    LinkedLists.append!(testLL1, "A")
-    LinkedLists.append!(testLL1, "B")
-    LinkedLists.append!(testLL1, "C")
-    LinkedLists.append!(testLL1, "A")
-    LinkedLists.append!(testLL1, "D")
-    LinkedLists.append!(testLL1, "D")
-    LinkedLists.append!(testLL1, [1,2,3,])
-    LinkedLists.append!(testLL1, π)
-    LinkedLists.append!(testLL1, 3)
-    LinkedLists.append!(testLL1, "D")
-    LinkedLists.append!(testLL1, "D")
-
-    corretStringRep = "[\"A\", \"B\", \"C\", \"A\", \"D\", \"D\", [1, 2, 3], π, 3, \"D\", \"D\"]"
-
-    @assert corretStringRep == LinkedLists.repr(testLL1)
+    # test append function (first block)
+    append!(testLL1, "A")
+    @assert testLL1 == testLL
 
     remove!(testLL1, "A")
+    testLL = LinkedList(nothing,nothing,0)
+    @assert testLL1 == testLL
+
+    # add a bunch more nodes and test the append function (second block)
+    append!(testLL1, "A")
+    append!(testLL1, "B")
+    append!(testLL1, "C")
+    append!(testLL1, "A")
+    append!(testLL1, "D")
+    append!(testLL1, "D")
+    append!(testLL1, [1,2,3,])
+    append!(testLL1, π)
+    append!(testLL1, 3)
+    append!(testLL1, "D")
+    append!(testLL1, "D")
+
+
+    append!(testLL, "A")
+    append!(testLL, "B")
+    append!(testLL, "C")
+    append!(testLL, "A")
+    append!(testLL, "D")
+    append!(testLL, "D")
+    append!(testLL, [1,2,3,])
+    append!(testLL, π)
+    append!(testLL, 3)
+    append!(testLL, "D")
+    append!(testLL, "D")
+
+    @assert testLL1 == testLL
+
+
+    # test the find function
+    testLL = LinkedList(nothing,nothing,0)
+
+    # first block
+    try
+        find(testLL, 3)
+    catch KeyError
+        @assert true
+    end
+
+
+    append!(testLL, 3)
+    node = find(testLL, 3)
+    @assert node.data == 3
+    @assert isequal(node.next, nothing)
+    @assert isequal(node.prev, nothing)
+
+    append!(testLL, 3)
+    try
+        node = find(testLL, 4)
+    catch KeyError
+        @assert true
+    end
+
+
+    # correct string representation test
+    correctStringRep = "[\"A\", \"B\", \"C\", \"A\", \"D\", \"D\", [1, 2, 3], π, 3, \"D\", \"D\"]"
+    @assert correctStringRep == repr(testLL1)
+
+    # test removal function
+    remove!(testLL1, "A")
     testLL2 = LinkedList(nothing,nothing,0)
-    LinkedLists.append!(testLL2, "B")
-    LinkedLists.append!(testLL2, "C")
-    LinkedLists.append!(testLL2, "A")
-    LinkedLists.append!(testLL2, "D")
-    LinkedLists.append!(testLL2, "D")
-    LinkedLists.append!(testLL2, [1,2,3,])
-    LinkedLists.append!(testLL2, π)
-    LinkedLists.append!(testLL2, 3)
-    LinkedLists.append!(testLL2, "D")
-    LinkedLists.append!(testLL2, "D")
+    append!(testLL2, "B")
+    append!(testLL2, "C")
+    append!(testLL2, "A")
+    append!(testLL2, "D")
+    append!(testLL2, "D")
+    append!(testLL2, [1,2,3,])
+    append!(testLL2, π)
+    append!(testLL2, 3)
+    append!(testLL2, "D")
+    append!(testLL2, "D")
 
     @assert testLL1 == testLL2
 
     try
-        println("here")
         remove!(testLL, "A")
     catch KeyError
         @assert true
     end
 
-    return
-
+    return true
 end
 
 
 function testD()
 
-    return
+    return true
 
 end
 
 
-testLL()
+function allTests()
+
+
+    @assert testLL()
+    @assert testD()
+
+    println("All tests passed!")
+
+end
+
+allTests()
+
 
 end

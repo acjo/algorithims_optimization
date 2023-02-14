@@ -3,7 +3,7 @@ module LinkedLists
 
 import Base.repr, Base.append!, Base.==
 
-export LinkedList, Deque, append!, find, get, length, repr, remove!, pop!, popleft!, insert!, appendleft!, ==
+export LinkedListNode, LinkedList, Deque, append!, find, get, length, repr, remove!, pop!, popleft!, insert!, appendleft!, ==
 
 # abstract type Node end
 # mutable struct LinkedListNode <: Node
@@ -79,6 +79,7 @@ function find(DS::CustomDataStructure, data::Union{Nothing, <:Number, String, Ve
     # now we search through the list
     # set intiial node
     currentNode = DS.head
+    search=true
     while search
         # checkt to see if the data inside the DSNode is equivalent
         # to the given data
@@ -119,15 +120,15 @@ length(DS::CustomDataStructure) = DS.nodeCount
 function ==(CDS1::CustomDataStructure, CDS2::CustomDataStructure)
 
 
-    if typeof(CDS1) != typeof(CDS2)
+    if !isequal(typeof(CDS1),typeof(CDS2))
         return false
-    elseif CDS1.nodeCount != CDS2.nodeCount
+    elseif CDS1.nodeCount ≠ CDS2.nodeCount
         return false
     else
         currentNode1 = CDS1.head
         currentNode2 = CDS2.head
         for i=2:CDS1.nodeCount
-            if currentNode1.data != currentNode2.data
+            if currentNode1.data ≠ currentNode2.data
                 return false
             end
                 currentNode1 = currentNode1.next
@@ -311,6 +312,4 @@ function appendleft!(D::Deque, data)
     insert!(D,0,data)
     return
 end
-
-
 end
