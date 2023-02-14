@@ -39,6 +39,9 @@ UnixShell2/Shell2/
 
 # General Files ---------------------------------------------------------------
 
+# Julia files
+statprof/
+
 # Extra Python files.
 __init__.py
 __main__.py

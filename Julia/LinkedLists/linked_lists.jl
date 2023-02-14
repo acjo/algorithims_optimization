@@ -1,12 +1,14 @@
-#linked_lists.jl
-
+# linked_lists.jl
 module LinkedLists
 
+import Base.repr, Base.append!, Base.==
 
-abstract type Node end
+export LinkedList, Deque, append!, find, get, length, repr, remove!, pop!, popleft!, insert!, appendleft!, ==
 
-mutable struct LinedListNode <: Node
-    data::Union{Nothing, Int64, Float64, String, Vector{Any}}
+# abstract type Node end
+# mutable struct LinkedListNode <: Node
+mutable struct LinkedListNode
+    data::Union{Nothing, <:Number, String, Vector{<:Any}}
     next::Union{Nothing,LinkedListNode}
     prev::Union{Nothing,LinkedListNode}
 end
@@ -36,7 +38,7 @@ mutable struct Deque <: CustomDataStructure
     nodeCount::Int64
 
     function Deque(head,tail,nodeCount)
-        if isnothing(head)
+        if isnothing(head) && isnothing(tail)
             nodeCount = 0
         else
             nodeCount = 1
@@ -45,41 +47,40 @@ mutable struct Deque <: CustomDataStructure
     end
 end
 
-function append!(LL<:CustomDataStructure, data)
+function append!(DS::CustomDataStructure, data)
 
     # initialize the new node using the data
     newNode = LinkedListNode(data,nothing,nothing)
 
-    if isequal(nothing,LL.head)
+    if isequal(nothing,DS.head)
         # check to see if the linked list is empty
         # if it is assing the new node to be the head and tai
-        LL.head = newNode
-        LL.tail = newNode
-        LL.nodeCount += 1
+        DS.head = newNode
+        DS.tail = newNode
+        DS.nodeCount += 1
     else
         # if the linked list is not empty then the new node goes at
         # the end of the list
-        LL.tail.next = newNode # connect the new node to the end of the list
-        newNode.prev = LL.tail # make it so the previous of the new node is the old tail
-        LL.tail = newNode # reassign the tail to be the new node
-        LL.nodeCount += 1
+        DS.tail.next = newNode # connect the new node to the end of the list
+        newNode.prev = DS.tail # make it so the previous of the new node is the old tail
+        DS.tail = newNode # reassign the tail to be the new node
+        DS.nodeCount += 1
     end
 
     return
 end
 
-function find(LL<:CustomDataStructure, data::Union{Nothing, Int64, Float64, String, Vector{Any}})
+function find(DS::CustomDataStructure, data::Union{Nothing, <:Number, String, Vector{<:Any}})
 
-    # check to see if the LL is empty
-    if isequal(LL.head,nothing)
-        throw(ArgumentError(LL, "The linked list is empty."))
+    # check to see if the DS is empty
+    if isequal(DS.head,nothing)
+        throw(KeyError(data))
     end
-
     # now we search through the list
     # set intiial node
-    currentNode = LL.head
+    currentNode = DS.head
     while search
-        # checkt to see if the data inside the LLNode is equivalent
+        # checkt to see if the data inside the DSNode is equivalent
         # to the given data
         if currentNode.data == data
             search = false
@@ -88,128 +89,143 @@ function find(LL<:CustomDataStructure, data::Union{Nothing, Int64, Float64, Stri
             currentNode = currentNode.next
             if isequal(currentNode, nothing)
                 search = false
-                throw(ArgumentError(LL, "The data is not found in the linked list."))
+                throw(KeyError(data))
             end
         end
     end
-
     return currentNode
 end
 
-function get(LL<:CustomDataStructure, index::Int64)
+function get(DS::CustomDataStructure, index::Int64)
 
-    if index < 1:
-        throw(KeyError(index, "Index out of range (too small)."))
+    if index < 1
+        throw(KeyError(index))
     end
-    if index > LL.nodeCount:
-        throw(KeyError(index, "Index out of range (too large)."))
-
+    if index > DS.nodeCount
+        throw(KeyError(index))
     end
 
-    currentNode = LL.head
+    currentNode = DS.head
     for i=2:index
         currentNode = currentNode.next
     end
 
     return currentNode
-
 end
 
 
+length(DS::CustomDataStructure) = DS.nodeCount
 
-length(LL<:CustomDataStructure) = LL.nodeCount
+function ==(CDS1::CustomDataStructure, CDS2::CustomDataStructure)
 
 
-function repr(LL<:CustomDataStructure)
+    if typeof(CDS1) != typeof(CDS2)
+        return false
+    elseif CDS1.nodeCount != CDS2.nodeCount
+        return false
+    else
+        currentNode1 = CDS1.head
+        currentNode2 = CDS2.head
+        for i=2:CDS1.nodeCount
+            if currentNode1.data != currentNode2.data
+                return false
+            end
+                currentNode1 = currentNode1.next
+                currentNode2 = currentNode2.next
 
-    currentNode = LL.head
+        end
+    end
+    return true
+end
+
+function repr(DS::CustomDataStructure)
+
+    currentNode = DS.head
     stringRep = "["
 
-    if LL.nodeCount == 0
-        stringRep += "]"
-        return repr(stringRep);
-    elseif LL.nodeCount == 1
+    if DS.nodeCount == 0
+        stringRep *= "]"
+        return Base.repr(stringRep);
+    elseif DS.nodeCount == 1
         if typeof(currentNode.data) == String
-            stringRep += repr(currentNode.data) + "]";
+            stringRep *= Base.repr(currentNode.data) * "]";
         else
-            stringRep += string(currentNode.data) + "]";
+            stringRep *= string(currentNode.data) * "]";
         end
         return stringRep
     end
 
-    for i=1:LL.nodeCount
+    for i=1:DS.nodeCount
         if typeof(currentNode.data) == String
             if i == 1
-                stringRep += repr(currentNode.data);
-            elseif i == LL.nodeCount
-                stringRep += ", " repr(currentNode.data) + "]";
+                stringRep *= Base.repr(currentNode.data);
+            elseif i == DS.nodeCount
+                stringRep *= ", " * Base.repr(currentNode.data) * "]";
             else
-                stringRep += ", " repr(currentNode.data);
+                stringRep *= ", " * Base.repr(currentNode.data);
             end
         else
             if i == 1
-                string_rep += string(currentNode.data);
-            elseif i == LL.nodeCount
-                stringRep += ", " + string(currentNode.data) + "]"''
+                string_rep *= string(currentNode.data);
+            elseif i == DS.nodeCount
+                stringRep *= ", " * string(currentNode.data) * "]"''
             else
-                stringRep += ", " + string(currentNode.data);
+                stringRep *= ", " * string(currentNode.data);
             end
         end
         currentNode = currentNode.next
     end
 
     return stringRep
-
 end
 
 
-function remove!(LL<:CustomDataStructure, data::Union{Nothing, Int64, Float64, String, Vector{Any}})
+function remove!(DS::CustomDataStructure, data::Union{Nothing,<:Number,String, Vector{<:Any}})
 
-    if typeof(LL) == Deque
-        throw(ArgumentError(LL, "Use pop!() or popleft!() for removal."))
+    if typeof(DS) == Deque
+        throw(ArgumentError("Use pop!() or popleft!() for removal."))
     end
 
-    if LL.nodeCount == 0:
-        throw(KeyError(LL.nodeCount, "Empty Linked List."))
+    if DS.nodeCount == 0
+        throw(KeyError(DS.nodeCount))
     end
 
-    currentNode = LL.head
+    currentNode = DS.head
 
     # special case where the list only has one element
-    if LL.nodeCount == 1  && data == currentNode.data
-        LL.head = nothing
-        LL.tail = nothing
-        LL.nodeCount = 0
+    if DS.nodeCount == 1  && data == currentNode.data
+        DS.head = nothing
+        DS.tail = nothing
+        DS.nodeCount = 0
         return
 
     # special case where the linked list has more than one element and the data to remove is the first node.
     elseif data == currentNode.data
-        LL.head = currentNode.next
-        LL.head.prev = nothing
-        LL.nodeCount -= 1
-
+        DS.head = currentNode.next
+        DS.head.prev = nothing
+        DS.nodeCount -= 1
+        return
 
     else
-        for i=2:LL.nodeCount
+        for i=2:DS.nodeCount
             currentNode = currentNode.next
             # special case where data to remove is the final node
             if data == currentNode.data
-                if i == LL.nodeCount
-                    LL.tail = LL.tail.prev
-                    LL.tail.next = nothing
-                    LL.nodeCount -= 1
+                if i == DS.nodeCount
+                    DS.tail = DS.tail.prev
+                    DS.tail.next = nothing
+                    DS.nodeCount -= 1
                     return
                 else
                     currentNode.prev.next = currentNode.next
                     currentNode.next.prev = currentNode.prev
-                    LL.nodeCount -= 1
+                    DS.nodeCount -= 1
                     return
                 end
             end
         end
     end
-    throw(KeyError(data, "Data not found."))
-    return
+    throw(KeyError(data))
 end
 
 function pop!(D::Deque)
@@ -221,7 +237,7 @@ function pop!(D::Deque)
         D.tail = nothing
         D.head= nothing
         D.nodeCount -= 1
-    else: # otherwise reset the tail value
+    else # otherwise reset the tail value
         nodeData = D.tail.data
         D.tail = D.tail.prev
         D.tail.next = nothing
@@ -248,37 +264,37 @@ function popleft!(D::Deque)
 end
 
 
-function insert!(LL<:CustomDataStructure, index::Int64, data)
-    if typeof(LL) == Deque
-        throw(ArgumentError(LL, "Use append!() or appendleft!() for insertion."))
+function insert!(DS::CustomDataStructure, index::Int64, data)
+    if typeof(DS) == Deque
+        throw(ArgumentError(DS, "Use append!() or appendleft!() for insertion."))
     end
 
-    if index < 1 || index > LL.nodeCount + 1
+    if index < 1 || index > DS.nodeCount + 1
         throw(KeyError(index, "index out of range."))
 
     end
 
     # create the new node
     newNode = LinkedListNode(data, nothing,nothing)
-    # special case where we are inserting and resetting the head and the LL is not empty.
-    if index == 1 and LL.nodeCount > 0
-        newNode.next = LL.head
+    # special case where we are inserting and resetting the head and the DS is not empty.
+    if index == 1 && DS.nodeCount > 0
+        newNode.next = DS.head
         newNode.next.prev = newNode
-        LL.head = newNode
-        LL.nodeCount += 1
+        DS.head = newNode
+        DS.nodeCount += 1
 
-    # special case where we are inserting and resetting the head and the LL is empty.
-    elseif index == 1 and LL.nodeCount == 0
-        LL.head = newNode
-        LL.tail = newNode
-        LL.nodeCount += 1
+    # special case where we are inserting and resetting the head and the DS is empty.
+    elseif index == 1 && DS.nodeCount == 0
+        DS.head = newNode
+        DS.tail = newNode
+        DS.nodeCount += 1
 
    # if the insert is just adding on a new node then we can just append
-   elseif index == LL.nodeCount + 1
-        append!(LL, data)
+   elseif index == DS.nodeCount + 1
+        append!(DS, data)
    # the final case where the insertion point is in the middle of the Linked List
    else
-        currentNode = LL.head
+        currentNode = DS.head
         for i=1:index-1
             currentNode = currentNode.next
         end
@@ -286,7 +302,7 @@ function insert!(LL<:CustomDataStructure, index::Int64, data)
         newNode.next = currentNode.next
         currentNode.next = newNode
         newNode.next.prev = newNode
-        LL.nodeCount += 1
+        DS.nodeCount += 1
     end
     return
 end
@@ -294,4 +310,7 @@ end
 function appendleft!(D::Deque, data)
     insert!(D,0,data)
     return
+end
+
+
 end
