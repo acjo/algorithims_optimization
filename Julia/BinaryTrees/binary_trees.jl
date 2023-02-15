@@ -5,18 +5,18 @@ module BinaryTrees
 import Base.append!
 
 using Plots
+using Graphs
+using GraphPlot
 
 mutable struct SinglyLinkedListNode
     data::Union{Nothing, <:Number, String, Vector{<:Any}}
     next::Union{Nothing,SinglyLinkedListNode}
 end
 
-
 mutable struct SinglyLinkedList
     head::Union{Nothing, SinglyLinkedListNode}
     tail::Union{Nothing, SinglyLinkedListNode}
 end
-
 
 function append!(SLL::SinglyLinkedList, data)
 
@@ -43,7 +43,6 @@ function iterativeFind(SLL::SinglyLinkedList, data)
     throw(KeyError(data))
 end
 
-
 function recursiveFind(SLL::SinglyLinkedList, data)
 
     function isNode(currentNode::SinglyLinkedListNode)
@@ -63,14 +62,40 @@ function recursiveFind(SLL::SinglyLinkedList, data)
 end
 
 mutable struct BSTNode
-    data::Union{Nothing, <:Number, String, Vector{<:Any}}
+    data::Union{<:Number, String, Vector{<:Any}}
     prev::Union{Nothing, BSTNode}
     left::Union{Nothing, BSTNode}
     right::Union{Nothing, BSTNode}
+
+    function BSTNode(data; prev=nothing,left=nothing,right=nothing)
+        return new(data,prev,left,right)
+    end
+
+    function BSTNode(data,prev,left,right)
+        return new(data,prev,left,right)
+    end
 end
 
 mutable struct BST
     root::Union{Nothing, BSTNode}
+    nodeCount::Int64
+
+    function BST(root; nodeCount=0)
+        if !isequal(root,nothing)
+            nodeCount += 1
+        end
+        return new(root,nodeCount)
+    end
+
+    function BST(root,nodeCount)
+        if !isequal(root,nothing)
+            nodeCount = 1
+        else
+            nodeCount = 0
+        end
+
+        return new(root,nodeCount)
+    end
 end
 
 function find(B::BST, data)
@@ -212,7 +237,20 @@ function remove!(B::BST, data)
             nodeToRemove.data = newData
         end
     end
+end
+
+function draw(B::BST)
+    if isequal(B.root,nothing)
+        return
+    end
+
+    G = SimpleGraph()
+
+
+
 
 end
+
+
 
 end
