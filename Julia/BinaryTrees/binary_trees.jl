@@ -2,11 +2,13 @@
 
 module BinaryTrees
 
-import Base.append!
+import Base.append!, Base.insert!
 
 using Plots
 using Graphs
 using GraphPlot
+
+export BSTNode, BST, find, insert!, remove!, draw
 
 mutable struct SinglyLinkedListNode
     data::Union{Nothing, <:Number, String, Vector{<:Any}}
@@ -154,10 +156,12 @@ function insert!(B::BST,data)
         find(B,data)
     catch e
         if isa(e, KeyError) # if the data is not found insert our new node
-            if isequal(B, nothing) # if there is no root, the BST is empty, make the newnode the root
+            if isequal(B.root, nothing) # if there is no root, the BST is empty, make the newnode the root
                 B.root = BSTNode(data)
+                B.nodeCount += 1
             else # otherwise call the step function to insert the node
                 _step(B.root)
+                B.nodeCount += 1
             end
         else # if the wrong error is caught, throw the error again.
             throw(e)
@@ -166,6 +170,8 @@ function insert!(B::BST,data)
         # if no error is caught at all that means the data is already contained in the true.
         throw(ArgumentError("Data already contained in tree, no duplicates allowed."))
     end
+
+    return 
 end
 
 function remove!(B::BST, data)
@@ -237,6 +243,7 @@ function remove!(B::BST, data)
             nodeToRemove.data = newData
         end
     end
+    B.nodeCount -= 1
 end
 
 function draw(B::BST)
@@ -244,10 +251,25 @@ function draw(B::BST)
         return
     end
 
-    G = SimpleGraph()
+    G = SimpleGraph(B.nodeCount)
 
+    newTuple = (B.root, 0)
+    nodes = [(B.root,0)]
+    while length(nodes) > 0
+        (currentNode, currentIndex) = pop!(nodes)
+        for childNode in [currentNode.left, currentNode.right]
+            if !isequal(childNode,nothing)
+                add_edge!(G,currentIndex, currentIndex +1)
+                currentIndex += 1
+                newTuple = (childNode,currentIndex)
+                append!(nodes, [newTuple])
+            end
+        end
+    end
 
+    gplothtml(G)
 
+    return
 
 end
 
