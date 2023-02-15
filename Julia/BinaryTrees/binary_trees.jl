@@ -2,7 +2,7 @@
 
 module BinaryTrees
 
-import base.append!
+import Base.append!
 
 using Plots
 
@@ -97,7 +97,7 @@ function find(B::BST, data)
 end
 
 
-function insert!(B::Bst,data)
+function insert!(B::BST,data)
     """ Insert a new node containing the specified data.
 
         throws:
@@ -143,7 +143,7 @@ function insert!(B::Bst,data)
     end
 end
 
-function remove!(B:BST, data):
+function remove!(B::BST, data)
     """ This function removes the node containing the specified data.
 
         throws:
@@ -212,5 +212,7 @@ function remove!(B:BST, data):
             nodeToRemove.data = newData
         end
     end
+
+end
 
 end
