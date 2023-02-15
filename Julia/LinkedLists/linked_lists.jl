@@ -52,7 +52,7 @@ function append!(DS::CustomDataStructure, data)
     # initialize the new node using the data
     newNode = LinkedListNode(data,nothing,nothing)
 
-    if isequal(nothing,DS.head)
+    if isequal(DS.head,nothing)
         # check to see if the linked list is empty
         # if it is assing the new node to be the head and tai
         DS.head = newNode
