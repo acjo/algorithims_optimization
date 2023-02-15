@@ -57,8 +57,12 @@ function testLL()
     # first block
     try
         find(testLL, 3)
-    catch KeyError
-        @assert true
+    catch e
+        if isa(e,KeyError)
+            @assert true
+        else
+            throw(e)
+        end
     end
 
 
@@ -71,8 +75,12 @@ function testLL()
     append!(testLL, 3)
     try
         node = find(testLL, 4)
-    catch KeyError
-        @assert true
+    catch e
+        if isa(e, KeyError)
+            @assert true
+        else
+            throw(e)
+        end
     end
 
 
@@ -98,9 +106,22 @@ function testLL()
 
     try
         remove!(testLL, "A")
-    catch KeyError
-        @assert true
+    catch e
+        if isa(e,KeyError)
+            @assert true
+        else
+            throw(e)
+        end
     end
+
+    testLL1 = LinkedList(nothing,nothing,0)
+    testLL2 = LinkedList(nothing,nothing,0)
+
+    append!(testLL1, "A")
+    insert!(testLL2, 1, "A")
+
+    @assert testLL1 == testLL2
+
 
     return true
 end

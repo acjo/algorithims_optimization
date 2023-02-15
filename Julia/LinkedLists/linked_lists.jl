@@ -1,7 +1,7 @@
 # linked_lists.jl
 module LinkedLists
 
-import Base.repr, Base.append!, Base.==
+import Base.repr, Base.append!, Base.==, Base.insert!
 
 export LinkedListNode, LinkedList, Deque, append!, find, get, length, repr, remove!, pop!, popleft!, insert!, appendleft!, ==
 
