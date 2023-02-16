@@ -4,9 +4,7 @@ module BinaryTrees
 
 import Base.append!, Base.insert!
 
-using Plots
-using Graphs
-using GraphPlot
+using Plots, Graphs, GraphRecipes
 
 export BSTNode, BST, find, insert!, remove!, draw
 
@@ -251,27 +249,40 @@ function draw(B::BST)
         return
     end
 
-    G = SimpleGraph(B.nodeCount)
 
-    newTuple = (B.root, 0)
-    nodes = [(B.root,0)]
+    nodes = [B.root]
+    edges = []
     while length(nodes) > 0
-        (currentNode, currentIndex) = pop!(nodes)
+        currentNode = pop!(nodes)
         for childNode in [currentNode.left, currentNode.right]
             if !isequal(childNode,nothing)
-                add_edge!(G,currentIndex, currentIndex +1)
-                currentIndex += 1
-                newTuple = (childNode,currentIndex)
-                append!(nodes, [newTuple])
+                append!(edges, [(currentNode.data, childNode.data)])
+                # add_edge!(G,currentNode.data, childNode.data)
+                append!(nodes, [childNode])
             end
         end
     end
 
-    gplothtml(G)
+    el = Edge.(edges)
+
+    G = SimpleDiGraph(el)
+
+
+    graphplot(G,curves=false)
+
 
     return
+end
+
+
+
+
+mutable struct AVL
 
 end
+
+
+
 
 
 
