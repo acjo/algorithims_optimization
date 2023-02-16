@@ -29,6 +29,8 @@ function append!(SLL::SinglyLinkedList, data)
         SLL.tail.next = newNode
         SLL.tail = newNode
     end
+
+    return
 end
 
 function iterativeFind(SLL::SinglyLinkedList, data)
@@ -41,6 +43,8 @@ function iterativeFind(SLL::SinglyLinkedList, data)
         currentNode = currentNode.next
     end
     throw(KeyError(data))
+
+    return
 end
 
 function recursiveFind(SLL::SinglyLinkedList, data)
@@ -76,7 +80,9 @@ mutable struct BSTNode
     end
 end
 
-mutable struct BST
+abstract type TreeStructure end
+
+mutable struct BST <: TreeStructure
     root::Union{Nothing, BSTNode}
     nodeCount::Int64
 
@@ -98,7 +104,30 @@ mutable struct BST
     end
 end
 
-function find(B::BST, data)
+mutable struct AVL <: TreeStructure
+    root::Union{Nothing, BSTNode}
+    nodeCount::Int64
+
+    function BST(root; nodeCount=0)
+        if !isequal(root,nothing)
+            nodeCount += 1
+        end
+        return new(root,nodeCount)
+    end
+
+    function BST(root,nodeCount)
+        if !isequal(root,nothing)
+            nodeCount = 1
+        else
+            nodeCount = 0
+        end
+
+        return new(root,nodeCount)
+    end
+end
+
+
+function find(B::TreeStructure, data)
     """ Return the node containing the data. If there is no such node in the tree,
         including if the tree is empty, raise a KeyError.
     """
@@ -121,8 +150,77 @@ function find(B::BST, data)
     return _step(B.root)
 end
 
+function _rebalance!(A::AVL, node::Union{BSTNode, Nothing})
+    # rebalance the subtree starting at the specified node
 
-function insert!(B::BST,data)
+    balance = _balanceFactor(A::AVL, node)
+
+    if balance == -2
+        if _height(node.left.left) > _height(node.left.right)
+            node = _rotate_left_left!(AVL, node)
+        else
+            node = _rotate_left_right!(AVL, node)
+        end
+    elseif balance == 2
+        if _height(node.right.right) > _height(node.right.left)
+            node = _rotate_right_right!(AVL, node)
+        else
+            node = _rotate_right_left!(AVL, node)
+        end
+    end
+    return node
+end
+
+
+function _height(currentNode::Union{BSTNode, Nothing})
+
+    if isequal(currentNode, nothing)
+        return -1
+    end
+
+    return 1 + max(_height(currentNode.right), _height(currentNode.left))
+end
+
+function _balanceFactor(currentNode::Union{BSTNode, Nothing}):
+    return _height(currentNode.right) - _height(currentNode.left)
+end
+
+function _rotate_left_left!(A::AVL, currentNode::Union{BSTNode, Nothing})
+    temp = currentNode.left
+    currentNode.left = temp.right
+    if !isequal(temp.right, nothing)
+        temp.right.prev = currentNode
+    end
+
+    temp.right = currentNode
+    temp.prev = currentNode.prev
+    currentNode.prev = temp
+
+    if !isequal(temp.prev,nothing)
+        if temp.prev.data > temp.data
+            temp.prev.left = temp
+        else
+            temp.prev.right = temp
+        end
+    end
+
+    if isequal(currentNode A.root)
+        A.root = temp
+    end
+    return temp
+end
+
+function _rotate_right_right!(A::AVL, currentNode::Union{BSTNode, Nothing})
+end
+
+function _rotate_left_right!(A::AVL, currentNode::Union{BSTNode, Nothing})
+end
+
+function _rotate_right_left!(A::AVL, currentNode::Union{BSTNode, Nothing})
+end
+
+
+function insert!(B::TreeStructure,data)
     """ Insert a new node containing the specified data.
 
         throws:
@@ -161,6 +259,14 @@ function insert!(B::BST,data)
                 _step(B.root)
                 B.nodeCount += 1
             end
+
+            if isequal(typeof(B), AVL)
+                node = find(AVL,data)
+                while !isequal(node,nothing)
+                    node = _rebalance!(B,node)
+                end
+            end
+
         else # if the wrong error is caught, throw the error again.
             throw(e)
         end
@@ -169,7 +275,7 @@ function insert!(B::BST,data)
         throw(ArgumentError("Data already contained in tree, no duplicates allowed."))
     end
 
-    return 
+    return
 end
 
 function remove!(B::BST, data)
@@ -242,9 +348,12 @@ function remove!(B::BST, data)
         end
     end
     B.nodeCount -= 1
+
+    return
 end
 
-function draw(B::BST)
+
+function draw(B::TreeStructure)
     if isequal(B.root,nothing)
         return
     end
@@ -270,20 +379,6 @@ function draw(B::BST)
 
     graphplot(G,curves=false)
 
-
-    return
 end
-
-
-
-
-mutable struct AVL
-
-end
-
-
-
-
-
 
 end

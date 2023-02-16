@@ -448,9 +448,9 @@ def prob4():
 
     #plotting
     ax1 = plt.subplot(121)
-    ax1.loglog(num_elements, sll_load_times, basex=2, basey=2, label='SLL Load Times')
-    ax1.loglog(num_elements, bst_load_times, basex=2, basey=2, label='BST Load Times')
-    ax1.loglog(num_elements, avl_load_times, basex=2, basey=2, label='AVL Load Times')
+    ax1.loglog(num_elements, sll_load_times,label='SLL Load Times')
+    ax1.loglog(num_elements, bst_load_times,label='BST Load Times')
+    ax1.loglog(num_elements, avl_load_times,label='AVL Load Times')
     ax1.legend(loc='upper left')
     plt.title('Load Times')
     plt.xlabel('Number of Elements in Structure')
@@ -464,3 +464,6 @@ def prob4():
     plt.xlabel('Number of Elements in Structure')
     plt.ylabel('Find Times')
     plt.show()
+
+if __name__ == "__main__":
+    prob4()
