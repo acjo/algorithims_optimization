@@ -168,7 +168,9 @@ mutable struct BSTNode
 end
 
 #=
-consider the following structure
+TODO: Consider the following structure as a
+replacement for the current architecture:
+
 abstract type Tree end
 
 mutable struct TreeStructureTest <: Tree
