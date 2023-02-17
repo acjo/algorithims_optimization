@@ -169,7 +169,7 @@ class KDT:
             ((k,) ndarray) the value in the tree that is nearest to z.
             (float) The Euclidean distance from the nearest neighbor to z.
         """
-        def KDSearch(current, nearest, d): #defines recursive function to infd nearest node
+        def KDSearch(current, nearest, d): #defines recursive function to find nearest node
             if current is None: #base case: dead end
                 return nearest, d
 
