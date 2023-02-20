@@ -1,4 +1,4 @@
-# binary_trees.jl
+# binaryTrees.jl
 
 module BinaryTrees
 

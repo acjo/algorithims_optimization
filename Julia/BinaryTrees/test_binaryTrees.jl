@@ -1,6 +1,6 @@
-# test.jl
+# test_binaryTrees.jl
 
-include("binary_trees.jl")
+include("binaryTrees.jl")
 using .BinaryTrees, Random, Plots
 
 

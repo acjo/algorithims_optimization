@@ -2,7 +2,7 @@
 
 module tests
 
-include("linked_lists.jl")
+include("linkedLists.jl")
 using .LinkedLists
 
 function testLL()

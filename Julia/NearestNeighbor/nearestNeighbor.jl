@@ -1,4 +1,4 @@
-#nearest_neighbor.jl
+# nearestNeighbor.jl
 
 module NearestNeighbor
 

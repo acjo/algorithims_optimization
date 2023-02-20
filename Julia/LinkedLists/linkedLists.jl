@@ -1,4 +1,4 @@
-# linked_lists.jl
+# linkedLists.jl
 module LinkedLists
 
 import Base.repr, Base.append!, Base.==, Base.insert!
