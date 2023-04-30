@@ -300,26 +300,81 @@ def prob6(n_neighbors, filename="mnist_subset.npz"):
 
 if __name__ == "__main__":
 
-    X = np.random.random( ( 100, 10 ) )
-    z = np.random.random( ( 10 ) )
+    # X = np.random.random( ( 100, 10 ) )
+    # z = np.random.random( ( 10 ) )
 
-    try:
-        with open( "testX.npy", "xb" ) as of:
-            np.save( of, X )
-    except FileExistsError:
-        X = np.load( "testX.npy" )
-        pass
+    # try:
+    #     with open( "testX.npy", "xb" ) as of:
+    #         np.save( of, X )
+    # except FileExistsError:
+    #     X = np.load( "testX.npy" )
+    #     pass
 
-    try:
-        with open( "testz.npy", "xb" ) as of:
-            np.save( of, z)
-    except FileExistsError:
-        z = np.load( "testz.npy" )
-        pass
+    # try:
+    #     with open( "testz.npy", "xb" ) as of:
+    #         np.save( of, z)
+    # except FileExistsError:
+    #     z = np.load( "testz.npy" )
+    #     pass
     
 
 
 
-    vec, dist = exhaustive_search( X, z )
-    print( vec )
-    print( dist )
+    # vec, dist = exhaustive_search( X, z )
+    # print( vec )
+    # print( dist )
+
+
+
+    # check1 = np.array([[2, 3],[1, 4]])
+    # check2 = np.array([[2, 3, 4],[5, 6, 7],[7, 1, 9],[3, 4, 8]])
+    # check3 = np.array([[5, 5],[2, 2],[8, 8],[3, 3],
+    #                    [4, 4],[1, 1],[6, 6],[7, 7],[9, 9]])
+    # check4 = np.array([[5, 5],[2, 4],[8, 3],[3, 2],
+    #                    [4, 6],[1, 7],[6, 8],[7, 9],[9, 1]])
+    # check5 = np.array([[3,1,4],[1,2,7],[4,3,5],
+    #                    [2,0,3],[2,4,5],[6,1,4],
+    #                    [1,4,4],[0,5,7],[5,2,5]])
+    # kdt = KDT( )
+
+    # for check, name in zip( [ check1, check2, check3, check4, check5 ], [ "chekc1", "check2", "check3", "check4", "check5" ] ):
+    #     kdt = KDT( )
+    #     for x in check:
+    #         kdt.insert( x )
+
+    #     str_rep = kdt.__str__( )
+
+    #     fileName = name + ".txt"
+    #     with open( fileName, 'x' ) as inFile:
+    #         inFile.write( str_rep )
+
+    # def _test( m, k, n_neighbors ):
+
+    #     data = np.random.random((m,k))
+    #     target = np.random.random(k)
+    #     labels = np.random.randint(0,2,m)
+
+    #     tree = KDTree( data )
+    #     _, indices = tree.query( target, k=n_neighbors) 
+    #     sol = mode( labels[ indices ] )
+    #     sol = sol[ 0 ][ 0 ]
+
+    #     print( sol + 1 )
+
+    #     return None
+
+    # def neighbors( ):
+
+    #     for m in [ 10, 20, 50, 100 ]:
+    #         for k,n_neighbors in [ ( 5, 3 ), ( 10, 5 ) ]:
+    #             _test( m, k, n_neighbors )
+
+    #     return None
+
+    # neighbors( )
+
+    # print( prob6( 1 ) )
+
+
+
+

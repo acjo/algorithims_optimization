@@ -1,0 +1,10 @@
+KDT(k=3)
+[3, 1, 4]	pivot = 1
+[1, 2, 7]	pivot = 2
+[4, 3, 5]	pivot = 2
+[2, 0, 3]	pivot = 3
+[2, 4, 5]	pivot = 3
+[6, 1, 4]	pivot = 3
+[1, 4, 4]	pivot = 1
+[0, 5, 7]	pivot = 1
+[5, 2, 5]	pivot = 1

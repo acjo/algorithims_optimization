@@ -1,0 +1,3 @@
+KDT(k=2)
+[2 3]	pivot = 0
+[1 4]	pivot = 1

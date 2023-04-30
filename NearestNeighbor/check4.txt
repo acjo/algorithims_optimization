@@ -1,0 +1,10 @@
+KDT(k=2)
+[5 5]	pivot = 0
+[2 4]	pivot = 1
+[8 3]	pivot = 1
+[3 2]	pivot = 0
+[4 6]	pivot = 0
+[9 1]	pivot = 0
+[6 8]	pivot = 0
+[1 7]	pivot = 1
+[7 9]	pivot = 1

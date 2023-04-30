@@ -2,12 +2,11 @@
 
 module NearestNeighbor
 
-using LinearAlgebra, DataStructures, NPZ
+using LinearAlgebra, DataStructures, NPZ, NearestNeighbors
+using StatsBase: mode
+import Base.println, Base.insert!, Base.string
 
-import Base.println, Base.insert!
-
-export exhaustiveSearch, KDTNode, KDT, find, insert!, println, query
-
+export exhaustiveSearch, KDTNode, KDT, find, insert!, println, string, query, KNeighborsClassifier, fit!, predict
 function exhaustiveSearch( X, z )
     """
     This function solves th enearest neighbor search problem with an exhaustive search.
@@ -46,25 +45,22 @@ mutable struct KDTNode
     """
 
     value::Vector{<:Number}
-    index::Union{Nothing, Int}
     pivot::Union{Nothing, Int}
     left::Union{Nothing, KDTNode}
     right::Union{Nothing,KDTNode}
 
-    function KDTNode( value, index, left, right, pivot )
+    function KDTNode( value, pivot, left, right )
         """
         Constructor if everything is provided. i.e. KDTNode( value, index,left,right,pivot )
         """
 
-        return new( value,index,left,right,pivot )
+        return new( value, pivot, left, right )
     end
 end
 # constructor if only the value is provided
-KDTNode( value ) = KDTNode( value, nothing, nothing, nothing, nothing )
-# constructor if only the value and index are provided
-KDTNode( value, index ) = KDTNode( value, index, nothing, nothing, nothing )
-# constructor if only the value, index, and pivot are provided 
-KDTNode( value, index, pivot ) = KDTNode( value, index, pivot, nothing, nothing )
+KDTNode( value ) = KDTNode( value, nothing, nothing, nothing )
+# constructor if only the value and pivot are provided
+KDTNode( value, pivot ) = KDTNode( value, pivot, nothing, nothing )
 
 
 mutable struct KDT
@@ -136,7 +132,7 @@ function insert!( tree::KDT, data; index=nothing )
         """
 
     data = vec( data )
-    newNode = KDTNode( data, index )
+    newNode = KDTNode( data )
 
     if !isequal( tree.root,nothing )
         if tree.k ≠ size( data,1 )
@@ -151,9 +147,9 @@ function insert!( tree::KDT, data; index=nothing )
             if isequal( currentNode.left, nothing )
                 # pont the parent to it
                 currentNode.left = newNode
-                # if the parents pivot is k-1 set child's pivot to 0
-                if currentNode.pivot == tree.k -1
-                    newNode.pivot = 0
+                # if the parents pivot is k set child's pivot to 1
+                if currentNode.pivot == tree.k
+                    newNode.pivot = 1
                 # set the child's pivot to k+1
                 else
                     newNode.pivot = currentNode.pivot + 1
@@ -166,8 +162,8 @@ function insert!( tree::KDT, data; index=nothing )
         else
             if isequal( currentNode.right, nothing )
                 currentNode.right = newNode
-                if currentNode.pivot == tree.k - 1
-                    newNode.pivot = 0
+                if currentNode.pivot == tree.k 
+                    newNode.pivot = 1
                 else
                     newNode.pivot = currentNode.pivot + 1
                 end
@@ -178,7 +174,6 @@ function insert!( tree::KDT, data; index=nothing )
         return nothing
     end
 
-
     # try to find the data
     try
         find( tree, data )
@@ -188,7 +183,7 @@ function insert!( tree::KDT, data; index=nothing )
             # if the tree is empty set the root node, k, and the pivot
             if isequal( tree.root, nothing )
                 tree.root = newNode
-                tree.root.pivot = 0
+                tree.root.pivot = 1
                 tree.k = size( data,1 )
             # otherwise recurisvely step through starting with the root node
             else
@@ -210,7 +205,6 @@ end
 function println( io::IO, tree::KDT )
     #=
     """String representation: a hierarchical list of nodes and their axes.
-
         Example:                            KDT( k=2 )
                     [5,5]                   [5 5]   pivot = 0
                     /   \                   [3 2]   pivot = 1
@@ -230,7 +224,6 @@ function println( io::IO, tree::KDT )
     while length( nodes ) > 0
         currentNode = dequeue!( nodes )
         currentString = string( currentNode.value ) * "\tpivot = " * string( currentNode.pivot )
-        println( typeof( currentString ) )
         push!( strs, currentString )
         for childNode in [currentNode.left, currentNode.right]
             if !isequal( childNode, nothing )
@@ -240,11 +233,45 @@ function println( io::IO, tree::KDT )
 
     end
 
-    str = "KDT( k=" * string( tree.k ) *" )\n" * join( strs, "\n" )
+    str = "KDT(k=" * string( tree.k ) *")\n" * join( strs, "\n" )
     println( str )
     return nothing
 end
 
+function string( tree::KDT )
+    #=
+    """String representation: a hierarchical list of nodes and their axes.
+        Example:                            KDT( k=2 )
+                    [5,5]                   [5 5]   pivot = 0
+                    /   \                   [3 2]   pivot = 1
+                [3,2]   [8,4]               [8 4]   pivot = 1
+                    \       \               [2 6]   pivot = 0
+                    [2,6]   [7,5]           [7 5]   pivot = 0
+    """
+    =#
+
+    if isequal( tree.root,nothing )
+        return "Empty KDT"
+    end
+
+    nodes, strs = Queue{KDTNode}( ), String[]
+    enqueue!( nodes, tree.root )
+
+    while length( nodes ) > 0
+        currentNode = dequeue!( nodes )
+        currentString = string( currentNode.value ) * "\tpivot = " * string( currentNode.pivot )
+        push!( strs, currentString )
+        for childNode in [currentNode.left, currentNode.right]
+            if !isequal( childNode, nothing )
+                enqueue!( nodes, childNode )
+            end
+        end
+
+    end
+
+    str = "KDT(k=" * string( tree.k ) *")\n" * join( strs, "\n" )
+    return str
+end
 
 function query( tree::KDT, z )
     """This function finds the value in the tree that is nearest to z.
@@ -271,30 +298,32 @@ function query( tree::KDT, z )
         currentDistance = norm( x-z,2 )
 
         if currentDistance < d # check if current is closer to z than the nearest
-            nearest = currentNode
+            nearestNode = currentNode
             d = currentDistance
         end
 
         # search to the left
-        if z[i] < x[i]
+        if z[ i ] < x[ i ]
             nearestNode, d = KDSearch( currentNode.left, nearestNode, d )
             # search to the right if needed
-            if z[i] + d >= x[i]
+            if z[ i ] + d >= x[ i ]
                 nearestNode, d = KDSearch( currentNode.right, nearestNode, d )
             end
         # search to the right
         else
             nearestNode, d = KDSearch( currentNode.right, nearestNode, d )
             # search to the left if needed
-            if z[i] - d <= x[i]
+            if z[ i ] - d <= x[ i ]
                 nearestNode, d = KDSearch( currentNode.left, nearestNode, d )
             end
         end
 
-        return nearest, d
+        return nearestNode, d
     end
 
-    return KDSearch( tree.root, tree.root, norm( tree.root.value-z, 2 ) )
+    node, distance = KDSearch( tree.root, tree.root, norm( tree.root.value-z, 2 ) )
+
+    return node.value, distance
 
 end
 
@@ -306,37 +335,43 @@ mutable struct KNeighborsClassifier
     """
 
     nNeighbors::Int
-    tree::Union{KDT, Nothing}
-    labels::Union{Vector{Union{String, Int}}, Nothing}
-
-    function KNeighborsClassifier( nNeighbors;tree=nothing,labels=nothing )
-        """
-        Constructor for when only nNeighbors is given. i.e. KNeighborsClassifier( nNeigbors )
-        """
-        return new( nNeighbors,tree,labels )
-    end
+    tree::Union{KDTree, Nothing}
+    labels::Union{Vector{Union{String, Int, Float64}}, Nothing}
 
     function KNeighborsClassifier( nNeighbors,tree,labels )
         return new( nNeighbors,tree,labels )
     end
 end
 
+KNeighborsClassifier( nNeighbors ) = KNeighborsClassifier( nNeighbors, nothing, nothing ) 
+
 function fit!( classifier::KNeighborsClassifier, X, y )
     """
     creates the tree and labels attributes
     Paramaters:
-        X: ( ( m,k ) matrix ) the training set
+        X: ( ( k,m ) matrix ) the training set
         y:( ( m, ), vector ) the training entries
     """
 
-    KDTree = KDT( )
+    if !isequal(classifier.tree, nothing )
+        @warn "KD trees are static, rebuilding entire tree with new data"
 
-    for ii in axes( X,1 )
-        currentRow = X[ii, 1:end]
-        insert!( KDTree, currentRow; index=ii )
+        if size( X, 1 ) != size( KDT.data[ 1 ], 1 )
+            throw( ArgumentError("The number of rows represents the dimension of the search space, \"X\" does not have the correct number of dimensions.") ) 
+        end
+        oldX = reduce( hcat, KDT.data )
+        combinedX = hcat( oldX, X )
+
+        for x in classifier.tree.data
+            combinedX = [ combinedX, x ]
+        end
+
+        kdt = KDTree( combinedX )
+
+    else
+        kdt = KDTree( X )
     end
-
-    classifier.tree = KDTree
+    classifier.tree = kdt
     classifier.labels = float.( vec( y ) )
 end
 
@@ -348,12 +383,38 @@ function predict( classifier::KNeighborsClassifier, z )
     i.e. there are n data points of size k.
     """
 
-    nodes, distances = query( classifier.tree, z )
+    idxs, dists = knn( classifier.tree, z, classifier.nNeighbors )
 
+    listOfLabels = [ classifier.labels[ idx ] for idx in idxs ]
 
-
+    return mode( listOfLabels )
 
 end
 
+function mnist( nNeighbors; fileName ="mnist_subset.npz" )
+
+    data = npzread( fileName )
+    xTrain = float.( data[ "X_train" ] )
+    xTrain = transpose( xTrain )
+    yTrain = Int.( data[ "y_train" ] )
+    xTest = float.( data["X_test" ] )
+    xTest = transpose( xTest )
+    yTest = Int.( data[ "y_test" ] )
+
+    classifier = KNeighborsClassifier( nNeighbors )
+    fit!( classifier, xTrain, yTrain )
+
+    classificationMatch = 0
+    for ii in axes( xTest, 2 )
+        predictedLabel = predict( classifier, xTest[ :, ii ] )
+        if predictedLabel == yTest[ ii ] 
+            classificationMatch += 1
+        end
+    end
+
+    accuracy = classificationMatch / size( xTest, 2 )
+    return accuracy
+
+end
 
 end
