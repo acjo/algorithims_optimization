@@ -296,3 +296,30 @@ def prob6(n_neighbors, filename="mnist_subset.npz"):
     #calculate and return accuracy
     accuracy = classification_match / m
     return accuracy
+
+
+if __name__ == "__main__":
+
+    X = np.random.random( ( 100, 10 ) )
+    z = np.random.random( ( 10 ) )
+
+    try:
+        with open( "testX.npy", "xb" ) as of:
+            np.save( of, X )
+    except FileExistsError:
+        X = np.load( "testX.npy" )
+        pass
+
+    try:
+        with open( "testz.npy", "xb" ) as of:
+            np.save( of, z)
+    except FileExistsError:
+        z = np.load( "testz.npy" )
+        pass
+    
+
+
+
+    vec, dist = exhaustive_search( X, z )
+    print( vec )
+    print( dist )
