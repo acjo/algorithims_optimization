@@ -129,14 +129,12 @@ class Graph:
             #while Q is nonempty
             while Q:
                 #pop the node off of the deque
-                current = Q.pop()
+                current = Q.popleft()
                 #append it to visited nodes
                 V.append(current)
                 #get the neighbors of current
-                neighbors = self.d.get(current)
-                #check if the nneighbor nodes are in marked if not, add them to Q and M,
                 #add them to Q the opposite way you remove them
-                for node in neighbors:
+                for node in self.d[ current ]:
                     if node not in M:
                         Q.appendleft(node)
                         M.add(node)
@@ -273,3 +271,18 @@ class MovieGraph:
         plt.hist(actor_distances, bins=[i-0.5 for i in range(8)])
         plt.show()
         return avg
+
+
+if __name__ == "__main__":
+
+
+    # adjacency = {'A': {'B', 'D'},
+    #              'B': {'A', 'D'},
+    #              'C': {'D'},
+    #              'D': {'A', 'B', 'C'}}
+
+    # G = Graph( adjacency )
+
+    # print( G.traverse( 'A' ) )
+
+    MV = MovieGraph( )

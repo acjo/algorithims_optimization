@@ -104,6 +104,7 @@ function test_insert( )
         myStrRep = string( kdt )
         io = open( fileName, "r")
         lines = readlines( io )
+        close( io )
         cStrRep = join( lines, "\n")
 
         @assert myStrRep == cStrRep
