@@ -285,4 +285,14 @@ if __name__ == "__main__":
 
     # print( G.traverse( 'A' ) )
 
+    # MV = MovieGraph( )
+
     MV = MovieGraph( )
+
+    print("number of nodes:", len( MV.network.nodes ) )
+    print( "number of edges:", len( MV.network.edges ) )
+
+    print( "number of unique movie titles:", len( MV.movie_titles ) )
+    print( "number of unique actor names:", len( MV.actor_names ) )
+
+    print( "what the total num of nodes should be:", len( MV.movie_titles ) + len( MV.actor_names ) )
