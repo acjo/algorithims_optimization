@@ -3,9 +3,14 @@
 
 module BreadthFirstSeach
 
-using DataStructures, Graphs
-export MyGraph, addNode!, println, addEdge!, removeNode!, removeEdge!, traverse, shortestPath
-import Base.println
+using Graphs
+using Plots
+using DataFrames
+using Statistics: mean
+using DataStructures
+
+export MyGraph, addNode!, println, repr, addEdge!, removeNode!, removeEdge!, traverse, shortestPath, MovieGraph, pathToActor, averageNumber 
+import Base.println, Base.repr
 
 struct MyGraph
     adjacency::Dict{Any, Set}
@@ -15,9 +20,19 @@ MyGraph() = MyGraph( Dict{Any, Set}( ) )
 
 function println( io::IO, G::MyGraph )
 
+    println( MyGraph )
     println( G.adjacency )
 
     return nothing
+end
+
+function repr( G::MyGraph )
+
+    stringRep = repr( MyGraph )
+    stringRep *= "\n"
+    stringRep *= repr( G.adjacency )
+
+    return stringRep
 end
 
 function addNode!( G::MyGraph, n )
@@ -76,18 +91,19 @@ function traverse( G::MyGraph, source )
         throw(KeyError( "source node is not present in graph." ) )
     end
 
-    V = [ ]
-    M = Set( source )
+    V = Any[ ]
+    M = Set{Any}( ) 
+    push!( M, source )
     Q = Deque{Any}( )
     push!( Q, source )
 
     while !isempty( Q )
-        node = popfirst!( Q )
-        append!( V, node )
-        for neighbor in G.adjacency[ node ]
+        currentNode = popfirst!( Q )
+        append!( V, [ currentNode ] )
+        for neighbor in G.adjacency[ currentNode ]
             if !( neighbor in M )
                 push!( M, neighbor )
-                pushfirst!( Q, neighbor )
+                push!( Q, neighbor )
             end
         end
     end
@@ -102,7 +118,8 @@ function shortestPath( G::MyGraph, source, target )
     end
 
     V = [ ]
-    M = Set( source )
+    M = Set{Any}( )
+    push!( M, source )
     Q = Deque{Any}( )
     push!( Q, source )
     all_paths = Dict{Any, Any}( )
@@ -137,147 +154,128 @@ struct MovieGraph
     fileName::Union{String, Nothing}
     # the network
     network::Union{Graph, Nothing}
-    # tracks graph index to the movie name
-    indexToMovieMap::Union{Dict{Int, String}, Nothing}
-    # tracks graph index to the actor name
-    indexToActorMap::Union{Dict{Int, String}, Nothing} 
-    # tracks movie title to the graph index
-    movieToIndexMap::Union{Dict{String, Int}, Nothing}
-    # tracks actor name to the graph index
-    actorToIndexMap::Union{Dict{String, Int}, Nothing}
-    # tracks what movie has what actors in it
-    movieToActorMap::Union{Dict{String, Vector{String}}, Nothing} 
-    # tracks which actor is in what movies
-    actorToMovieMap::Union{Dict{String, Vector{String}}, Nothing}
+    # contains movie titles
+    movieTitles::Union{Set{String}, Nothing}
+    # contains actor names
+    actorNames::Union{Set{String}, Nothing}
+    # maps name (of actor or movie) to to network node index
+    nameToIndex::Union{Dict{String, Int}, Nothing}
+    # maps index of network node to name (of actor or movie)
+    indexToName::Union{Dict{Int, String}, Nothing}
 end
 
-MovieGraph( ) = MovieGraph( nothing, nothing, nothing, nothing )
+MovieGraph( ) = MovieGraph( nothing, nothing, nothing, nothing, nothing, nothing )
 
 function MovieGraph( fileName )
 
-    # open file, read in the lines, and close the file
     io = open( fileName, "r" )
     S = readlines( io )
     close( io )
 
-    # instantiate graph
+
     G = Graph( )
+    movieTitles = Set{String}( )
+    actorNames = Set{String}( )
+    nameToIndex = Dict{String,Int}( )
+    indexToName = Dict{Int,String}( )
 
-    # tracks graph index to the movie name
-    indexToMovieMap = Dict{Int, String}( )
-    # tracks graph index to the actor name
-    indexToActorMap = Dict{Int, String}( )
-    # tracks movie title to the graph index
-    movieToIndexMap = Dict{String, Int}( )
-    # tracks actor name to the graph index
-    actorToIndexMap = Dict{String, Int}( )
-    # tracks what movie has what actors in it
-    movieToActorMap = Dict{ String, Vector{ String}}( )
-    # tracks which actor is in what movies
-    actorToMovieMap = Dict{String, Vector{String}}( )
-
-    # intialize graph vertex index 
     ll = 1
-    # iterate through all movies
-    for ii in axes( S, 1 )
-
-        # get the current movie and split by forward slash
-        currentMovie = strip( S[ ii ] )
-        currentMovie = split( S[ ii ], "/" )
-
-        # extract the current title
+    for ii in eachindex( S )
+        currentMovie = split( strip( S[ ii ] ), "/" )
         currentTitle = currentMovie[ 1 ]
 
-        # if the current title is not contained in the movie dictionaries
-        if !( haskey( movieToActorMap, currentTitle ) )
-            # create a key value pair where the key is the movie and the value are the actors
-            movieToActorMap[ currentTitle ] = currentMovie[ 2:end ]
-            # creat a key value pair where the key is the movie and the value is the graph index
-            movieToIndexMap[ currentTitle ] = ll
-            # create a key value pair where the key is the graph index and the value is the movie title
-            indexToMovieMap[ ll ] = currentTitle
-            # add one vertex to G
+        push!( movieTitles, currentTitle )
+        if !haskey( nameToIndex, currentTitle )
+            nameToIndex[ currentTitle ] = ll
+            indexToName[ ll ] = currentTitle
             add_vertex!( G )
-            # increment the graph index to match the next vertex we add to G
             ll += 1
-        # if the current title is contained in the movie dictionaries
-        else
-            # get the old actors this movie pointed to 
-            old = movieToActorMap[ currentTitle ]
-            # instantiate a new empty vector of strings
-            combined = Vector{String}()
-            # add all the old actors
-            append!( combined, old )
-            # add all the new actors
-            append!( combined, currentMovie[ 2:end ] )
-            # map the movie title to the unqiue actors of the movie 
-            movieToActorMap[ currentTitle ] = unique( combined )
         end
+        movieIndex = nameToIndex[ currentTitle ]
 
-        # iterate throughe each actor of the current movie
+        
         for jj in eachindex( currentMovie[ 2:end ] )
-
-            # extract the current actor
-            currentActor = currentMovie[ jj + 1 ]
-            
-            # if the current actor is not contained in the actor dictionaries
-            if !( haskey( actorToMovieMap, currentActor ) )
-                # create a key value pair where the key is the current actor and the value is the current movie title 
-                actorToMovieMap[ currentActor ] = [ currentTitle ] 
-                # create a key value pair where the key is the current actor and the value is the graph index
-                actorToIndexMap[ currentActor ] = ll
-                # create a key value pair where the key is the graph index and the value is the current actor
-                indexToActorMap[ ll ] = currentActor
-                # add one vertex to G
+            currentActor = currentMovie[ jj+1 ]
+            push!( actorNames, currentActor )
+            if !haskey( nameToIndex, currentActor )
+                nameToIndex[ currentActor ] = ll
+                indexToName[ ll ] = currentActor
                 add_vertex!( G )
-                # incrrement the graph index to match the next vertex we add to G
                 ll += 1
-            # if the current actor is contained in the acotr dictionaries
-            else
-                # get the old movie title(s) mapped to by this actor
-                old = actorToMovieMap[ currentActor ]
-                # instantiate an empty vector of strings
-                combined = Vector{String}( )
-                # add the old title(s)
-                append!( combined, old )
-                # add the new title
-                append!( combined, [ currentTitle ] )
-                # map the current actor to the unique movie titles they have acted in
-                actorToMovieMap[ currentActor ] = unique( combined )
             end
+            actorIndex = nameToIndex[ currentActor ]
 
-            # add edge from current actor <==> current movie 
-            add_edge!( G, actorToIndexMap[ currentActor ], movieToIndexMap[ currentTitle ] )
+            add_edge!( G, actorIndex, movieIndex )
+
         end
     end
 
-    return MovieGraph( fileName, G, indexToMovieMap, indexToActorMap, movieToIndexMap, actorToIndexMap, movieToActorMap, actorToMovieMap ) 
+    return MovieGraph( fileName, G, movieTitles, actorNames, nameToIndex, indexToName )
 end
 
 
-function pathToActor( G::MovieGraph, source, target )
+function pathToActor( G::MovieGraph, source::Union{String, Int}, target::Union{String,Int} )
 
     if typeof( source ) === String
-        sourceIndex = G.actorToIndexMap[ source ]
+        sourceIndex = G.nameToIndex[ source ]
     else
-        sourceIndex = source
+        if source in keys( G.indexToName )
+            sourceIndex = source
+        else
+            throw( KeyError( source ) )
+        end
     end
 
     if typeof( target ) === String
-        targetIndex = G.actorToIndexMap[ target ]
+        targetIndex = G.nameToIndex[ target ]
     else
-        targetIndex = target
+        if target in keys( G.indexToName )
+            targetIndex = target
+        else
+            throw( KeyError( target ) )
+        end
     end
 
-    ds = dijkstra_shortest_paths( G.network, sourceIndex )
+    ds = desopo_pape_shortest_paths( G.network, sourceIndex )
 
+    spath( x, r, s ) = x == s ? x : [ spath( r.parents[ x ], r, s ) x ]
+
+    indexPath = spath( targetIndex, ds, sourceIndex )
+
+    path = String[ ]
+    for ii in indexPath
+        append!( path, [ G.indexToName[ ii ] ] )
+    end
     
-
-
-    return nothing
+    return path, length( path ) - 1
 end
 
-MV = MovieGraph( "movie_data.txt" )
+function averageNumber( G::MovieGraph, target::Union{String,Int} )
+
+    if typeof( target ) === String
+        targetIndex = G.nameToIndex[ target ]
+    else
+        if target in keys( G.indexToName )
+            targetIndex = target
+        else
+            throw( KeyError( target ) )
+        end
+    end
+
+    actorDistances = []
+    ds = desopo_pape_shortest_paths( G.network, targetIndex )
+
+    actorDistances = [ Int( floor( ds.dists[ G.nameToIndex[ name ] ] / 2) ) for name in G.actorNames ]
+
+
+    avgDist = mean( actorDistances )
+
+
+    p = histogram( actorDistances; xlabel="actor Distances", normalize=:pdf, bins=collect( 1:maximum( actorDistances ) ).- 0.5 )
+    display( p )
+
+    return avgDist 
+end
 
 
 end

@@ -232,7 +232,7 @@ end
 function pop!(D::Deque)
     # function remove last node
     if D.nodeCount == 0 # edge case if deque is empty
-        throw(ArgumentError(D, "Index out of range"))
+        throw(ArgumentError("Index out of range"))
     elseif D.nodeCount == 1 #edge case if deque only has one node
         nodeData = D.tail.data
         D.tail = nothing
@@ -250,7 +250,7 @@ end
 function popleft!(D::Deque)
     # function to remove first node
     if D.nodeCount == 0 # edge case if our deque is empty
-        throw(ArgumentError(D, "Index out of range"))
+        throw(KeyError)
     elseif D.nodeCount == 1 # edge case if our deque only has one elemnt
         nodeData = D.head.data
         D.tail = nothing
@@ -267,11 +267,11 @@ end
 
 function insert!(DS::CustomDataStructure, index::Int64, data)
     if typeof(DS) == Deque
-        throw(ArgumentError(DS, "Use append!() or appendleft!() for insertion."))
+        throw(ArgumentError("Use append!() or appendleft!() for insertion."))
     end
 
     if index < 1 || index > DS.nodeCount + 1
-        throw(KeyError(index, "index out of range."))
+        throw(KeyError(index))
 
     end
 

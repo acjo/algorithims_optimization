@@ -8,6 +8,7 @@ October 28, 2020
 from collections import deque
 import networkx as nx
 from matplotlib import pyplot as plt
+import time
 
 # Problems 1-3
 class Graph:
@@ -214,7 +215,7 @@ class MovieGraph:
         self.actor_names = set()
 
         #open the file and read line by line
-        with open(filename, 'r') as infile:
+        with open(filename, 'r', encoding="utf8") as infile:
             lines = infile.read().strip().split('\n')
         #add the correct content to each set
         #add the edges between nodes
@@ -257,7 +258,7 @@ class MovieGraph:
             (float): the average path length from actor to target.
         """
         #get all distances to target
-        shortest_distances = nx.shortest_path_length(self.network, target)
+        shortest_distances = nx.shortest_path_length(self.network, target=target)
 
         #get rid of the distances from movies
         actor_distances = []
@@ -268,8 +269,8 @@ class MovieGraph:
         #compute the average
         avg = sum(actor_distances) / len(actor_distances)
         #plot the histogram
-        plt.hist(actor_distances, bins=[i-0.5 for i in range(8)])
-        plt.show()
+        # plt.hist(actor_distances, bins=[i-0.5 for i in range(8)])
+        # plt.show()
         return avg
 
 
@@ -287,12 +288,23 @@ if __name__ == "__main__":
 
     # MV = MovieGraph( )
 
-    MV = MovieGraph( )
-
+    start = time.time( )
+    MV = MovieGraph( "BreadthFirstSearch\\movie_data_small.txt" )
+    end = time.time( )
+    print( "construction time:", end - start )
     print("number of nodes:", len( MV.network.nodes ) )
     print( "number of edges:", len( MV.network.edges ) )
-
     print( "number of unique movie titles:", len( MV.movie_titles ) )
     print( "number of unique actor names:", len( MV.actor_names ) )
-
     print( "what the total num of nodes should be:", len( MV.movie_titles ) + len( MV.actor_names ) )
+    print( ) 
+
+    for ( actor1, actor2 ) in [ ( "Samuel L. Jackson", "Kevin Bacon" ), ( "Ewan McGregor", "Kevin Bacon"), ("Jennifer Lawrence", "Kevin Bacon"), ( "Mark Hamill", "Kevin Bacon" ) ]:
+        print( MV.path_to_actor( actor1, actor2 ) )
+
+
+    start = time.time( )
+    print( MV.average_number( "Kevin Bacon" ) )
+    end = time.time( )
+
+    print( end-start )
