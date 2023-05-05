@@ -1,6 +1,4 @@
 # breadthFristSearch.jl
-
-
 module BreadthFirstSeach
 
 using Graphs
