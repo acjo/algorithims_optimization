@@ -205,7 +205,7 @@ class SentenceGenerator(MarkovChain):
                 #nothing ever follows stop
                 if j == len(state_labels) - 1:
                     break
-                #nothing is every followed by start
+                #nothing is ever followed by start
                 elif i == 0:
                     continue
                 #find out what follows start
@@ -267,3 +267,11 @@ class SentenceGenerator(MarkovChain):
 
         #join the words into a sentence and return it
         return ' '.join(rand_babble)
+
+
+if __name__ == "__main__":
+    np.random.seed( 6 )
+    SG = SentenceGenerator( "yoda.txt" )
+    print( SG.babble( ) )
+
+    # np.save( "TM.npy", SG.transition_matrix )
