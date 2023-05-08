@@ -5,8 +5,7 @@ module MarkovChains
 using Distributions: Multinomial
 using LinearAlgebra: norm
 using Random: rand, seed!
-using NPZ
-export MarkovChain, transition, walk, path, steadyState
+export MarkovChain, transition, walk, path, steadyState, SentenceGenerator, babble
 
 abstract type Chain end
 
@@ -152,9 +151,10 @@ function SentenceGenerator( fileName::String )
     # algorithmically construct the transition matrix
     # The element transitionMatrix[ii, jj] is the probability that word jj follows word ii.
 
-    for jj=1:length( stateLabels ) - 1
+    for jj in eachindex( stateLabels[ 1:end-1 ] ) 
     # for jj in eachindex( stateLabels )
-        for ii=2:length( stateLabels )
+        for i in eachindex( stateLabels[ 1:end-1 ] )
+            ii = i+1
         # for ii in eachindex( stateLabels ) 
             # nothing ever follows stop
             # if jj == length( stateLabels )
@@ -226,17 +226,6 @@ function babble( SG::SentenceGenerator )
 
     return join( randomBable, " " )
 end
-
-
-seed!( 3 )
-@time SG = SentenceGenerator( "Julia\\MarkovChains\\yoda.txt" )
-
-println( babble( SG ) )
-
-# TM = npzread( "Julia\\MarkovChains\\TM.npy" )
-# println( SG.transitionMatrix ≈ TM )
-
-
 
 
 
