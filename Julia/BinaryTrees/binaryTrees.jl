@@ -6,7 +6,7 @@ import Base.append!, Base.insert!
 
 using Plots, Graphs, GraphRecipes
 
-export SinglyLinkedListNode, SinglyLinkedList, append!, iterativeFind,recursiveFind, BSTNode, BST, AVL, find, insert!, remove!, draw
+export SinglyLinkedListNode, SinglyLinkedList, append!, iterativeFind, recursiveFind, BSTNode, BST, AVL, find, insert!, remove!, draw
 
 mutable struct SinglyLinkedListNode
     """
@@ -525,7 +525,7 @@ function remove!(B::BST, data)
                 leaf = leaf.right
             end
             newData = leaf.data
-            remove!(B,leaf.data) # remove the leaf
+            remove!(B, leaf.data) # remove the leaf
             self.root.data = newData # set the roots new value
         else # if the node to remove is not the root, follow the same strategy as above.
             leaf = nodeToRemove.left
