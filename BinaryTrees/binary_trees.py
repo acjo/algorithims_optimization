@@ -273,9 +273,16 @@ class AVL(BST):
         while n:                    # Rebalance from the bottom up.
             n = self._rebalance(n).prev
 
-    def remove(*args, **kwargs):
+    def remove(self, data):
         """Disable remove() to keep the tree in balance."""
-        raise NotImplementedError("remove() is disabled for this class")
+
+        n = self.find(data).prev
+        BST.remove(self, data)
+        while n:
+            n = self._rebalance(n).prev
+
+        return
+
 
     def _rebalance(self,n):
         """Rebalance the subtree starting at the specified node."""
@@ -467,21 +474,16 @@ def prob4():
 
 if __name__ == "__main__":
 
+    """
     import numpy as np
 
-    data = np.random.randint(1, 1001, size=(15,))
-
-    data = np.array(list(set(data)))
-
-    bst = BST()
-    for d in data:
-        bst.insert(d)
-
-    bst.draw()
+    data = np.random.randint(1, 1001, size=(20,))
 
     avl = AVL()
 
     for d in data:
         avl.insert(d)
 
-    avl.draw()
+    avl.remove(data[4])
+    """
+
