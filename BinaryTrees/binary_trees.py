@@ -466,4 +466,22 @@ def prob4():
     plt.show()
 
 if __name__ == "__main__":
-    prob4()
+
+    import numpy as np
+
+    data = np.random.randint(1, 1001, size=(15,))
+
+    data = np.array(list(set(data)))
+
+    bst = BST()
+    for d in data:
+        bst.insert(d)
+
+    bst.draw()
+
+    avl = AVL()
+
+    for d in data:
+        avl.insert(d)
+
+    avl.draw()

@@ -4,7 +4,7 @@ module BinaryTrees
 
 import Base.append!, Base.insert!
 
-using Plots, Graphs, GraphRecipes
+using Plots, Graphs, GraphRecipes, Random
 
 export SinglyLinkedListNode, SinglyLinkedList, append!, iterativeFind, recursiveFind, BSTNode, BST, AVL, find, insert!, remove!, draw
 
@@ -450,7 +450,7 @@ function insert!(B::TreeStructure,data)
                 B.nodeCount += 1
             end
 
-            if isequal(typeof(B), AVL)
+            if isa(B, AVL)
                 node = find(B ,data)
                 while !isequal(node,nothing)
                     node = _rebalance!(B,node).prev
@@ -476,7 +476,7 @@ function remove!(B::BST, data)
             the tree is empty.
     """
 
-    if isequal(B.root,nothing) # if the BST is empty raise a value error
+    if isequal(B.root, nothing) # if the BST is empty raise a value error
         throw(KeyError(data))
     end
 
@@ -542,18 +542,30 @@ function remove!(B::BST, data)
     return
 end
 
-
 function draw(B::TreeStructure)
     if isequal(B.root,nothing)
         return
     end
-
+    
+    
     nodes = [B.root]
     edges = []
+
+
+    nodesToIdx = Dict()
+    idxToNodes = Dict()
+
     while length(nodes) > 0
         currentNode = pop!(nodes)
+        if isempty(nodesToIdx)
+            nodesToIdx[currentNode.data] = 1
+            idxToNodes[1] = currentNode.data
+        else
+            nodesToIdx[currentNode.data] = maximum(values(nodesToIdx)) + 1
+            idxToNodes[nodesToIdx[currentNode.data]] = currentNode.data
+        end
         for childNode in [currentNode.left, currentNode.right]
-            if !isequal(childNode,nothing)
+            if !isequal(childNode, nothing)
                 append!(edges, [(currentNode.data, childNode.data)])
                 # add_edge!(G,currentNode.data, childNode.data)
                 append!(nodes, [childNode])
@@ -561,12 +573,37 @@ function draw(B::TreeStructure)
         end
     end
 
-    el = Edge.(edges)
+    A = zeros((B.nodeCount, B.nodeCount))
 
-    G = SimpleDiGraph(el)
+    for edge in edges
+        A[nodesToIdx[edge[1]], nodesToIdx[edge[end]]] = 1
+    end
 
-    graphplot(G,curves=false)
+    names = [idxToNodes[i] for i=1:B.nodeCount]
 
+    p = graphplot(A; markersize=0.2, names=names, method=:tree, fontsize=4, linecolor=:black)
+
+    return p
 end
 
+Random.seed!(32)
+bst = BST()
+data = unique(rand([1:1000;], 15))
+
+println(data)
+
+
+for d in data
+    insert!(bst, d)
 end
+
+draw(bst)
+
+
+avl = AVL()
+for d in data
+    insert!(avl, d)
+end
+draw(avl)
+end
+

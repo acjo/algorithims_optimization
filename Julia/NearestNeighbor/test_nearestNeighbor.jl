@@ -2,38 +2,38 @@ include("nearestNeighbor.jl")
 
 using .NearestNeighbor, NearestNeighbors, Distances, NPZ
 
-function test_exhaustiveSearch( m::Int,k::Int )
+function test_exhaustiveSearch(m::Int, k::Int)
 
     X = npzread("testX.npy")
     z = npzread("testz.npy")
 
     
-    X = rand( Float64, ( m,k ) )
-    z = rand( Float64, k )
+    X = rand(Float64, (m,k))
+    z = rand(Float64, k)
 
-    minvec, mindist = exhaustiveSearch( X, z )
+    minvec, mindist = exhaustiveSearch(X, z)
 
-    kdt = KDTree( X' )
+    kdt = KDTree(X')
 
-    idx, dist = nn( kdt, z )
+    idx, dist = nn(kdt, z)
 
     @assert mindist ≈ dist
-    @assert minvec ≈ X[ idx, 1:end ]' 
+    @assert minvec ≈ X[idx, 1:end]' 
 
     return nothing
 end
 
-function test_KDTNode( )
+function test_KDTNode()
 
-    node = KDTNode( [ 1, 2, 3 ] )
+    node = KDTNode([1, 2, 3])
 
-    @assert node.value == [ 1,2,3 ]
+    @assert node.value == [1,2,3]
     @assert node.pivot === nothing
     @assert node.left === nothing 
     @assert node.right === nothing
 
 
-    node = KDTNode( [1, 2, 3], 1 )
+    node = KDTNode([1, 2, 3], 1)
     @assert node.value == [1,2,3]
     @assert node.pivot == 1
     @assert node.left === nothing
@@ -44,46 +44,46 @@ function test_KDTNode( )
 
 end
 
-function test_KDTree( )
+function test_KDTree()
 
-    kdt = KDT( )
+    kdt = KDT()
 
     @assert kdt.root === nothing
     @assert kdt.k === nothing
 
-    node = KDTNode( [ 1,2,3 ], 0 )
-    kdt = KDT( node )
+    node = KDTNode([1,2,3], 0)
+    kdt = KDT(node)
     @assert kdt.k == 3
-    @assert kdt.root.value == [ 1,2,3 ]
+    @assert kdt.root.value == [1,2,3]
 
     return nothing
 end
 
-function test_find( )
+function test_find()
 
-    kdt = KDT( )
+    kdt = KDT()
     try
-        find( kdt, [ 1,2,3 ] )
+        find(kdt, [1,2,3])
     catch e
-        if isa( e, KeyError )
+        if isa(e, KeyError)
             @assert true
         else
-            throw( e )
+            throw(e)
         end
     end
 
-    node = KDTNode( [ 1,2,3 ], 1 )
-    kdt = KDT( node, 3 )
-    foundNode = find( kdt, [ 1,2,3 ] )
+    node = KDTNode([1,2,3], 1)
+    kdt = KDT(node, 3)
+    foundNode = find(kdt, [1,2,3])
     @assert foundNode === node
 
     try
-        find( kdt, [ 3,4,5 ] )
+        find(kdt, [3,4,5])
     catch e
-        if isa( e, KeyError )
+        if isa(e, KeyError)
             @assert true
         else
-            throw( e )
+            throw(e)
         end
     end
 
@@ -91,68 +91,68 @@ function test_find( )
 
 end
 
-function test_insert( )
+function test_insert()
 
-    function _test( dataset, fileName )
+    function _test(dataset, fileName)
 
-        kdt = KDT( )
+        kdt = KDT()
 
         for entry in dataset
-            insert!( kdt, entry )
+            insert!(kdt, entry)
         end
 
-        myStrRep = string( kdt )
-        io = open( fileName, "r")
-        lines = readlines( io )
-        close( io )
-        cStrRep = join( lines, "\n")
+        myStrRep = string(kdt)
+        io = open(fileName, "r")
+        lines = readlines(io)
+        close(io)
+        cStrRep = join(lines, "\n")
 
         @assert myStrRep == cStrRep
 
         return nothing
     end
 
-    check1 = [ [ 2, 3 ], 
-               [ 1, 4 ] ]
+    check1 = [[2, 3], 
+               [1, 4]]
 
-    check2 = [ [ 2, 3, 4 ], 
-               [ 5, 6, 7 ], 
-               [ 7, 1, 9 ], 
-               [ 3, 4, 8 ] ]
+    check2 = [[2, 3, 4], 
+               [5, 6, 7], 
+               [7, 1, 9], 
+               [3, 4, 8]]
 
-    check3 = [ [ 5, 5 ], 
-               [ 2, 2 ], 
-               [ 8, 8 ], 
-               [ 3, 3 ], 
-               [ 4, 4 ], 
-               [ 1, 1 ], 
-               [ 6, 6 ], 
-               [ 7, 7 ], 
-               [ 9,9 ] ]
+    check3 = [[5, 5], 
+               [2, 2], 
+               [8, 8], 
+               [3, 3], 
+               [4, 4], 
+               [1, 1], 
+               [6, 6], 
+               [7, 7], 
+               [9,9]]
 
-    check4 = [ [ 5, 5 ], 
-               [ 2, 4 ], 
-               [ 8, 3 ], 
-               [ 3, 2 ], 
-               [ 4, 6 ], 
-               [ 1, 7 ], 
-               [ 6, 8 ], 
-               [ 7, 9 ], 
-               [ 9, 1] ]
+    check4 = [[5, 5], 
+               [2, 4], 
+               [8, 3], 
+               [3, 2], 
+               [4, 6], 
+               [1, 7], 
+               [6, 8], 
+               [7, 9], 
+               [9, 1]]
 
-    check5 = [ [ 3, 1, 4 ], 
-               [ 1, 2, 7 ], 
-               [ 4, 3, 5 ], 
-               [ 2, 0, 3 ], 
-               [ 2, 4, 5 ], 
-               [ 6, 1, 4 ], 
-               [ 1, 4, 4 ], 
-               [ 0, 5, 7 ], 
-               [ 5, 2, 5 ] ]
+    check5 = [[3, 1, 4], 
+               [1, 2, 7], 
+               [4, 3, 5], 
+               [2, 0, 3], 
+               [2, 4, 5], 
+               [6, 1, 4], 
+               [1, 4, 4], 
+               [0, 5, 7], 
+               [5, 2, 5]]
 
-    for (data, fileName) in zip( [ check1, check2, check3, check4, check5 ], 
-                                 [ "check1.txt", "check2.txt", "check3.txt", "check4.txt", "check5.txt" ] )
-        _test( data, fileName )
+    for (data, fileName) in zip([check1, check2, check3, check4, check5], 
+                                 ["check1.txt", "check2.txt", "check3.txt", "check4.txt", "check5.txt"])
+        _test(data, fileName)
     end
 
     return nothing
@@ -160,25 +160,25 @@ end
 
 
 
-function test_query( )
+function test_query()
 
-    function neighbor( m::Int, k::Int )
+    function neighbor(m::Int, k::Int)
         # get random pints
-        X = rand( Float64, ( m, k ) ) 
-        y = rand( Float64, k )
+        X = rand(Float64, (m, k)) 
+        y = rand(Float64, k)
 
         # build trees
-        myKDT = KDT( )
-        for ii in axes( X, 1 )
-            insert!( myKDT, X[ ii, : ] )
+        myKDT = KDT()
+        for ii in axes(X, 1)
+            insert!(myKDT, X[ii, :])
         end
-        kdt = KDTree( X' )
+        kdt = KDTree(X')
 
         # query for the distances
-        point, distance = query( myKDT, y )
-        idx, dist = nn( kdt, y )
+        point, distance = query(myKDT, y)
+        idx, dist = nn(kdt, y)
 
-        closest = X[ idx, : ]
+        closest = X[idx, :]
 
 
         @assert distance ≈ dist
@@ -188,45 +188,45 @@ function test_query( )
 
     end
 
-    dims = [ ( 10, 10 ), 
-             ( 100, 10 ), 
-             ( 10, 100 ), 
-             ( 100, 100 ), 
-             ( 100, 100 ) ]
+    dims = [(10, 10), 
+             (100, 10), 
+             (10, 100), 
+             (100, 100), 
+             (100, 100)]
 
 
-    for ( m, k ) in dims
-        neighbor( m, k )
+    for (m, k) in dims
+        neighbor(m, k)
     end
     return nothing
 end
 
 
-function test_knnclassifier( )
+function test_knnclassifier()
 
 
-    function _test( m,k, nNeighbors )
+    function _test(m,k, nNeighbors)
 
         # generate random data
-        data = rand( Float64, ( k, m ) )
+        data = rand(Float64, (k, m))
         # generate random target
-        target = rand( Float64, k)
+        target = rand(Float64, k)
         # do binary classification
-        labels = rand( (1:2), m )
+        labels = rand((1:2), m)
 
         # classify 
-        classifier = KNeighborsClassifier( nNeighbors )
+        classifier = KNeighborsClassifier(nNeighbors)
 
-        fit!( classifier, data, labels )
+        fit!(classifier, data, labels)
 
-        stu = predict( classifier, target )
+        stu = predict(classifier, target)
 
         return nothing
     end
 
-    for m in [ 10, 20, 50, 100 ]
-        for ( k, nNeighbors ) in [ ( 5, 3 ), ( 10, 5 ) ]
-            _test( m, k, nNeighbors )
+    for m in [10, 20, 50, 100]
+        for (k, nNeighbors) in [(5, 3), (10, 5)]
+            _test(m, k, nNeighbors)
         end
     end
 
@@ -234,10 +234,10 @@ function test_knnclassifier( )
 
 end
 
-function test_mnist( )
+function test_mnist()
 
 
-    acc = NearestNeighbor.mnist( 1 )
+    acc = NearestNeighbor.mnist(1)
 
     @assert acc > 0.88
 
@@ -246,21 +246,21 @@ function test_mnist( )
 end
 
 
-test_exhaustiveSearch( 100, 10 )
+test_exhaustiveSearch(100, 10)
 
-test_KDTNode( )
+test_KDTNode()
 
-test_KDTree( )
+test_KDTree()
 
-test_find( )
+test_find()
 
-test_insert( )
+test_insert()
 
-test_query( ) 
+test_query() 
 
-test_knnclassifier( )
+test_knnclassifier()
 
-test_mnist( )
+test_mnist()
 
 
-printstyled( "All tests pass\n", color=:blue )
+printstyled("All tests pass\n", color=:blue)
