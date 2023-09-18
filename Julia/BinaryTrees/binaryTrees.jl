@@ -453,7 +453,7 @@ function insert!(B::TreeStructure,data)
             if isa(B, AVL)
                 node = find(B ,data)
                 while !isequal(node,nothing)
-                    node = _rebalance!(B,node).prev
+                    node = _rebalance!(B, node).prev
                 end
             end
 
@@ -483,6 +483,10 @@ function remove!(B::BST, data)
     # this is the node to remove; find() will raise a KeyError if
     # there is no node in the BST containing the data.
     nodeToRemove = find(B,data)
+
+    if isa(B, AVL)
+        rebalanceNode = nodeToRemove.prev
+    end
 
     if isequal(nodeToRemove.left,nothing) && isequal(nodeToRemove.right,nothing) # if the nde to remove is a leaf node.
         if isequal(nodeToRemove.prev, nothing) # if it is the root node
@@ -535,6 +539,12 @@ function remove!(B::BST, data)
             newData = leaf.Data
             remove!(B, leaf.Data)
             nodeToRemove.data = newData
+        end
+    end
+
+    if isa(B, AVL)
+        while !isequal(rebalanceNode, nothing)
+            rebalanceNode = _rebalance!(B, rebalanceNode).prev
         end
     end
     B.nodeCount -= 1
