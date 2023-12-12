@@ -299,6 +299,7 @@ def prob6(n_neighbors, filename="mnist_subset.npz"):
 
 
 if __name__ == "__main__":
+    pass
 
     # X = np.random.random( ( 100, 10 ) )
     # z = np.random.random( ( 10 ) )
